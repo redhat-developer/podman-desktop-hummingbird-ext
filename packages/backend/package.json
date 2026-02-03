@@ -1,0 +1,30 @@
+{
+  "name": "hummingbird",
+  "displayName": "Hummingbird",
+  "description": "Hummingbird extension",
+  "version": "0.1.0-next",
+  "icon": "icon.png",
+  "publisher": "podman-desktop",
+  "type": "module",
+  "license": "Apache-2.0",
+  "engines": {
+    "podman-desktop": ">=1.10.0"
+  },
+  "main": "./dist/extension.cjs",
+  "scripts": {
+    "build": "vite build",
+    "test": "vitest run --coverage",
+    "test:watch": "vitest watch --coverage",
+    "format:check": "prettier --check \"src/**/*.ts\"",
+    "format:fix": "prettier --write \"src/**/*.ts\"",
+    "watch": "vite --mode development build -w"
+  },
+  "contributes": {},
+  "devDependencies": {
+    "@podman-desktop/api": "^1.24.2",
+    "@types/node": "^24",
+    "vite": "^7.3.1",
+    "vitest": "^4.0.16"
+  },
+  "dependencies": {}
+}

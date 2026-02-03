@@ -1,0 +1,11 @@
+@import 'tailwindcss';
+@config '../tailwind.config.cjs';
+
+html, body {
+    height: 100%;
+}
+
+.monaco-glyph {
+    width: 20px;
+    margin-left: 1rem;
+}

@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "Node",
+    "resolveJsonModule": true,
+    "sourceMap": true,
+    "outDir": "dist",
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "types": ["node"],
+    "paths": {
+      "/@shared/*": ["../shared/*"]
+    },
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true
+  },
+  "include": ["src", "vitest.setup.*", "types/*.d.ts", "../../types/*.d.ts", "../shared/*.ts", "../shared/**/*.ts"],
+  "exclude": ["vite.config.ts", "vitest.config.ts"]
+}
