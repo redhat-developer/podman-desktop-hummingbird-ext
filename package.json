@@ -1,10 +1,10 @@
 {
-  "name": "quadlet",
-  "displayName": "Podman Quadlet",
-  "description": "Manage, generate Podman Quadlet",
-  "version": "0.13.0-next",
+  "name": "hummingbird",
+  "displayName": "Hummingbird",
+  "description": "Hummingbird extension",
+  "version": "0.1.0-next",
   "icon": "icon.png",
-  "publisher": "podman-desktop",
+  "publisher": "redhat",
   "private": true,
   "engines": {
     "node": ">=24.0.0",
@@ -13,15 +13,16 @@
   "scripts": {
     "build:backend": "cd packages/backend && npm run build",
     "build:frontend": "cd packages/frontend && npm run build",
-    "build": "concurrently \"npm run build:frontend\" \"npm run build:backend\"",
-    "watch": "concurrently \"cd packages/frontend && npm run watch\" \"cd packages/backend && npm run watch\"",
+    "build:shared": "cd packages/shared && npm run build",
+    "build": "npm run build:shared && concurrently \"npm run build:frontend\" \"npm run build:backend\"",
+    "watch": "concurrently \"cd packages/shared && npm run watch\" \"cd packages/frontend && npm run watch\" \"cd packages/backend && npm run watch\"",
     "format:check": "prettier --check \"packages/**/*.{ts,js,json,svelte}\"",
     "format:fix": "prettier --write \"packages/**/*.{ts,js,json,svelte}\"",
     "lint:check": "eslint . --cache",
     "lint:fix": "eslint . --cache --fix",
-    "test:backend":   "vitest run --project quadlet",
-    "test:frontend":  "vitest run --project frontend",
-    "test:shared":    "vitest run --project shared",
+    "test:backend": "vitest run --project quadlet",
+    "test:frontend": "vitest run --project frontend",
+    "test:shared": "vitest run --project @hummingbird/core-api",
     "test:unit": "vitest run",
     "typecheck:shared": "tsc --noEmit --project packages/shared",
     "typecheck:frontend": "cd packages/frontend && pnpm check",
@@ -41,6 +42,8 @@
     "concurrently": "^9.2.1",
     "eslint": "^9.39.2",
     "@eslint/compat": "^2.0.1",
+    "@eslint/js": "^9.39.2",
+    "@eslint/eslintrc": "^3.3.3",
     "eslint-import-resolver-custom-alias": "^1.3.2",
     "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-plugin-etc": "^2.0.3",
@@ -58,7 +61,8 @@
     "typescript-eslint": "^8.54.0",
     "vite": "^7.3.1",
     "vitest": "^4.0.16",
-    "globals": "^17.2.0"
+    "globals": "^17.2.0",
+    "@podman-desktop/api": "^1.25.1"
   },
   "workspaces": {
     "packages": [

@@ -11,15 +11,5 @@
     "sourceMap": true,
     "strict": true,
     "moduleResolution": "bundler"
-  },
-  "include": [
-    "src/**/*.d.ts",
-    "src/**/*.ts",
-    "src/**/*.js",
-    "src/**/*.svelte",
-    "../../types/**/*.d.ts",
-    "../shared/**/*.ts",
-    "vite.tests.setup.ts"
-  ],
-  "exclude": ["vite.config.ts", "vitest.config.ts"]
+  }
 }

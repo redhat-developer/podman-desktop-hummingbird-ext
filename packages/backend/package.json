@@ -4,11 +4,11 @@
   "description": "Hummingbird extension",
   "version": "0.1.0-next",
   "icon": "icon.png",
-  "publisher": "podman-desktop",
+  "publisher": "redhat",
   "type": "module",
   "license": "Apache-2.0",
   "engines": {
-    "podman-desktop": ">=1.10.0"
+    "podman-desktop": ">=1.25.0"
   },
   "main": "./dist/extension.cjs",
   "scripts": {
@@ -21,7 +21,7 @@
   },
   "contributes": {},
   "devDependencies": {
-    "@podman-desktop/api": "^1.24.2",
+    "@podman-desktop/api": "^1.25.1",
     "@types/node": "^24",
     "vite": "^7.3.1",
     "vitest": "^4.0.16"

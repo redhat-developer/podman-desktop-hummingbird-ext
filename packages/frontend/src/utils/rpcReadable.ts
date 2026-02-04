@@ -17,7 +17,7 @@
  ***********************************************************************/
 
 import { writable, type Subscriber, type Unsubscriber, type Readable } from 'svelte/store';
-import type { Subscriber as SharedSubscriber } from '/@shared/src/messages/message-proxy';
+import type { Subscriber as SharedSubscriber } from '@hummingbird/core-api';
 import { rpcBrowser } from '/@/api/client';
 
 export function RPCReadable<T>(

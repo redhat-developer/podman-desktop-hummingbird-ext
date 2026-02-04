@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (C) 2025 Red Hat, Inc.
+ * Copyright (C) 2026 Red Hat, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,17 +15,15 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-import { join } from 'node:path';
-import * as path from 'node:path';
+import { join, dirname } from 'node:path';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
 import { fileURLToPath } from 'node:url';
 import tailwindcss from '@tailwindcss/vite';
-import { codecovVitePlugin } from '@codecov/vite-plugin';
 import { svelteTesting } from '@testing-library/svelte/vite'; // Add this
 
 const filename = fileURLToPath(import.meta.url);
-const PACKAGE_ROOT = path.dirname(filename);
+const PACKAGE_ROOT = dirname(filename);
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -38,17 +36,7 @@ export default defineConfig({
       '/@shared/': join(PACKAGE_ROOT, '../shared') + '/',
     },
   },
-  plugins: [
-    tailwindcss(),
-    sveltekit(),
-    svelteTesting(),
-    codecovVitePlugin({
-      enableBundleAnalysis: process.env.CODECOV_TOKEN !== undefined,
-      bundleName: 'frontend',
-      uploadToken: process.env.CODECOV_TOKEN,
-      telemetry: false,
-    }),
-  ],
+  plugins: [tailwindcss(), sveltekit(), svelteTesting()],
   build: {
     // vite module preload option create dynamically a <link rel="modulepreload" ../>
     // preloading a module do not send referrer header

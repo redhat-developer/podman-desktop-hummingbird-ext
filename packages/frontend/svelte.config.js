@@ -22,6 +22,12 @@ const config = {
     output: {
       bundleStrategy: 'inline',
     },
+    typescript: {
+      config: tsconfig => {
+        tsconfig['include'] = [...tsconfig['include'], '../../../types/**/*.d.ts', '../vite.tests.setup.ts'];
+        return tsconfig;
+      },
+    },
   },
 };
 
