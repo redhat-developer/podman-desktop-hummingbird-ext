@@ -32,6 +32,7 @@ export class QuayIOService implements Disposable, AsyncInit {
     const res = await this.#client.api.listRepos({
       public: true,
       namespace: options.organisation,
+      last_modified: true,
     });
     const data = await res.json();
     return RepositoriesResponseSchema.parse(data);

@@ -33,14 +33,17 @@ import type {
 import { expect, test, vi, beforeEach } from 'vitest';
 import { MainService } from './main-service';
 import { WebviewService } from './webview-service';
-import { RpcExtension, RoutingApi } from '@hummingbird/core-api';
+import { RpcExtension, RoutingApi, DialogApi } from '@hummingbird/core-api';
 import { RoutingApiImpl } from '../apis/routing-api-impl';
+import { DialogApiImpl } from '../apis/dialog-api-impl';
 
 // mock message-proxy
 vi.mock(import('@hummingbird/core-api'));
 // mock services
 vi.mock(import('./webview-service'));
 vi.mock(import('./routing-service'));
+vi.mock(import('./dialog-service'));
+vi.mock(import('./hummingbird-service'));
 
 const EXTENSION_CONTEXT_MOCK: ExtensionContext = {} as unknown as ExtensionContext;
 const WINDOW_API_MOCK: typeof window = {} as unknown as typeof window;
@@ -85,7 +88,10 @@ test('ensure init register all APIs', async () => {
   const main = getMainService();
   await main.init();
 
-  const APIS = new Map<{ CHANNEL: string }, unknown>([[RoutingApi, RoutingApiImpl]]);
+  const APIS = new Map<{ CHANNEL: string }, unknown>([
+    [RoutingApi, RoutingApiImpl],
+    [DialogApi, DialogApiImpl],
+  ]);
 
   for (const [key, value] of APIS.entries()) {
     expect(RpcExtension.prototype.registerInstance).toHaveBeenCalledWith(key, expect.any(value));

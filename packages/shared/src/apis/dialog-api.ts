@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (C) 2026 Red Hat, Inc.
+ * Copyright (C) 2025 Red Hat, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,18 +15,13 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
+import type { InputBoxOptions } from '../models/input-box-options';
 
-// constants
-export * from './messages';
+export abstract class DialogApi {
+  static readonly CHANNEL: string = 'dialog-api';
 
-// apis
-export * from './apis/routing-api';
-export * from './apis/hummingbird-api';
-export * from './apis/dialog-api';
-
-// proxy utils
-export * from './messages/message-proxy';
-
-// models
-export * from './models/repository';
-export * from './models/input-box-options';
+  abstract showWarningMessage(message: string, ...items: string[]): Promise<string | undefined>;
+  abstract showInformationMessage(message: string, ...items: string[]): Promise<string | undefined>;
+  abstract showInputBox(options: InputBoxOptions): Promise<string | undefined>;
+  abstract openExternal(href: string): Promise<boolean>;
+}

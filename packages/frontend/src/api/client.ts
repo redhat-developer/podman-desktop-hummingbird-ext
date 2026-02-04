@@ -15,7 +15,7 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-import { HummingbirdApi, RoutingApi, RpcBrowser } from '@hummingbird/core-api';
+import { DialogApi, HummingbirdApi, RoutingApi, RpcBrowser } from '@hummingbird/core-api';
 
 /**
  * This file is the client side of the API. It is used to communicate with the backend, which allows
@@ -31,6 +31,7 @@ export const rpcBrowser: RpcBrowser = new RpcBrowser(window, podmanDesktopApi);
 // apis
 export const routingAPI: RoutingApi = rpcBrowser.getProxy(RoutingApi);
 export const hummingbirdAPI: HummingbirdApi = rpcBrowser.getProxy(HummingbirdApi);
+export const dialogAPI: DialogApi = rpcBrowser.getProxy(DialogApi);
 
 // The below code is used to save the state of the router in the podmanDesktopApi, so
 // that we can determine the correct route to display when the extension is reloaded.
@@ -64,4 +65,8 @@ Object.defineProperty(window, 'routingAPI', {
 
 Object.defineProperty(window, 'hummingbirdAPI', {
   value: hummingbirdAPI,
+});
+
+Object.defineProperty(window, 'dialogAPI', {
+  value: dialogAPI,
 });

@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (C) 2026 Red Hat, Inc.
+ * Copyright (C) 2025 Red Hat, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,14 @@
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
 
-// constants
-export * from './messages';
+export interface InputBoxOptions {
+  /**
+   * An optional string that represents the title of the input box.
+   */
+  title?: string;
 
-// apis
-export * from './apis/routing-api';
-export * from './apis/hummingbird-api';
-export * from './apis/dialog-api';
-
-// proxy utils
-export * from './messages/message-proxy';
-
-// models
-export * from './models/repository';
-export * from './models/input-box-options';
+  /**
+   * The value to pre-fill in the input box.
+   */
+  value?: string;
+}

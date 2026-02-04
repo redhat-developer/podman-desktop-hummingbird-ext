@@ -25,6 +25,7 @@ export const RepositorySchema = z.object({
   name: z.string(),
   description: z.string().nullable(),
   is_public: z.boolean(),
+  last_modified: z.number(),
 });
 
 /**

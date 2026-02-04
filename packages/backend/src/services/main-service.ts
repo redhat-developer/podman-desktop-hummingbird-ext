@@ -30,7 +30,7 @@ import type {
   TelemetryLogger,
 } from '@podman-desktop/api';
 import { WebviewService } from './webview-service';
-import { RpcExtension, RoutingApi, HummingbirdApi } from '@hummingbird/core-api';
+import { RpcExtension, RoutingApi, HummingbirdApi, DialogApi } from '@hummingbird/core-api';
 
 import type { AsyncInit } from '../utils/async-init';
 
@@ -39,6 +39,8 @@ import { RoutingApiImpl } from '../apis/routing-api-impl';
 import { QuayIOService } from './quay-io-service';
 import { HummingbirdService } from './hummingbird-service';
 import { HummingbirdApiImpl } from '../apis/hummingbird-api-impl';
+import { DialogApiImpl } from '../apis/dialog-api-impl';
+import { DialogService } from './dialog-service';
 
 interface Dependencies {
   extensionContext: ExtensionContext;
@@ -90,6 +92,12 @@ export class MainService implements Disposable, AsyncInit {
     await routing.init();
     this.#disposables.push(routing);
 
+    // dialog service
+    const dialog = new DialogService({
+      windowApi: this.dependencies.window,
+      envApi: this.dependencies.env,
+    });
+
     // quay service
     const quay = new QuayIOService();
     this.#disposables.push(quay);
@@ -114,5 +122,11 @@ export class MainService implements Disposable, AsyncInit {
       hummingbird,
     });
     rpcExtension.registerInstance<HummingbirdApi>(HummingbirdApi, hummingbirdApiImpl);
+
+    // dialog api
+    const dialogApiImpl = new DialogApiImpl({
+      dialog: dialog,
+    });
+    rpcExtension.registerInstance<DialogApi>(DialogApi, dialogApiImpl);
   }
 }
