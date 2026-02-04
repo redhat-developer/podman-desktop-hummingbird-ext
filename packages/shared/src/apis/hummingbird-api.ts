@@ -15,19 +15,10 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-import { RoutingApi } from '@hummingbird/core-api';
-import type { RoutingService } from '../services/routing-service';
+import type { Repository } from '../models/repository';
 
-interface Dependencies {
-  routing: RoutingService;
-}
+export abstract class HummingbirdApi {
+  static readonly CHANNEL: string = 'hummingbird-api';
 
-export class RoutingApiImpl extends RoutingApi {
-  constructor(protected dependencies: Dependencies) {
-    super();
-  }
-
-  override async readRoute(): Promise<string | undefined> {
-    return this.dependencies.routing.read();
-  }
+  abstract all(): Promise<Array<Repository>>;
 }

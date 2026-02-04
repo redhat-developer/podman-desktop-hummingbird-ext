@@ -15,19 +15,28 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-import { RoutingApi } from '@hummingbird/core-api';
-import type { RoutingService } from '../services/routing-service';
+import type { Disposable } from '@podman-desktop/api';
+import type { AsyncInit } from '../utils/async-init';
+import { Api } from '/@generated/quay-io-api';
+import type { RepositoriesResponse } from '@hummingbird/core-api';
+import { RepositoriesResponseSchema } from '@hummingbird/core-api';
 
-interface Dependencies {
-  routing: RoutingService;
-}
+export class QuayIOService implements Disposable, AsyncInit {
+  #client: Api<unknown>;
 
-export class RoutingApiImpl extends RoutingApi {
-  constructor(protected dependencies: Dependencies) {
-    super();
+  constructor() {
+    this.#client = new Api();
   }
 
-  override async readRoute(): Promise<string | undefined> {
-    return this.dependencies.routing.read();
+  public async listRepos(options: { organisation: string }): Promise<RepositoriesResponse> {
+    const res = await this.#client.api.listRepos({
+      public: true,
+      namespace: options.organisation,
+    });
+    const data = await res.json();
+    return RepositoriesResponseSchema.parse(data);
   }
+
+  dispose(): void {}
+  async init(): Promise<void> {}
 }

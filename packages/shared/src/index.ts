@@ -16,6 +16,15 @@
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
 
+// constants
 export * from './messages';
+
+// apis
 export * from './apis/routing-api';
+export * from './apis/hummingbird-api';
+
+// proxy utils
 export * from './messages/message-proxy';
+
+// models
+export * from './models/repository';

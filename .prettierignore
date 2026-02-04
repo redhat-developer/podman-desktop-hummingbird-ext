@@ -1,6 +1,7 @@
 # ignore vite build output
 packages/**/dist/*
 packages/backend/media/*
+packages/**/generated/*
 
 # ignore vitest coverage
 packages/**/coverage/*

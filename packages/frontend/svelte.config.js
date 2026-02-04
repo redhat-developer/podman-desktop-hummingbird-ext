@@ -16,7 +16,6 @@ const config = {
     },
     alias: {
       '/@/*': './src/*',
-      '/@shared/*': '../shared/*',
       '/@store/*': './src/stores/*',
     },
     output: {

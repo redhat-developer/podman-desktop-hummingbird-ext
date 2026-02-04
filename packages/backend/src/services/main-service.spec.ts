@@ -33,12 +33,11 @@ import type {
 import { expect, test, vi, beforeEach } from 'vitest';
 import { MainService } from './main-service';
 import { WebviewService } from './webview-service';
-import { RpcExtension } from '/@shared/src/messages/message-proxy';
+import { RpcExtension, RoutingApi } from '@hummingbird/core-api';
 import { RoutingApiImpl } from '../apis/routing-api-impl';
-import { RoutingApi } from '/@shared/src/apis/routing-api';
 
 // mock message-proxy
-vi.mock(import('/@shared/src/messages/message-proxy'));
+vi.mock(import('@hummingbird/core-api'));
 // mock services
 vi.mock(import('./webview-service'));
 vi.mock(import('./routing-service'));

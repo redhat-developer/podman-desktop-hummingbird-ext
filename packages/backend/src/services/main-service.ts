@@ -30,13 +30,15 @@ import type {
   TelemetryLogger,
 } from '@podman-desktop/api';
 import { WebviewService } from './webview-service';
-import { RpcExtension } from '/@shared/src/messages/message-proxy';
+import { RpcExtension, RoutingApi, HummingbirdApi } from '@hummingbird/core-api';
 
 import type { AsyncInit } from '../utils/async-init';
 
 import { RoutingService } from './routing-service';
 import { RoutingApiImpl } from '../apis/routing-api-impl';
-import { RoutingApi } from '/@shared/src/apis/routing-api';
+import { QuayIOService } from './quay-io-service';
+import { HummingbirdService } from './hummingbird-service';
+import { HummingbirdApiImpl } from '../apis/hummingbird-api-impl';
 
 interface Dependencies {
   extensionContext: ExtensionContext;
@@ -88,6 +90,15 @@ export class MainService implements Disposable, AsyncInit {
     await routing.init();
     this.#disposables.push(routing);
 
+    // quay service
+    const quay = new QuayIOService();
+    this.#disposables.push(quay);
+
+    const hummingbird = new HummingbirdService({
+      quay,
+    });
+    this.#disposables.push(hummingbird);
+
     /**
      * Creating the api for the frontend IPCs
      */
@@ -97,5 +108,11 @@ export class MainService implements Disposable, AsyncInit {
       routing: routing,
     });
     rpcExtension.registerInstance<RoutingApi>(RoutingApi, routingApiImpl);
+
+    // hummingbird api
+    const hummingbirdApiImpl = new HummingbirdApiImpl({
+      hummingbird,
+    });
+    rpcExtension.registerInstance<HummingbirdApi>(HummingbirdApi, hummingbirdApiImpl);
   }
 }

@@ -15,19 +15,28 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-import { RoutingApi } from '@hummingbird/core-api';
-import type { RoutingService } from '../services/routing-service';
+import { z } from 'zod';
 
-interface Dependencies {
-  routing: RoutingService;
-}
+/**
+ * Single repository entry
+ */
+export const RepositorySchema = z.object({
+  namespace: z.string(),
+  name: z.string(),
+  description: z.string().nullable(),
+  is_public: z.boolean(),
+});
 
-export class RoutingApiImpl extends RoutingApi {
-  constructor(protected dependencies: Dependencies) {
-    super();
-  }
+/**
+ * Top-level API response
+ */
+export const RepositoriesResponseSchema = z.object({
+  repositories: z.array(RepositorySchema),
+  next_page: z.string().optional(),
+});
 
-  override async readRoute(): Promise<string | undefined> {
-    return this.dependencies.routing.read();
-  }
-}
+/**
+ * Inferred types
+ */
+export type Repository = z.infer<typeof RepositorySchema>;
+export type RepositoriesResponse = z.infer<typeof RepositoriesResponseSchema>;

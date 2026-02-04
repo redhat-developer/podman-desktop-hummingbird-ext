@@ -18,7 +18,7 @@
 import type { AsyncInit } from '../utils/async-init';
 import type { Disposable, WebviewPanel } from '@podman-desktop/api';
 import { Publisher } from '../utils/publisher';
-import { Messages } from '/@shared/src/messages';
+import { Messages } from '@hummingbird/core-api';
 
 interface Dependencies {
   panel: WebviewPanel;
