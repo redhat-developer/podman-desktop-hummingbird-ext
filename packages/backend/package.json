@@ -23,7 +23,7 @@
   "devDependencies": {
     "@podman-desktop/extension-hummingbird-core-api": "workspace:^",
     "@podman-desktop/api": "^1.25.1",
-    "@types/node": "^24",
+    "@types/node": "^25",
     "vite": "^7.3.1",
     "vitest": "^4.0.16",
     "swagger-typescript-api": "^13.2.16"
