@@ -4,6 +4,8 @@ import { Button, TableDurationColumn } from '@podman-desktop/ui-svelte';
 import { faDownload } from '@fortawesome/free-solid-svg-icons/faDownload';
 import { faExternalLink } from '@fortawesome/free-solid-svg-icons/faExternalLink';
 import { dialogAPI } from '/@/api/client';
+import { getFirstParagraphAfterFirstHeading } from '/@/utils/markdown';
+import DOMPurify from 'dompurify';
 
 interface Props {
   object: Repository;
@@ -21,7 +23,7 @@ function openExternal(): Promise<boolean> {
 </script>
 
 <div
-  class="rounded-lg border border-[var(--pd-content-bg)] flex flex-col bg-[var(--pd-content-card-bg)] hover:border-[var(--pd-content-card-border-selected)] min-h-40 max-h-40"
+  class="rounded-lg border border-[var(--pd-content-bg)] flex flex-col bg-[var(--pd-content-card-bg)] hover:border-[var(--pd-content-card-border-selected)] min-h-48 max-h-48"
   role="group"
   aria-label={repository.name}>
   <div class="p-3 h-full w-full flex flex-col gap-y-4 justify-between">
@@ -41,17 +43,24 @@ function openExternal(): Promise<boolean> {
           </div>
         </div>
       </div>
-      <div class="pt-2 text-(--pd-content-text)">
-        Hardened {repository.name} image
-      </div>
 
-      <div class="flex">
-        <div class="flex flex row justify-between w-full text-(--pd-content-text)">
-          <span>Last updated</span>
-          <span class="flex gap-x-1">
-            <TableDurationColumn object={new Date(repository.last_modified * 1000)} />
-            ago
-          </span>
+      <div class="flex flex-col gap-y-2 divide-y divide-[var(--pd-content-divider)]">
+        {#if repository.description}
+          <div class="py-2 text-(--pd-content-text)">
+            <article class="line-clamp-2 overflow-hidden">
+              <!-- eslint-disable-next-line svelte/no-at-html-tags -->
+              {@html DOMPurify.sanitize(getFirstParagraphAfterFirstHeading(repository.description) ?? '')}
+            </article>
+          </div>
+        {/if}
+        <div class="flex">
+          <div class="flex flex row justify-between w-full text-(--pd-content-text)">
+            <span>Last updated</span>
+            <span class="flex gap-x-1">
+              <TableDurationColumn object={new Date(repository.last_modified * 1000)} />
+              ago
+            </span>
+          </div>
         </div>
       </div>
     </div>
