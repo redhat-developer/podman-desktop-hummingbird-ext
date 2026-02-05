@@ -22,7 +22,7 @@
     "lint:fix": "eslint . --cache --fix",
     "test:backend": "vitest run --project backend",
     "test:frontend": "vitest run --project frontend",
-    "test:shared": "vitest run --project @hummingbird/core-api",
+    "test:shared": "vitest run --project @podman-desktop/extension-hummingbird-core-api",
     "test:unit": "vitest run",
     "typecheck:shared": "tsc --noEmit --project packages/shared",
     "typecheck:frontend": "cd packages/frontend && pnpm check",

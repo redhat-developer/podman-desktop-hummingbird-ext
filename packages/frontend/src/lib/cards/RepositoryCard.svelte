@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { Repository } from '@hummingbird/core-api';
+import type { Repository } from '@podman-desktop/extension-hummingbird-core-api';
 import { Button, TableDurationColumn } from '@podman-desktop/ui-svelte';
 import { faDownload } from '@fortawesome/free-solid-svg-icons/faDownload';
 import { faExternalLink } from '@fortawesome/free-solid-svg-icons/faExternalLink';

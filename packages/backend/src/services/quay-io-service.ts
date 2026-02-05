@@ -18,8 +18,8 @@
 import type { Disposable } from '@podman-desktop/api';
 import type { AsyncInit } from '../utils/async-init';
 import { Api } from '/@generated/quay-io-api';
-import type { RepositoriesResponse } from '@hummingbird/core-api';
-import { RepositoriesResponseSchema } from '@hummingbird/core-api';
+import type { RepositoriesResponse } from '@podman-desktop/extension-hummingbird-core-api';
+import { RepositoriesResponseSchema } from '@podman-desktop/extension-hummingbird-core-api';
 
 export class QuayIOService implements Disposable, AsyncInit {
   #client: Api<unknown>;

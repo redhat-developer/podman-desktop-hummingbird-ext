@@ -21,7 +21,7 @@
   },
   "contributes": {},
   "devDependencies": {
-    "@hummingbird/core-api": "workspace:^",
+    "@podman-desktop/extension-hummingbird-core-api": "workspace:^",
     "@podman-desktop/api": "^1.25.1",
     "@types/node": "^24",
     "vite": "^7.3.1",

@@ -17,7 +17,7 @@
  ***********************************************************************/
 import type { QuayIOService } from './quay-io-service';
 import type { Disposable } from '@podman-desktop/api';
-import type { Repository } from '@hummingbird/core-api';
+import type { Repository } from '@podman-desktop/extension-hummingbird-core-api';
 
 export const QUAY_HUMMING_BIRD_ORGANISATION = 'hummingbird';
 

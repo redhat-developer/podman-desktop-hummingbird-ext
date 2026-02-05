@@ -2,7 +2,7 @@
 import { NavPage } from '@podman-desktop/ui-svelte';
 import type { PageProps } from './$types';
 import RepositoryCard from '$lib/cards/RepositoryCard.svelte';
-import type { Repository } from '@hummingbird/core-api';
+import type { Repository } from '@podman-desktop/extension-hummingbird-core-api';
 import HummingbirdBanner from '$lib/banners/HummingbirdBanner.svelte';
 
 let { data }: PageProps = $props();

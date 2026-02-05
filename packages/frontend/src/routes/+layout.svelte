@@ -5,7 +5,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import { onMount } from 'svelte';
 import { getRouterState, rpcBrowser } from '/@/api/client';
 import { goto } from '$app/navigation';
-import { Messages } from '@hummingbird/core-api';
+import { Messages } from '@podman-desktop/extension-hummingbird-core-api';
 
 let { children } = $props();
 

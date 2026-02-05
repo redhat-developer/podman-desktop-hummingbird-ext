@@ -15,8 +15,8 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-import { HummingbirdApi } from '@hummingbird/core-api';
-import type { Repository } from '@hummingbird/core-api';
+import { HummingbirdApi } from '@podman-desktop/extension-hummingbird-core-api';
+import type { Repository } from '@podman-desktop/extension-hummingbird-core-api';
 import type { HummingbirdService } from '../services/hummingbird-service';
 
 interface Dependencies {

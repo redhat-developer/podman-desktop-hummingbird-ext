@@ -102,7 +102,7 @@ importers:
 
   packages/backend:
     devDependencies:
-      '@hummingbird/core-api':
+      '@podman-desktop/extension-hummingbird-core-api':
         specifier: workspace:^
         version: link:../shared
       '@podman-desktop/api':
@@ -138,7 +138,7 @@ importers:
       '@fortawesome/free-solid-svg-icons':
         specifier: ^7.1.0
         version: 7.1.0
-      '@hummingbird/core-api':
+      '@podman-desktop/extension-hummingbird-core-api':
         specifier: workspace:^
         version: link:../shared
       '@podman-desktop/ui-svelte':

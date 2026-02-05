@@ -1,5 +1,5 @@
 {
-  "name": "@hummingbird/core-api",
+  "name": "@podman-desktop/extension-hummingbird-core-api",
   "private": true,
   "version": "0.1.0-next",
   "type": "module",

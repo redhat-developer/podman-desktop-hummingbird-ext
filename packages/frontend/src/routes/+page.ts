@@ -16,7 +16,7 @@
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
 import type { PageLoad } from './$types';
-import type { Repository } from '@hummingbird/core-api';
+import type { Repository } from '@podman-desktop/extension-hummingbird-core-api';
 import { hummingbirdAPI } from '/@/api/client';
 
 export const load: PageLoad = async (): Promise<{ repositories: Array<Repository> }> => {

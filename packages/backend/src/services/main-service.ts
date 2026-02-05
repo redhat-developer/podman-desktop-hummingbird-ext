@@ -30,7 +30,7 @@ import type {
   TelemetryLogger,
 } from '@podman-desktop/api';
 import { WebviewService } from './webview-service';
-import { RpcExtension, RoutingApi, HummingbirdApi, DialogApi } from '@hummingbird/core-api';
+import { RpcExtension, RoutingApi, HummingbirdApi, DialogApi } from '@podman-desktop/extension-hummingbird-core-api';
 
 import type { AsyncInit } from '../utils/async-init';
 

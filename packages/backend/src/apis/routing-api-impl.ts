@@ -15,7 +15,7 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-import { RoutingApi } from '@hummingbird/core-api';
+import { RoutingApi } from '@podman-desktop/extension-hummingbird-core-api';
 import type { RoutingService } from '../services/routing-service';
 
 interface Dependencies {

@@ -33,12 +33,12 @@ import type {
 import { expect, test, vi, beforeEach } from 'vitest';
 import { MainService } from './main-service';
 import { WebviewService } from './webview-service';
-import { RpcExtension, RoutingApi, DialogApi } from '@hummingbird/core-api';
+import { RpcExtension, RoutingApi, DialogApi } from '@podman-desktop/extension-hummingbird-core-api';
 import { RoutingApiImpl } from '../apis/routing-api-impl';
 import { DialogApiImpl } from '../apis/dialog-api-impl';
 
 // mock message-proxy
-vi.mock(import('@hummingbird/core-api'));
+vi.mock(import('@podman-desktop/extension-hummingbird-core-api'));
 // mock services
 vi.mock(import('./webview-service'));
 vi.mock(import('./routing-service'));

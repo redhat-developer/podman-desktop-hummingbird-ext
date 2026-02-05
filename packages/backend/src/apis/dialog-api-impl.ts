@@ -16,8 +16,8 @@
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
 import type { DialogService } from '../services/dialog-service';
-import { DialogApi } from '@hummingbird/core-api';
-import type { InputBoxOptions } from '@hummingbird/core-api';
+import { DialogApi } from '@podman-desktop/extension-hummingbird-core-api';
+import type { InputBoxOptions } from '@podman-desktop/extension-hummingbird-core-api';
 
 interface Dependencies {
   dialog: DialogService;

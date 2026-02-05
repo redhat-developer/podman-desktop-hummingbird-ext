@@ -18,7 +18,7 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@hummingbird/core-api": "workspace:^",
+    "@podman-desktop/extension-hummingbird-core-api": "workspace:^",
     "@fortawesome/fontawesome-free": "^7.1.0",
     "@fortawesome/free-brands-svg-icons": "^7.1.0",
     "@fortawesome/free-regular-svg-icons": "^7.1.0",
