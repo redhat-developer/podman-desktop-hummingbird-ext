@@ -101,13 +101,17 @@ importers:
         version: 4.0.16(@types/node@24.10.9)(jiti@2.6.1)(jsdom@27.4.0)(lightningcss@1.30.2)(yaml@2.8.2)
 
   packages/backend:
+    dependencies:
+      zod:
+        specifier: ^4.3.6
+        version: 4.3.6
     devDependencies:
-      '@podman-desktop/extension-hummingbird-core-api':
-        specifier: workspace:^
-        version: link:../shared
       '@podman-desktop/api':
         specifier: ^1.25.1
         version: 1.25.1
+      '@podman-desktop/extension-hummingbird-core-api':
+        specifier: workspace:^
+        version: link:../shared
       '@types/node':
         specifier: ^24
         version: 24.10.9
