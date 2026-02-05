@@ -22,14 +22,14 @@ import type { RepositoriesResponse } from '@podman-desktop/extension-hummingbird
 import { RepositoriesResponseSchema } from '@podman-desktop/extension-hummingbird-core-api';
 
 interface Dependencies {
-  fetch?: typeof fetch;
+  fetch: typeof fetch;
 }
 
 export class QuayIOService implements Disposable, AsyncInit {
   #client: Api<unknown>;
 
-  constructor(dependencies?: Dependencies) {
-    this.#client = new Api({ customFetch: dependencies?.fetch });
+  constructor(dependencies: Dependencies) {
+    this.#client = new Api({ customFetch: dependencies.fetch });
   }
 
   public async listRepos(options: { organisation: string }): Promise<RepositoriesResponse> {

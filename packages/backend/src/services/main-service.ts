@@ -99,7 +99,9 @@ export class MainService implements Disposable, AsyncInit {
     });
 
     // quay service
-    const quay = new QuayIOService();
+    const quay = new QuayIOService({
+      fetch,
+    });
     this.#disposables.push(quay);
 
     const hummingbird = new HummingbirdService({
