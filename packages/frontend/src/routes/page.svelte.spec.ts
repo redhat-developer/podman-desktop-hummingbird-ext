@@ -41,12 +41,11 @@ beforeEach(() => {
 
 describe('error', () => {
   const ERROR_MOCK = new Error('Something went wrong with network');
-  const REJECTED_PROMISE = Promise.reject<Array<Repository>>(ERROR_MOCK);
 
   test('promise date reject should display empty screen with error', async () => {
     const { getByLabelText } = render(Page, {
       data: {
-        repositories: REJECTED_PROMISE,
+        repositories: Promise.reject<Array<Repository>>(ERROR_MOCK),
       },
       params: {},
     });
@@ -61,7 +60,7 @@ describe('error', () => {
   test('retry button should call invalidateAll', async () => {
     const { getByLabelText } = render(Page, {
       data: {
-        repositories: REJECTED_PROMISE,
+        repositories: Promise.reject<Array<Repository>>(ERROR_MOCK),
       },
       params: {},
     });
