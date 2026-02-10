@@ -34,7 +34,7 @@ jobs:
         id: build-image
         uses: redhat-actions/buildah-build@v2
         with:
-          image: ghcr.io/${{ github.repository }}
+          image: ${{ github.repository }}
           tags: |
             next
             ${{ github.sha }}
@@ -47,3 +47,4 @@ jobs:
         with:
           image: ${{ steps.build-image.outputs.image }}
           tags: ${{ steps.build-image.outputs.tags }}
+          registry: ghcr.io
