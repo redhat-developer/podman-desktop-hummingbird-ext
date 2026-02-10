@@ -27,13 +27,15 @@ import { invalidateAll } from '$app/navigation';
 
 vi.mock(import('$app/navigation'));
 
-const REPOSITORIES: Array<Repository> = [{
-  name: 'curl',
-  namespace: 'hummingbird',
-  is_public: true,
-  last_modified: new Date().getTime() / 1000,
-  description: 'Dummy desc',
-}];
+const REPOSITORIES: Array<Repository> = [
+  {
+    name: 'curl',
+    namespace: 'hummingbird',
+    is_public: true,
+    last_modified: new Date().getTime() / 1000,
+    description: 'Dummy desc',
+  },
+];
 
 beforeEach(() => {
   vi.resetAllMocks();
@@ -73,6 +75,36 @@ describe('error', () => {
 
     await vi.waitFor(() => {
       expect(invalidateAll).toHaveBeenCalledOnce();
+    });
+  });
+});
+
+describe('loading', () => {
+  test('should display 10 skeletons when repositories promise is pending', async () => {
+    // We pass a promise that never resolves (or at least doesn't resolve immediately)
+    const { getAllByLabelText } = render(Page, {
+      data: {
+        repositories: new Promise<Array<Repository>>(vi.fn()),
+      },
+      params: {},
+    });
+
+    const skeletons = getAllByLabelText('Loading repository card');
+    expect(skeletons.length).toBe(10);
+  });
+});
+
+describe('data', () => {
+  test('should display repositories when promise resolves', async () => {
+    const { getByLabelText } = render(Page, {
+      data: {
+        repositories: Promise.resolve(REPOSITORIES),
+      },
+      params: {},
+    });
+
+    await vi.waitFor(() => {
+      expect(getByLabelText(REPOSITORIES[0].name)).toBeInTheDocument();
     });
   });
 });

@@ -1,6 +1,7 @@
 <div
   class="rounded-lg border border-[var(--pd-content-bg)] flex flex-col bg-[var(--pd-content-card-bg)] min-h-48 max-h-48"
-  role="group">
+  role="group"
+  aria-label="Loading repository card">
   <div class="p-3 h-full w-full flex flex-col gap-y-4 justify-between animate-pulse">
     <!-- card body -->
     <div class="flex flex-col w-full gap-y-2">
