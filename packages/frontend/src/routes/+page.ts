@@ -19,9 +19,8 @@ import type { PageLoad } from './$types';
 import type { Repository } from '@podman-desktop/extension-hummingbird-core-api';
 import { hummingbirdAPI } from '/@/api/client';
 
-export const load: PageLoad = async (): Promise<{ repositories: Array<Repository> }> => {
-  const repositories = await hummingbirdAPI.all();
+export const load: PageLoad = async (): Promise<{ repositories: Promise<Array<Repository>> }> => {
   return {
-    repositories,
+    repositories: hummingbirdAPI.all(),
   };
 };
