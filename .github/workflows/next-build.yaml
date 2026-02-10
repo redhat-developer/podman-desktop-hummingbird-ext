@@ -35,9 +35,12 @@ jobs:
         uses: redhat-actions/buildah-build@v2
         with:
           image: ghcr.io/${{ github.repository }}
-          tags: next ${{ github.sha }}
+          tags: |
+            next
+            ${{ github.sha }}
           containerfiles: ./Containerfile
-          extra-args: --squash-all
+          extra-args: |
+            --squash
 
       - name: Push Image
         uses: redhat-actions/push-to-registry@v2
