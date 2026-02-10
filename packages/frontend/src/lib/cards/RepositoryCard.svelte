@@ -3,7 +3,7 @@ import type { Repository } from '@podman-desktop/extension-hummingbird-core-api'
 import { Button, TableDurationColumn } from '@podman-desktop/ui-svelte';
 import { faDownload } from '@fortawesome/free-solid-svg-icons/faDownload';
 import { faExternalLink } from '@fortawesome/free-solid-svg-icons/faExternalLink';
-import { dialogAPI } from '/@/api/client';
+import {dialogAPI, imageAPI} from '/@/api/client';
 import { getFirstParagraphAfterFirstHeading } from '/@/utils/markdown';
 import DOMPurify from 'dompurify';
 
@@ -13,8 +13,10 @@ interface Props {
 
 let { object: repository }: Props = $props();
 
-function pullImage(): void {
-  console.log('not implemented');
+function pullImage(): Promise<void> {
+  return imageAPI.pull({
+    image: `quay.io/hummingbird/${repository.name}:latest`,
+  });
 }
 
 function openExternal(): Promise<boolean> {
@@ -67,8 +69,7 @@ function openExternal(): Promise<boolean> {
 
     <!-- card footer -->
     <div class="flex">
-      <Button type="primary" class="grow" disabled={true} icon={faDownload} aria-label="Pull" onclick={pullImage}
-        >Pull</Button>
+      <Button type="primary" class="grow" icon={faDownload} aria-label="Pull" onclick={pullImage}>Pull</Button>
 
       <Button type="link" icon={faExternalLink} aria-label="More details" onclick={openExternal}>More details</Button>
     </div>

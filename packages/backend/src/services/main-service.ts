@@ -30,7 +30,13 @@ import type {
   TelemetryLogger,
 } from '@podman-desktop/api';
 import { WebviewService } from './webview-service';
-import { RpcExtension, RoutingApi, HummingbirdApi, DialogApi } from '@podman-desktop/extension-hummingbird-core-api';
+import {
+  RpcExtension,
+  RoutingApi,
+  HummingbirdApi,
+  DialogApi,
+  ImageApi,
+} from '@podman-desktop/extension-hummingbird-core-api';
 
 import type { AsyncInit } from '../utils/async-init';
 
@@ -41,6 +47,8 @@ import { HummingbirdService } from './hummingbird-service';
 import { HummingbirdApiImpl } from '../apis/hummingbird-api-impl';
 import { DialogApiImpl } from '../apis/dialog-api-impl';
 import { DialogService } from './dialog-service';
+import { ImageService } from './image-service';
+import { ImageApiImpl } from '../apis/image-api-impl';
 
 interface Dependencies {
   extensionContext: ExtensionContext;
@@ -109,6 +117,13 @@ export class MainService implements Disposable, AsyncInit {
     });
     this.#disposables.push(hummingbird);
 
+    const images = new ImageService({
+      windowApi: this.dependencies.window,
+      containers: this.dependencies.containers,
+      providers: this.dependencies.providers,
+    });
+    this.#disposables.push(images);
+
     /**
      * Creating the api for the frontend IPCs
      */
@@ -130,5 +145,11 @@ export class MainService implements Disposable, AsyncInit {
       dialog: dialog,
     });
     rpcExtension.registerInstance<DialogApi>(DialogApi, dialogApiImpl);
+
+    // image api
+    const imageApiImpl = new ImageApiImpl({
+      images: images,
+    });
+    rpcExtension.registerInstance<ImageApi>(ImageApi, imageApiImpl);
   }
 }

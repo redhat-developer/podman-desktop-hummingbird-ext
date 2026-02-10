@@ -15,19 +15,9 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
+export abstract class ImageApi {
+  static readonly CHANNEL: string = 'image-api';
 
-// constants
-export * from './messages';
+  abstract pull(options: { image: string }): Promise<void>;
+}
 
-// apis
-export * from './apis/routing-api';
-export * from './apis/hummingbird-api';
-export * from './apis/dialog-api';
-export * from './apis/image-api';
-
-// proxy utils
-export * from './messages/message-proxy';
-
-// models
-export * from './models/repository';
-export * from './models/input-box-options';

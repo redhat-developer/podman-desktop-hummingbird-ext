@@ -15,19 +15,19 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
+import { ImageApi } from '@podman-desktop/extension-hummingbird-core-api';
+import type { ImageService } from '../services/image-service';
 
-// constants
-export * from './messages';
+interface Dependencies {
+  images: ImageService;
+}
 
-// apis
-export * from './apis/routing-api';
-export * from './apis/hummingbird-api';
-export * from './apis/dialog-api';
-export * from './apis/image-api';
+export class ImageApiImpl extends ImageApi {
+  constructor(protected readonly dependencies: Dependencies) {
+    super();
+  }
 
-// proxy utils
-export * from './messages/message-proxy';
-
-// models
-export * from './models/repository';
-export * from './models/input-box-options';
+  override pull(options: { image: string }): Promise<void> {
+    return this.dependencies.images.pull(options);
+  }
+}
