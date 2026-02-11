@@ -26,6 +26,7 @@ import type {
   window,
   configuration as configurationAPI,
   cli as cliApi,
+  navigation as navigationApi,
   containerEngine,
   TelemetryLogger,
 } from '@podman-desktop/api';
@@ -62,6 +63,7 @@ interface Dependencies {
   providers: typeof provider;
   cliApi: typeof cliApi;
   commandsApi: typeof commandsApi;
+  navigationApi: typeof navigationApi;
   containers: typeof containerEngine;
   configuration: typeof configurationAPI;
 }
@@ -132,8 +134,11 @@ export class MainService implements Disposable, AsyncInit {
     const images = new ImageService({
       windowApi: this.dependencies.window,
       containers: this.dependencies.containers,
-      providers: this.dependencies.providers,
+      providers: providers,
+      navigation: this.dependencies.navigationApi,
+      webview: webview.getPanel().webview,
     });
+    await images.init();
     this.#disposables.push(images);
 
     /**
@@ -166,7 +171,8 @@ export class MainService implements Disposable, AsyncInit {
 
     // image api
     const imageApiImpl = new ImageApiImpl({
-      images: images,
+      images,
+      providers,
     });
     rpcExtension.registerInstance<ImageApi>(ImageApi, imageApiImpl);
   }

@@ -19,5 +19,6 @@
 export enum Messages {
   TEST_PURPOSE = 'test-purpose',
   UPDATE_PROVIDERS = 'update-providers',
+  UPDATE_IMAGES = 'update-images',
   ROUTE_UPDATE = 'route-update',
 }

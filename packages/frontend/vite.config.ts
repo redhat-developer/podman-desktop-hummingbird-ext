@@ -28,7 +28,6 @@ const PACKAGE_ROOT = dirname(filename);
 // https://vitejs.dev/config/
 export default defineConfig({
   mode: process.env.MODE,
-  root: PACKAGE_ROOT,
   resolve: {
     alias: {
       '/@/': join(PACKAGE_ROOT, 'src') + '/',

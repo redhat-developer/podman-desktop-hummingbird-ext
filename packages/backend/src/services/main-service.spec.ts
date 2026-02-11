@@ -28,14 +28,25 @@ import type {
   containerEngine,
   Webview,
   WebviewPanel,
+  navigation as navigationApi,
 } from '@podman-desktop/api';
 
 import { expect, test, vi, beforeEach } from 'vitest';
 import { MainService } from './main-service';
 import { WebviewService } from './webview-service';
-import { RpcExtension, RoutingApi, DialogApi } from '@podman-desktop/extension-hummingbird-core-api';
+import {
+  RpcExtension,
+  RoutingApi,
+  DialogApi,
+  ImageApi,
+  HummingbirdApi,
+  ProviderApi,
+} from '@podman-desktop/extension-hummingbird-core-api';
 import { RoutingApiImpl } from '../apis/routing-api-impl';
 import { DialogApiImpl } from '../apis/dialog-api-impl';
+import { ImageApiImpl } from '../apis/image-api-impl';
+import { HummingbirdApiImpl } from '../apis/hummingbird-api-impl';
+import { ProviderApiImpl } from '../apis/provider-api-impl';
 
 // mock message-proxy
 vi.mock(import('@podman-desktop/extension-hummingbird-core-api'));
@@ -44,6 +55,8 @@ vi.mock(import('./webview-service'));
 vi.mock(import('./routing-service'));
 vi.mock(import('./dialog-service'));
 vi.mock(import('./hummingbird-service'));
+vi.mock(import('./image-service'));
+vi.mock(import('./provider-service'));
 
 const EXTENSION_CONTEXT_MOCK: ExtensionContext = {} as unknown as ExtensionContext;
 const WINDOW_API_MOCK: typeof window = {} as unknown as typeof window;
@@ -57,6 +70,7 @@ const CLI_API_MOCK: typeof cliApi = {} as unknown as typeof cliApi;
 const COMMANDS_API_MOCK: typeof commandsApi = {} as unknown as typeof commandsApi;
 const CONTAINER_API_MOCK: typeof containerEngine = {} as unknown as typeof containerEngine;
 const CONFIGURATION_API_MOCK: typeof configurationApi = {} as unknown as typeof configurationApi;
+const NAVIGATION_API_MOCK: typeof navigationApi = {} as unknown as typeof navigationApi;
 
 const WEBVIEW_PANEL: WebviewPanel = {
   webview: {
@@ -81,6 +95,7 @@ function getMainService(): MainService {
     commandsApi: COMMANDS_API_MOCK,
     containers: CONTAINER_API_MOCK,
     configuration: CONFIGURATION_API_MOCK,
+    navigationApi: NAVIGATION_API_MOCK,
   });
 }
 
@@ -91,6 +106,9 @@ test('ensure init register all APIs', async () => {
   const APIS = new Map<{ CHANNEL: string }, unknown>([
     [RoutingApi, RoutingApiImpl],
     [DialogApi, DialogApiImpl],
+    [ImageApi, ImageApiImpl],
+    [HummingbirdApi, HummingbirdApiImpl],
+    [ProviderApi, ProviderApiImpl],
   ]);
 
   for (const [key, value] of APIS.entries()) {

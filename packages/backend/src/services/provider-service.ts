@@ -30,10 +30,7 @@ interface Dependencies {
   webview: Webview;
 }
 
-export class ProviderService
-  extends Publisher<ProviderContainerConnectionDetailedInfo[]>
-  implements Disposable, AsyncInit
-{
+export class ProviderService extends Publisher<ProviderContainerConnectionDetailedInfo[]> implements Disposable, AsyncInit {
   #disposables: Disposable[] = [];
 
   constructor(protected dependencies: Dependencies) {
@@ -46,8 +43,7 @@ export class ProviderService
   }
 
   getContainerConnections(): ProviderContainerConnection[] {
-    return this.dependencies.providers
-      .getContainerConnections();
+    return this.dependencies.providers.getContainerConnections();
   }
 
   public all(): ProviderContainerConnectionDetailedInfo[] {

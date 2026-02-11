@@ -16,19 +16,34 @@
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
 import type { PageLoad } from './$types';
-import type { Repository } from '@podman-desktop/extension-hummingbird-core-api';
-import { hummingbirdAPI } from '/@/api/client';
+import type { SimpleImageInfo } from '@podman-desktop/extension-hummingbird-core-api';
+import { imageAPI } from '/@/api/client';
 
 interface Data {
-  repositories: Promise<Array<Repository>>;
-  providerId: string | undefined;
-  connection: string | undefined;
+  pulled?: Promise<Array<SimpleImageInfo>>;
+  providerId?: string;
+  connection?: string;
 }
 
-export const load: PageLoad = async ({ url }): Promise<Data> => {
+export const load: PageLoad = async ({ url, depends }): Promise<Data> => {
+  depends('images:pulled');
+
+  const providerId = url.searchParams.get('providerId') ?? undefined;
+  const connection = url.searchParams.get('connection') ?? undefined;
+
   return {
-    repositories: hummingbirdAPI.all(),
-    providerId: url.searchParams.get('providerId') ?? undefined,
-    connection: url.searchParams.get('connection') ?? undefined,
+    pulled:
+      providerId && connection
+        ? imageAPI.all({
+            connection: {
+              providerId,
+              name: connection,
+            },
+            registry: 'quay.io',
+            organisation: 'hummingbird',
+          })
+        : undefined,
+    providerId,
+    connection,
   };
 };

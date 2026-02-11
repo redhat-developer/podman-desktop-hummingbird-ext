@@ -5,11 +5,13 @@ import RepositoryCard from '$lib/cards/RepositoryCard.svelte';
 import HummingbirdBanner from '$lib/banners/HummingbirdBanner.svelte';
 import RepositoryCardSkeleton from '$lib/skeleton/RepositoryCardSkeleton.svelte';
 import { faWarning } from '@fortawesome/free-solid-svg-icons/faWarning';
-import { goto, invalidateAll } from '$app/navigation';
+import { goto, invalidateAll, invalidate } from '$app/navigation';
 import { providerConnectionsInfo } from '/@/stores/connections';
 import ContainerProviderConnectionSelect from '$lib/selects/ContainerProviderConnectionSelect.svelte';
-import type { ProviderContainerConnectionDetailedInfo } from '@podman-desktop/extension-hummingbird-core-api';
+import { Messages, type ProviderContainerConnectionDetailedInfo } from '@podman-desktop/extension-hummingbird-core-api';
 import { page } from '$app/state';
+import { onMount } from 'svelte';
+import { rpcBrowser } from '/@/api/client';
 
 let { data }: PageProps = $props();
 
@@ -24,6 +26,13 @@ $effect(() => {
   if (!selectedContainerProviderConnection && $providerConnectionsInfo.length > 0) {
     onContainerProviderConnectionChange($providerConnectionsInfo[0]);
   }
+});
+
+onMount(() => {
+  const subscriber = rpcBrowser.subscribe(Messages.UPDATE_IMAGES, () => {
+    invalidate('images:pulled').catch(console.error);
+  });
+  return subscriber.unsubscribe;
 });
 
 function onContainerProviderConnectionChange(value: ProviderContainerConnectionDetailedInfo | undefined): void {
@@ -80,7 +89,8 @@ function refresh(): Promise<void> {
               : repositories}
           <div class="grid min-[920px]:grid-cols-2 min-[1180px]:grid-cols-3 gap-3">
             {#each filtered as repository (repository.name)}
-              <RepositoryCard object={repository} />
+              {@const pulled = data.pulled?.then((images) => images.find((image) => image.name.startsWith(`quay.io/hummingbird/${repository.name}`)))}
+              <RepositoryCard object={repository} pulled={pulled} connection={selectedContainerProviderConnection} />
             {/each}
           </div>
         {:catch err}

@@ -15,7 +15,10 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-import { getChannel } from './utils';
-import { ImageApi } from '../apis/image-api';
+import type { ProviderContainerConnectionIdentifierInfo } from './provider-container-connection-identifier-info';
 
-export const noTimeoutChannels: string[] = [getChannel(ImageApi, 'pull')];
+export interface SimpleImageInfo {
+  id: string;
+  connection: ProviderContainerConnectionIdentifierInfo;
+  name: string;
+}

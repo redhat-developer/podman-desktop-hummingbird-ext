@@ -1,3 +1,5 @@
+import { SimpleImageInfo } from '../models/simple-image-info';
+
 /**********************************************************************
  * Copyright (C) 2026 Red Hat, Inc.
  *

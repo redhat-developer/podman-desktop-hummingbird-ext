@@ -15,9 +15,25 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
+import type { ProviderContainerConnectionIdentifierInfo } from '../models/provider-container-connection-identifier-info';
+import type { SimpleImageInfo } from '../models/simple-image-info';
+
 export abstract class ImageApi {
   static readonly CHANNEL: string = 'image-api';
 
-  abstract pull(options: { image: string }): Promise<void>;
+  abstract pull(options: {
+    image: string;
+    connection?: ProviderContainerConnectionIdentifierInfo;
+  }): Promise<SimpleImageInfo>;
+
+  abstract all(options: {
+    registry: string;
+    connection?: ProviderContainerConnectionIdentifierInfo;
+    organisation: string;
+  }): Promise<Array<SimpleImageInfo>>;
+  /**
+   * Open the image details page for the given image.
+   */
+  abstract navigateToImageDetails(image: SimpleImageInfo): Promise<void>;
 }
 

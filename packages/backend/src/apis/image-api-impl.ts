@@ -15,11 +15,18 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-import { ImageApi } from '@podman-desktop/extension-hummingbird-core-api';
+import type {
+  ProviderContainerConnectionIdentifierInfo,
+  SimpleImageInfo} from '@podman-desktop/extension-hummingbird-core-api';
+import {
+  ImageApi,
+} from '@podman-desktop/extension-hummingbird-core-api';
 import type { ImageService } from '../services/image-service';
+import type { ProviderService } from '../services/provider-service';
 
 interface Dependencies {
   images: ImageService;
+  providers: ProviderService;
 }
 
 export class ImageApiImpl extends ImageApi {
@@ -27,7 +34,31 @@ export class ImageApiImpl extends ImageApi {
     super();
   }
 
-  override pull(options: { image: string }): Promise<void> {
-    return this.dependencies.images.pull(options);
+  override pull(options: {
+    image: string;
+    connection: ProviderContainerConnectionIdentifierInfo;
+  }): Promise<SimpleImageInfo> {
+    const connection = this.dependencies.providers.getProviderContainerConnection(options.connection);
+    return this.dependencies.images.pull({
+      image: options.image,
+      connection,
+    });
+  }
+
+  override all(options: {
+    registry: string;
+    organisation: string;
+    connection: ProviderContainerConnectionIdentifierInfo;
+  }): Promise<Array<SimpleImageInfo>> {
+    const connection = this.dependencies.providers.getProviderContainerConnection(options.connection);
+    return this.dependencies.images.all({
+      registry: options.registry,
+      organisation: options.organisation,
+      connection,
+    });
+  }
+
+  override navigateToImageDetails(image: SimpleImageInfo): Promise<void> {
+    return this.dependencies.images.navigateToImageDetails(image);
   }
 }

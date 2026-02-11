@@ -19,71 +19,131 @@ import type {
   Disposable,
   containerEngine,
   window,
-  provider,
-  ProviderContainerConnection} from '@podman-desktop/api';
+  ProviderContainerConnection,
+  navigation,
+  Webview,
+} from '@podman-desktop/api';
 import {
   ProgressLocation,
 } from '@podman-desktop/api';
+import type {
+  ProviderContainerConnectionIdentifierInfo,
+  SimpleImageInfo,
+} from '@podman-desktop/extension-hummingbird-core-api';
+import {
+  Messages,
+} from '@podman-desktop/extension-hummingbird-core-api';
+import type { ProviderService } from './provider-service';
+import { Publisher } from '../utils/publisher';
+import type { AsyncInit } from '../utils/async-init';
+import { z } from 'zod';
 
 interface Dependencies {
   containers: typeof containerEngine;
   windowApi: typeof window;
-  providers: typeof provider;
+  providers: ProviderService;
+  navigation: typeof navigation;
+  webview: Webview;
 }
 
-export class ImageService implements Disposable {
-  constructor(protected readonly dependencies: Dependencies) {}
+const HummingBirdImageEvent = z.object({
+  Type: z.literal('image'),
+  Action: z.literal(['pull', 'delete']),
+  Actor: z.object({
+    Attributes: z.object({
+      name: z.string().startsWith('quay.io/hummingbird/'),
+    }),
+  }),
+});
 
-  public async pull(options: { image: string; connection?: ProviderContainerConnection }): Promise<void> {
-    let selected: ProviderContainerConnection | undefined = options.connection;
+export class ImageService extends Publisher<void> implements AsyncInit, Disposable {
+  #disposables: Disposable[] = [];
 
-    // if caller did not specify a connection let's ask the user which connection to use
-    if(!selected) {
-      const connections = this.dependencies.providers.getContainerConnections();
-      const running = connections.filter(connection => connection.connection.status() === 'started');
+  constructor(protected readonly dependencies: Dependencies) {
+    super(dependencies.webview, Messages.UPDATE_IMAGES, () => {});
+  }
 
-      // no connection running => we cannot pull
-      if (running.length === 0) {
-        throw new Error('No running connections');
-      }
-      // more than one connection => we ask the user to select
-      else if (running.length > 1) {
-        const result = await this.dependencies.windowApi.showQuickPick(
-          running.map(connection => `${connection.providerId}:${connection.connection.name}`),
-          {
-            title: 'Select a connection to pull image from',
-            canPickMany: false,
-          },
-        );
-
-        if (!result) throw new Error('user did not pick any value');
-        const find = running.find(connection => `${connection.providerId}:${connection.connection.name}` === result);
-        if (!find) throw new Error(`Could not find connection ${result}`);
-        selected = find;
-      }
-      // only one connection => we use it
-      else {
-        selected = running[0];
-      }
-    }
-
+  public async pull(options: { image: string; connection: ProviderContainerConnection }): Promise<SimpleImageInfo> {
     return await this.dependencies.windowApi.withProgress(
       {
         location: ProgressLocation.TASK_WIDGET,
         title: `Pulling ${options.image}`,
         cancellable: true,
       },
-      (_, token) => {
-        return this.dependencies.containers.pullImage(
-          selected.connection,
+      async (_, token) => {
+        await this.dependencies.containers.pullImage(
+          options.connection.connection,
           options.image,
           console.log,
           undefined,
           token,
         );
+        const images = await this.dependencies.containers.listImages({
+          provider: options.connection.connection,
+        });
+        const image = images.find(image => image.RepoTags?.find(tag => tag === options.image));
+        if (!image) throw new Error(`Cannot find image ${options.image}`);
+        return {
+          name: options.image,
+          connection: this.dependencies.providers.toProviderContainerConnectionDetailedInfo(options.connection),
+          id: image.Id,
+        };
       },
     );
   }
 
-  dispose(): void {}
+  public async all(options: {
+    registry: string;
+    connection: ProviderContainerConnection;
+    organisation: string;
+  }): Promise<Array<SimpleImageInfo>> {
+    const images = await this.dependencies.containers.listImages({
+      provider: options.connection.connection,
+    });
+
+    const connection: ProviderContainerConnectionIdentifierInfo = {
+      providerId: options.connection.providerId,
+      name: options.connection.connection.name,
+    };
+
+    return images.reduce((accumulator, current) => {
+      const tag = current.RepoTags?.find(tag => tag.startsWith(`${options.registry}/${options.organisation}`));
+      if (tag) {
+        accumulator.push({
+          id: current.Id,
+          name: tag,
+          connection,
+        });
+      }
+      return accumulator;
+    }, [] as Array<SimpleImageInfo>);
+  }
+
+  public async navigateToImageDetails(image: SimpleImageInfo): Promise<void> {
+    const connection = this.dependencies.providers.getProviderContainerConnection(image.connection);
+
+    const info = await this.dependencies.containers.listInfos({
+      provider: connection.connection,
+    });
+    if (info.length !== 1) throw new Error('Unexpected number of connections');
+    const engineId = info[0].engineId;
+
+    return this.dependencies.navigation.navigateToImage(image.id, engineId, image.name);
+  }
+
+  override dispose(): void {
+    super.dispose();
+    this.#disposables.forEach((disposable: Disposable) => disposable.dispose());
+  }
+
+  async init(): Promise<void> {
+    this.#disposables.push(
+      this.dependencies.containers.onEvent(event => {
+        const result = HummingBirdImageEvent.safeParse(event);
+        if (!result.success) return;
+
+        this.notify();
+      }),
+    );
+  }
 }

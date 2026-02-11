@@ -50,6 +50,9 @@ function handleOnChange(nValue: ProviderContainerConnectionDetailedInfo | undefi
     <div class="flex items-center">
       <div class="flex w-2 h-2 me-2 rounded-full"></div>
       <span>{item.name}</span>
+      {#if item.vmType}
+        ({item.vmType})
+      {/if}
     </div>
   </div>
 </Select>

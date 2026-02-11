@@ -76,3 +76,7 @@ Object.defineProperty(window, 'dialogAPI', {
 Object.defineProperty(window, 'imageAPI', {
   value: imageAPI,
 });
+
+Object.defineProperty(window, 'providerAPI', {
+  value: providerAPI,
+});

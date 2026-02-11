@@ -16,11 +16,12 @@
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
 
-import { test, expect, vi, describe, beforeEach, afterEach } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { RpcBrowser, RpcExtension } from './message-proxy';
 import { getChannel } from './utils';
 import type { Webview } from '@podman-desktop/api';
 import * as messageConstants from './constants';
+import { Messages } from '../messages';
 
 let webview: Webview;
 let window: Window;
@@ -201,11 +202,11 @@ describe('subscribe', () => {
     const messageListener = vi.mocked(window.addEventListener).mock.calls[0][1] as (event: MessageEvent) => void;
 
     const listener = vi.fn();
-    rpcBrowser.subscribe('example', listener);
+    rpcBrowser.subscribe(Messages.TEST_PURPOSE, listener);
 
     messageListener({
       data: {
-        id: 'example',
+        id: Messages.TEST_PURPOSE,
         body: 'hello',
       },
     } as unknown as MessageEvent);
@@ -221,11 +222,11 @@ describe('subscribe', () => {
 
     const listeners = Array.from({ length: 10 }, _ => vi.fn());
 
-    listeners.forEach(listener => rpcBrowser.subscribe('example', listener));
+    listeners.forEach(listener => rpcBrowser.subscribe(Messages.TEST_PURPOSE, listener));
 
     messageListener({
       data: {
-        id: 'example',
+        id: Messages.TEST_PURPOSE,
         body: 'hello',
       },
     } as unknown as MessageEvent);
@@ -243,12 +244,12 @@ describe('subscribe', () => {
 
     const [listenerA, listenerB] = [vi.fn(), vi.fn()];
 
-    const unsubscriberA = rpcBrowser.subscribe('example', listenerA);
-    const unsubscriberB = rpcBrowser.subscribe('example', listenerB);
+    const unsubscriberA = rpcBrowser.subscribe(Messages.TEST_PURPOSE, listenerA);
+    const unsubscriberB = rpcBrowser.subscribe(Messages.TEST_PURPOSE, listenerB);
 
     messageListener({
       data: {
-        id: 'example',
+        id: Messages.TEST_PURPOSE,
         body: 'hello',
       },
     } as unknown as MessageEvent);
@@ -258,7 +259,7 @@ describe('subscribe', () => {
 
     messageListener({
       data: {
-        id: 'example',
+        id: Messages.TEST_PURPOSE,
         body: 'hello',
       },
     } as unknown as MessageEvent);
