@@ -109,6 +109,7 @@ export class MainService implements Disposable, AsyncInit {
     const dialog = new DialogService({
       windowApi: this.dependencies.window,
       envApi: this.dependencies.env,
+      telemetry: this.#telemetry,
     });
 
     // quay service
@@ -137,6 +138,7 @@ export class MainService implements Disposable, AsyncInit {
       providers: providers,
       navigation: this.dependencies.navigationApi,
       webview: webview.getPanel().webview,
+      telemetry: this.#telemetry,
     });
     await images.init();
     this.#disposables.push(images);

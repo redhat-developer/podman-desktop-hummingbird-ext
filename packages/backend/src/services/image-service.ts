@@ -22,6 +22,7 @@ import type {
   ProviderContainerConnection,
   navigation,
   Webview,
+  TelemetryLogger,
 } from '@podman-desktop/api';
 import { ProgressLocation } from '@podman-desktop/api';
 import type {
@@ -33,6 +34,7 @@ import type { ProviderService } from './provider-service';
 import { Publisher } from '../utils/publisher';
 import type { AsyncInit } from '../utils/async-init';
 import { z } from 'zod';
+import { TelemetryEvents } from '../utils/telemetry-events';
 
 interface Dependencies {
   containers: typeof containerEngine;
@@ -40,6 +42,7 @@ interface Dependencies {
   providers: ProviderService;
   navigation: typeof navigation;
   webview: Webview;
+  telemetry: TelemetryLogger;
 }
 
 const HummingBirdImageEvent = z.object({
@@ -60,32 +63,42 @@ export class ImageService extends Publisher<void> implements AsyncInit, Disposab
   }
 
   public async pull(options: { image: string; connection: ProviderContainerConnection }): Promise<SimpleImageInfo> {
-    return await this.dependencies.windowApi.withProgress(
-      {
-        location: ProgressLocation.TASK_WIDGET,
-        title: `Pulling ${options.image}`,
-        cancellable: true,
-      },
-      async (_, token) => {
-        await this.dependencies.containers.pullImage(
-          options.connection.connection,
-          options.image,
-          console.log,
-          undefined,
-          token,
-        );
-        const images = await this.dependencies.containers.listImages({
-          provider: options.connection.connection,
-        });
-        const image = images.find(image => image.RepoTags?.find(tag => tag === options.image));
-        if (!image) throw new Error(`Cannot find image ${options.image}`);
-        return {
-          name: options.image,
-          connection: this.dependencies.providers.toProviderContainerConnectionDetailedInfo(options.connection),
-          id: image.Id,
-        };
-      },
-    );
+    const telemetry: Record<string, unknown> = {
+      image: options.image,
+    };
+
+    return await this.dependencies.windowApi
+      .withProgress(
+        {
+          location: ProgressLocation.TASK_WIDGET,
+          title: `Pulling ${options.image}`,
+          cancellable: true,
+        },
+        async (_, token) => {
+          token.onCancellationRequested(() => (telemetry['cancelled'] = true));
+
+          await this.dependencies.containers.pullImage(
+            options.connection.connection,
+            options.image,
+            console.log,
+            undefined,
+            token,
+          );
+          const images = await this.dependencies.containers.listImages({
+            provider: options.connection.connection,
+          });
+          const image = images.find(image => image.RepoTags?.find(tag => tag === options.image));
+          if (!image) throw new Error(`Cannot find image ${options.image}`);
+          return {
+            name: options.image,
+            connection: this.dependencies.providers.toProviderContainerConnectionDetailedInfo(options.connection),
+            id: image.Id,
+          };
+        },
+      )
+      .finally(() => {
+        this.dependencies.telemetry.logUsage(TelemetryEvents.PULL_IMAGE, telemetry);
+      });
   }
 
   public async all(options: {

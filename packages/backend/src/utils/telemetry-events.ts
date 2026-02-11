@@ -16,4 +16,7 @@
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
 
-export enum TelemetryEvents {}
+export enum TelemetryEvents {
+  OPEN_EXTERNAL = 'open-external',
+  PULL_IMAGE = 'pull-image',
+}

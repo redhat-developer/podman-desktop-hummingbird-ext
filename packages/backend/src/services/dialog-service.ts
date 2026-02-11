@@ -15,12 +15,14 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-import type { InputBoxOptions, window, env } from '@podman-desktop/api';
+import type { InputBoxOptions, window, env, TelemetryLogger } from '@podman-desktop/api';
 import { Uri } from '@podman-desktop/api';
+import { TelemetryEvents } from '../utils/telemetry-events';
 
 interface Dependencies {
   windowApi: typeof window;
   envApi: typeof env;
+  telemetry: TelemetryLogger;
 }
 
 export class DialogService {
@@ -38,7 +40,16 @@ export class DialogService {
     return this.dependencies.windowApi.showInformationMessage(message, ...items);
   }
 
-  openExternal(href: string): Promise<boolean> {
-    return this.dependencies.envApi.openExternal(Uri.parse(href));
+  async openExternal(href: string): Promise<boolean> {
+    const telemetry: Record<string, unknown> = {
+      href,
+    };
+    try {
+      const result = await this.dependencies.envApi.openExternal(Uri.parse(href));
+      telemetry['opened'] = result;
+      return result;
+    } finally {
+      this.dependencies.telemetry.logUsage(TelemetryEvents.OPEN_EXTERNAL, telemetry);
+    }
   }
 }
