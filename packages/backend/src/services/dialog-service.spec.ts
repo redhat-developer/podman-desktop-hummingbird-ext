@@ -15,7 +15,7 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-import type { env, InputBoxOptions, window } from '@podman-desktop/api';
+import type { env, InputBoxOptions, window, TelemetryLogger } from '@podman-desktop/api';
 
 import { beforeEach, vi, test, expect } from 'vitest';
 import { DialogService } from './dialog-service';
@@ -34,10 +34,20 @@ const ENV_API_MOCK: typeof env = {
   openExternal: vi.fn(),
 } as unknown as typeof env;
 
+const TELEMETRY_LOGGER_MOCK: TelemetryLogger = {
+  logUsage: vi.fn(),
+  onDidChangeEnableStates: vi.fn(),
+  isUsageEnabled: true,
+  isErrorsEnabled: true,
+  logError: vi.fn(),
+  dispose: vi.fn(),
+};
+
 function getDialogService(): DialogService {
   return new DialogService({
     windowApi: WINDOWS_API_MOCK,
     envApi: ENV_API_MOCK,
+    telemetry: TELEMETRY_LOGGER_MOCK,
   });
 }
 
