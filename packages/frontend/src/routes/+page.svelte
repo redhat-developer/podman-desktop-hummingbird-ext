@@ -26,7 +26,9 @@ let selectedContainerProviderConnection: ProviderContainerConnectionDetailedInfo
 $effect(() => {
   // ensure we always have a selected provider connection
   if (!selectedContainerProviderConnection && $providerConnectionsInfo.length > 0) {
-    onContainerProviderConnectionChange($providerConnectionsInfo[0]);
+    onContainerProviderConnectionChange(
+      $providerConnectionsInfo.find(({ status }) => status === 'started') ?? $providerConnectionsInfo[0],
+    );
   }
 });
 

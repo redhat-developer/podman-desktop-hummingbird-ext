@@ -89,7 +89,7 @@ function openExternal(): Promise<boolean> {
     </div>
 
     <!-- card footer -->
-    <div class="flex">
+    <div class="flex justify-end">
       {#await pulled}
         <div class="animate-pulse grow rounded-[4px] bg-gray-900"></div>
       {:then result}

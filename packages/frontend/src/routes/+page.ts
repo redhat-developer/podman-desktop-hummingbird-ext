@@ -31,18 +31,31 @@ export const load: PageLoad = async ({ url, depends }): Promise<Data> => {
   const providerId = url.searchParams.get('providerId') ?? undefined;
   const connection = url.searchParams.get('connection') ?? undefined;
 
+  let pulled: Promise<Array<SimpleImageInfo>> | undefined = undefined;
+  if (providerId && connection) {
+    /**
+     * The imageAPI.all is tricky as the call could take 50ms or 500ms or even a few seconds if using remote connections
+     * The UI should be able to handle all cases, but the 50ms is annoying as we see the loading state flickering
+     *
+     * To solve this UI problem, we artificially delay the promise resolution to 500ms minimum
+     */
+    const { promise, resolve } = Promise.withResolvers<void>();
+    setTimeout(resolve, 500);
+
+    pulled = Promise.all([
+      imageAPI.all({
+        connection: {
+          providerId,
+          name: connection,
+        },
+        registry: 'quay.io',
+        organisation: 'hummingbird',
+      }),
+      promise,
+    ]).then(([images]) => images);
+  }
   return {
-    pulled:
-      providerId && connection
-        ? imageAPI.all({
-            connection: {
-              providerId,
-              name: connection,
-            },
-            registry: 'quay.io',
-            organisation: 'hummingbird',
-          })
-        : undefined,
+    pulled,
     providerId,
     connection,
   };
