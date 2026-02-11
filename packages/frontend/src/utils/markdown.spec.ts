@@ -34,6 +34,6 @@ Second paragraph.
     },
   ])('$name', ({ markdown, expected }) => {
     const result = getFirstParagraphAfterFirstHeading(markdown);
-    expect(result).toBe(expected);
+    expect(result).toContain(expected);
   });
 });

@@ -23,16 +23,12 @@ import type {
   navigation,
   Webview,
 } from '@podman-desktop/api';
-import {
-  ProgressLocation,
-} from '@podman-desktop/api';
+import { ProgressLocation } from '@podman-desktop/api';
 import type {
   ProviderContainerConnectionIdentifierInfo,
   SimpleImageInfo,
 } from '@podman-desktop/extension-hummingbird-core-api';
-import {
-  Messages,
-} from '@podman-desktop/extension-hummingbird-core-api';
+import { Messages } from '@podman-desktop/extension-hummingbird-core-api';
 import type { ProviderService } from './provider-service';
 import { Publisher } from '../utils/publisher';
 import type { AsyncInit } from '../utils/async-init';

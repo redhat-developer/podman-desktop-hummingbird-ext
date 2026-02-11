@@ -36,4 +36,3 @@ export abstract class ImageApi {
    */
   abstract navigateToImageDetails(image: SimpleImageInfo): Promise<void>;
 }
-

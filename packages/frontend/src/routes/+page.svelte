@@ -18,7 +18,9 @@ let { data }: PageProps = $props();
 let searchTerm: string = $state('');
 // using the query parameters
 let selectedContainerProviderConnection: ProviderContainerConnectionDetailedInfo | undefined = $derived(
-  $providerConnectionsInfo.find(provider => provider.providerId === data.providerId && provider.name === data.connection),
+  $providerConnectionsInfo.find(
+    provider => provider.providerId === data.providerId && provider.name === data.connection,
+  ),
 );
 
 $effect(() => {
@@ -89,7 +91,9 @@ function refresh(): Promise<void> {
               : repositories}
           <div class="grid min-[920px]:grid-cols-2 min-[1180px]:grid-cols-3 gap-3">
             {#each filtered as repository (repository.name)}
-              {@const pulled = data.pulled?.then((images) => images.find((image) => image.name.startsWith(`quay.io/hummingbird/${repository.name}`)))}
+              {@const pulled = data.pulled?.then(images =>
+                images.find(image => image.name.startsWith(`quay.io/hummingbird/${repository.name}`)),
+              )}
               <RepositoryCard object={repository} pulled={pulled} connection={selectedContainerProviderConnection} />
             {/each}
           </div>

@@ -17,10 +17,9 @@
  ***********************************************************************/
 import type {
   ProviderContainerConnectionIdentifierInfo,
-  SimpleImageInfo} from '@podman-desktop/extension-hummingbird-core-api';
-import {
-  ImageApi,
+  SimpleImageInfo,
 } from '@podman-desktop/extension-hummingbird-core-api';
+import { ImageApi } from '@podman-desktop/extension-hummingbird-core-api';
 import type { ImageService } from '../services/image-service';
 import type { ProviderService } from '../services/provider-service';
 

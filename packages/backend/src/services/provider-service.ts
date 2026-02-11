@@ -30,7 +30,10 @@ interface Dependencies {
   webview: Webview;
 }
 
-export class ProviderService extends Publisher<ProviderContainerConnectionDetailedInfo[]> implements Disposable, AsyncInit {
+export class ProviderService
+  extends Publisher<ProviderContainerConnectionDetailedInfo[]>
+  implements Disposable, AsyncInit
+{
   #disposables: Disposable[] = [];
 
   constructor(protected dependencies: Dependencies) {

@@ -16,7 +16,7 @@
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
 import type { AsyncInit } from '../utils/async-init';
-import type { Disposable, WebviewPanel} from '@podman-desktop/api';
+import type { Disposable, WebviewPanel } from '@podman-desktop/api';
 import { Publisher } from '../utils/publisher';
 import { Messages } from '@podman-desktop/extension-hummingbird-core-api';
 

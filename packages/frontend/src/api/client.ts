@@ -15,7 +15,14 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-import { DialogApi, HummingbirdApi, RoutingApi, ImageApi, ProviderApi, RpcBrowser } from '@podman-desktop/extension-hummingbird-core-api';
+import {
+  DialogApi,
+  HummingbirdApi,
+  RoutingApi,
+  ImageApi,
+  ProviderApi,
+  RpcBrowser,
+} from '@podman-desktop/extension-hummingbird-core-api';
 
 /**
  * This file is the client side of the API. It is used to communicate with the backend, which allows
