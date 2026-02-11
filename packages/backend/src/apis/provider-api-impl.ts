@@ -16,8 +16,20 @@
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
 
-export enum Messages {
-  TEST_PURPOSE = 'test-purpose',
-  UPDATE_PROVIDERS = 'update-providers',
-  ROUTE_UPDATE = 'route-update',
+import { ProviderApi } from '@podman-desktop/extension-hummingbird-core-api';
+import type { ProviderContainerConnectionDetailedInfo } from '@podman-desktop/extension-hummingbird-core-api';
+import type { ProviderService } from '../services/provider-service';
+
+interface Dependencies {
+  providers: ProviderService;
+}
+
+export class ProviderApiImpl extends ProviderApi {
+  constructor(protected dependencies: Dependencies) {
+    super();
+  }
+
+  override async all(): Promise<ProviderContainerConnectionDetailedInfo[]> {
+    return this.dependencies.providers.all();
+  }
 }

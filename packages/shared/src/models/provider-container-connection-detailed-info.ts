@@ -16,8 +16,9 @@
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
 
-export enum Messages {
-  TEST_PURPOSE = 'test-purpose',
-  UPDATE_PROVIDERS = 'update-providers',
-  ROUTE_UPDATE = 'route-update',
+import type { ProviderContainerConnectionIdentifierInfo } from './provider-container-connection-identifier-info';
+
+export interface ProviderContainerConnectionDetailedInfo extends ProviderContainerConnectionIdentifierInfo {
+  status: 'started' | 'stopped' | 'starting' | 'stopping' | 'unknown';
+  vmType?: string;
 }

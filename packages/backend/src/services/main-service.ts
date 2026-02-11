@@ -36,6 +36,7 @@ import {
   HummingbirdApi,
   DialogApi,
   ImageApi,
+  ProviderApi,
 } from '@podman-desktop/extension-hummingbird-core-api';
 
 import type { AsyncInit } from '../utils/async-init';
@@ -49,6 +50,8 @@ import { DialogApiImpl } from '../apis/dialog-api-impl';
 import { DialogService } from './dialog-service';
 import { ImageService } from './image-service';
 import { ImageApiImpl } from '../apis/image-api-impl';
+import { ProviderService } from './provider-service';
+import { ProviderApiImpl } from '../apis/provider-api-impl';
 
 interface Dependencies {
   extensionContext: ExtensionContext;
@@ -112,6 +115,15 @@ export class MainService implements Disposable, AsyncInit {
     });
     this.#disposables.push(quay);
 
+    // The provider service register subscribers events for provider updates
+    const providers = new ProviderService({
+      providers: this.dependencies.providers,
+      webview: webview.getPanel().webview,
+    });
+    await providers.init();
+    this.#disposables.push(providers);
+
+    // hummingbird service
     const hummingbird = new HummingbirdService({
       quay,
     });
@@ -133,6 +145,12 @@ export class MainService implements Disposable, AsyncInit {
       routing: routing,
     });
     rpcExtension.registerInstance<RoutingApi>(RoutingApi, routingApiImpl);
+
+    // provider api
+    const providerApiImpl = new ProviderApiImpl({
+      providers: providers,
+    });
+    rpcExtension.registerInstance<ProviderApi>(ProviderApi, providerApiImpl);
 
     // hummingbird api
     const hummingbirdApiImpl = new HummingbirdApiImpl({

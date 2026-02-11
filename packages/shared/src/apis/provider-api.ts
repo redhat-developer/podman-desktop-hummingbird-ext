@@ -15,9 +15,10 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
+import type { ProviderContainerConnectionDetailedInfo } from '../models/provider-container-connection-detailed-info';
 
-export enum Messages {
-  TEST_PURPOSE = 'test-purpose',
-  UPDATE_PROVIDERS = 'update-providers',
-  ROUTE_UPDATE = 'route-update',
+export abstract class ProviderApi {
+  static readonly CHANNEL: string = 'provider-api';
+
+  abstract all(): Promise<ProviderContainerConnectionDetailedInfo[]>;
 }

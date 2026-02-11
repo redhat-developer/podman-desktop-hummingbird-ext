@@ -5,11 +5,42 @@ import RepositoryCard from '$lib/cards/RepositoryCard.svelte';
 import HummingbirdBanner from '$lib/banners/HummingbirdBanner.svelte';
 import RepositoryCardSkeleton from '$lib/skeleton/RepositoryCardSkeleton.svelte';
 import { faWarning } from '@fortawesome/free-solid-svg-icons/faWarning';
-import { invalidateAll } from '$app/navigation';
+import { goto, invalidateAll } from '$app/navigation';
+import { providerConnectionsInfo } from '/@/stores/connections';
+import ContainerProviderConnectionSelect from '$lib/selects/ContainerProviderConnectionSelect.svelte';
+import type { ProviderContainerConnectionDetailedInfo } from '@podman-desktop/extension-hummingbird-core-api';
+import { page } from '$app/state';
 
 let { data }: PageProps = $props();
 
 let searchTerm: string = $state('');
+// using the query parameters
+let selectedContainerProviderConnection: ProviderContainerConnectionDetailedInfo | undefined = $derived(
+  $providerConnectionsInfo.find(provider => provider.providerId === data.providerId && provider.name === data.connection),
+);
+
+$effect(() => {
+  // ensure we always have a selected provider connection
+  if (!selectedContainerProviderConnection && $providerConnectionsInfo.length > 0) {
+    onContainerProviderConnectionChange($providerConnectionsInfo[0]);
+  }
+});
+
+function onContainerProviderConnectionChange(value: ProviderContainerConnectionDetailedInfo | undefined): void {
+  const nURL = new URL(page.url);
+
+  if (value) {
+    nURL.searchParams.set('providerId', value.providerId);
+    nURL.searchParams.set('connection', value.name);
+  } else {
+    nURL.searchParams.entries().forEach(([name]) => {
+      nURL.searchParams.delete(name);
+    });
+  }
+
+  // eslint-disable-next-line svelte/no-navigation-without-resolve
+  goto(nURL).catch(console.error);
+}
 
 function refresh(): Promise<void> {
   return invalidateAll();
@@ -17,6 +48,19 @@ function refresh(): Promise<void> {
 </script>
 
 <NavPage title="Hummingbird Catalog" searchEnabled={true} bind:searchTerm={searchTerm}>
+  {#snippet bottomAdditionalActions()}
+    {#if $providerConnectionsInfo.length > 1}
+      <div class="w-full flex justify-end">
+        <div class="w-[250px]">
+          <ContainerProviderConnectionSelect
+            clearable={false}
+            onChange={onContainerProviderConnectionChange}
+            value={selectedContainerProviderConnection}
+            containerProviderConnections={$providerConnectionsInfo} />
+        </div>
+      </div>
+    {/if}
+  {/snippet}
   {#snippet content()}
     <div class="flex flex-col grow px-5 py-3">
       <HummingbirdBanner />

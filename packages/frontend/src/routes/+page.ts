@@ -19,8 +19,16 @@ import type { PageLoad } from './$types';
 import type { Repository } from '@podman-desktop/extension-hummingbird-core-api';
 import { hummingbirdAPI } from '/@/api/client';
 
-export const load: PageLoad = async (): Promise<{ repositories: Promise<Array<Repository>> }> => {
+interface Data {
+  repositories: Promise<Array<Repository>>;
+  providerId: string | undefined;
+  connection: string | undefined;
+}
+
+export const load: PageLoad = async ({ url }): Promise<Data> => {
   return {
     repositories: hummingbirdAPI.all(),
+    providerId: url.searchParams.get('providerId') ?? undefined,
+    connection: url.searchParams.get('connection') ?? undefined,
   };
 };

@@ -32,34 +32,39 @@ interface Dependencies {
 }
 
 export class ImageService implements Disposable {
-
   constructor(protected readonly dependencies: Dependencies) {}
 
-  public async pull(options: {
-    image: string;
-  }): Promise<void> {
-    // this.dependencies.windowApi.
-    const connections = this.dependencies.providers.getContainerConnections();
-    const running = connections.filter((connection) => connection.connection.status() === 'started');
+  public async pull(options: { image: string; connection?: ProviderContainerConnection }): Promise<void> {
+    let selected: ProviderContainerConnection | undefined = options.connection;
 
-    let selected: ProviderContainerConnection;
-    if (running.length === 0) {
-      throw new Error('No running connections');
-    } else if (running.length > 1) {
-      const result = await this.dependencies.windowApi.showQuickPick(
-        running.map(connection => `${connection.providerId}:${connection.connection.name}`),
-        {
-          title: 'Select a connection to pull image from',
-          canPickMany: false,
-        },
-      );
+    // if caller did not specify a connection let's ask the user which connection to use
+    if(!selected) {
+      const connections = this.dependencies.providers.getContainerConnections();
+      const running = connections.filter(connection => connection.connection.status() === 'started');
 
-      if (!result) throw new Error('user did not pick any value');
-      const find = running.find(connection => `${connection.providerId}:${connection.connection.name}` === result);
-      if(!find) throw new Error(`Could not find connection ${result}`);
-      selected = find;
-    } else {
-      selected = running[0];
+      // no connection running => we cannot pull
+      if (running.length === 0) {
+        throw new Error('No running connections');
+      }
+      // more than one connection => we ask the user to select
+      else if (running.length > 1) {
+        const result = await this.dependencies.windowApi.showQuickPick(
+          running.map(connection => `${connection.providerId}:${connection.connection.name}`),
+          {
+            title: 'Select a connection to pull image from',
+            canPickMany: false,
+          },
+        );
+
+        if (!result) throw new Error('user did not pick any value');
+        const find = running.find(connection => `${connection.providerId}:${connection.connection.name}` === result);
+        if (!find) throw new Error(`Could not find connection ${result}`);
+        selected = find;
+      }
+      // only one connection => we use it
+      else {
+        selected = running[0];
+      }
     }
 
     return await this.dependencies.windowApi.withProgress(
@@ -69,7 +74,13 @@ export class ImageService implements Disposable {
         cancellable: true,
       },
       (_, token) => {
-        return this.dependencies.containers.pullImage(selected.connection, options.image, console.log, undefined, token);
+        return this.dependencies.containers.pullImage(
+          selected.connection,
+          options.image,
+          console.log,
+          undefined,
+          token,
+        );
       },
     );
   }

@@ -16,8 +16,7 @@
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
 
-export enum Messages {
-  TEST_PURPOSE = 'test-purpose',
-  UPDATE_PROVIDERS = 'update-providers',
-  ROUTE_UPDATE = 'route-update',
+export interface ProviderContainerConnectionIdentifierInfo {
+  providerId: string;
+  name: string;
 }
