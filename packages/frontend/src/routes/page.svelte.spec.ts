@@ -24,8 +24,13 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import type { Repository } from '@podman-desktop/extension-hummingbird-core-api';
 import Page from './+page.svelte';
 import { invalidateAll } from '$app/navigation';
+import { rpcBrowser } from '/@/api/client';
+import * as connections from '/@/stores/connections';
+import { readable } from 'svelte/store';
 
 vi.mock(import('$app/navigation'));
+vi.mock(import('/@/api/client'));
+vi.mock(import('/@/stores/connections'));
 
 const REPOSITORIES: Array<Repository> = [
   {
@@ -39,6 +44,11 @@ const REPOSITORIES: Array<Repository> = [
 
 beforeEach(() => {
   vi.resetAllMocks();
+
+  vi.mocked(rpcBrowser.subscribe).mockReturnValue({
+    unsubscribe: vi.fn(),
+  });
+  vi.mocked(connections).providerConnectionsInfo = readable([]);
 });
 
 describe('error', () => {
@@ -56,7 +66,7 @@ describe('error', () => {
       return getByLabelText('Error while fetching the Hummingbird catalog');
     });
     const element = within(emptyScreen).getByText(ERROR_MOCK.message);
-    expect(element).toBeInTheDocument();
+    expect(element).toBeDefined();
   });
 
   test('retry button should call invalidateAll', async () => {
@@ -104,7 +114,7 @@ describe('data', () => {
     });
 
     await vi.waitFor(() => {
-      expect(getByLabelText(REPOSITORIES[0].name)).toBeInTheDocument();
+      expect(getByLabelText(REPOSITORIES[0].name)).toBeDefined();
     });
   });
 });

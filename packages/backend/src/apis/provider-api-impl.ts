@@ -16,24 +16,20 @@
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
 
-import { describe, test, expect } from 'vitest';
-import { getFirstParagraphAfterFirstHeading } from './markdown';
+import { ProviderApi } from '@podman-desktop/extension-hummingbird-core-api';
+import type { ProviderContainerConnectionDetailedInfo } from '@podman-desktop/extension-hummingbird-core-api';
+import type { ProviderService } from '../services/provider-service';
 
-describe('getFirstParagraphAfterFirstHeading', () => {
-  test.each([
-    {
-      name: 'basic case – first paragraph after H1',
-      markdown: `
-# Title
+interface Dependencies {
+  providers: ProviderService;
+}
 
-First paragraph.
+export class ProviderApiImpl extends ProviderApi {
+  constructor(protected dependencies: Dependencies) {
+    super();
+  }
 
-Second paragraph.
-`,
-      expected: 'First paragraph.',
-    },
-  ])('$name', ({ markdown, expected }) => {
-    const result = getFirstParagraphAfterFirstHeading(markdown);
-    expect(result).toContain(expected);
-  });
-});
+  override async all(): Promise<ProviderContainerConnectionDetailedInfo[]> {
+    return this.dependencies.providers.all();
+  }
+}

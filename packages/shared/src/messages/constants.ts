@@ -15,4 +15,7 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-export const noTimeoutChannels: string[] = [];
+import { getChannel } from './utils';
+import { ImageApi } from '../apis/image-api';
+
+export const noTimeoutChannels: string[] = [getChannel(ImageApi, 'pull')];

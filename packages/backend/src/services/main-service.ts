@@ -26,11 +26,19 @@ import type {
   window,
   configuration as configurationAPI,
   cli as cliApi,
+  navigation as navigationApi,
   containerEngine,
   TelemetryLogger,
 } from '@podman-desktop/api';
 import { WebviewService } from './webview-service';
-import { RpcExtension, RoutingApi, HummingbirdApi, DialogApi } from '@podman-desktop/extension-hummingbird-core-api';
+import {
+  RpcExtension,
+  RoutingApi,
+  HummingbirdApi,
+  DialogApi,
+  ImageApi,
+  ProviderApi,
+} from '@podman-desktop/extension-hummingbird-core-api';
 
 import type { AsyncInit } from '../utils/async-init';
 
@@ -41,6 +49,10 @@ import { HummingbirdService } from './hummingbird-service';
 import { HummingbirdApiImpl } from '../apis/hummingbird-api-impl';
 import { DialogApiImpl } from '../apis/dialog-api-impl';
 import { DialogService } from './dialog-service';
+import { ImageService } from './image-service';
+import { ImageApiImpl } from '../apis/image-api-impl';
+import { ProviderService } from './provider-service';
+import { ProviderApiImpl } from '../apis/provider-api-impl';
 
 interface Dependencies {
   extensionContext: ExtensionContext;
@@ -51,6 +63,7 @@ interface Dependencies {
   providers: typeof provider;
   cliApi: typeof cliApi;
   commandsApi: typeof commandsApi;
+  navigationApi: typeof navigationApi;
   containers: typeof containerEngine;
   configuration: typeof configurationAPI;
 }
@@ -104,10 +117,29 @@ export class MainService implements Disposable, AsyncInit {
     });
     this.#disposables.push(quay);
 
+    // The provider service register subscribers events for provider updates
+    const providers = new ProviderService({
+      providers: this.dependencies.providers,
+      webview: webview.getPanel().webview,
+    });
+    await providers.init();
+    this.#disposables.push(providers);
+
+    // hummingbird service
     const hummingbird = new HummingbirdService({
       quay,
     });
     this.#disposables.push(hummingbird);
+
+    const images = new ImageService({
+      windowApi: this.dependencies.window,
+      containers: this.dependencies.containers,
+      providers: providers,
+      navigation: this.dependencies.navigationApi,
+      webview: webview.getPanel().webview,
+    });
+    await images.init();
+    this.#disposables.push(images);
 
     /**
      * Creating the api for the frontend IPCs
@@ -118,6 +150,12 @@ export class MainService implements Disposable, AsyncInit {
       routing: routing,
     });
     rpcExtension.registerInstance<RoutingApi>(RoutingApi, routingApiImpl);
+
+    // provider api
+    const providerApiImpl = new ProviderApiImpl({
+      providers: providers,
+    });
+    rpcExtension.registerInstance<ProviderApi>(ProviderApi, providerApiImpl);
 
     // hummingbird api
     const hummingbirdApiImpl = new HummingbirdApiImpl({
@@ -130,5 +168,12 @@ export class MainService implements Disposable, AsyncInit {
       dialog: dialog,
     });
     rpcExtension.registerInstance<DialogApi>(DialogApi, dialogApiImpl);
+
+    // image api
+    const imageApiImpl = new ImageApiImpl({
+      images,
+      providers,
+    });
+    rpcExtension.registerInstance<ImageApi>(ImageApi, imageApiImpl);
   }
 }

@@ -15,25 +15,13 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
+import { RPCReadable } from '/@/utils/rpcReadable';
+import { Messages } from '@podman-desktop/extension-hummingbird-core-api';
+import { providerAPI } from '/@/api/client';
+import type { ProviderContainerConnectionDetailedInfo } from '@podman-desktop/extension-hummingbird-core-api';
 
-import { describe, test, expect } from 'vitest';
-import { getFirstParagraphAfterFirstHeading } from './markdown';
-
-describe('getFirstParagraphAfterFirstHeading', () => {
-  test.each([
-    {
-      name: 'basic case – first paragraph after H1',
-      markdown: `
-# Title
-
-First paragraph.
-
-Second paragraph.
-`,
-      expected: 'First paragraph.',
-    },
-  ])('$name', ({ markdown, expected }) => {
-    const result = getFirstParagraphAfterFirstHeading(markdown);
-    expect(result).toContain(expected);
-  });
-});
+export const providerConnectionsInfo = RPCReadable<ProviderContainerConnectionDetailedInfo[]>(
+  [],
+  [Messages.UPDATE_PROVIDERS],
+  providerAPI.all,
+);

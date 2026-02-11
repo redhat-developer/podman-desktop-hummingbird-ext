@@ -16,24 +16,9 @@
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
 
-import { describe, test, expect } from 'vitest';
-import { getFirstParagraphAfterFirstHeading } from './markdown';
+import type { ProviderContainerConnectionIdentifierInfo } from './provider-container-connection-identifier-info';
 
-describe('getFirstParagraphAfterFirstHeading', () => {
-  test.each([
-    {
-      name: 'basic case – first paragraph after H1',
-      markdown: `
-# Title
-
-First paragraph.
-
-Second paragraph.
-`,
-      expected: 'First paragraph.',
-    },
-  ])('$name', ({ markdown, expected }) => {
-    const result = getFirstParagraphAfterFirstHeading(markdown);
-    expect(result).toContain(expected);
-  });
-});
+export interface ProviderContainerConnectionDetailedInfo extends ProviderContainerConnectionIdentifierInfo {
+  status: 'started' | 'stopped' | 'starting' | 'stopping' | 'unknown';
+  vmType?: string;
+}

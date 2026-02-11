@@ -20,6 +20,7 @@
 import type { Webview, Disposable } from '@podman-desktop/api';
 import { noTimeoutChannels } from './constants';
 import { getChannel } from './utils';
+import type { Messages } from '../messages';
 
 export interface IMessage {
   id: number;
@@ -37,7 +38,7 @@ export interface IMessageResponse extends IMessageRequest {
 }
 
 export interface ISubscribedMessage {
-  id: string;
+  id: Messages;
   body: any;
 }
 
@@ -134,7 +135,7 @@ export type Listener = (value: any) => void;
 export class RpcBrowser {
   counter: number = 0;
   promises: Map<number, { resolve: (value: unknown) => unknown; reject: (value: unknown) => void }> = new Map();
-  subscribers: Map<string, Set<Listener>> = new Map();
+  subscribers: Map<Messages, Set<Listener>> = new Map();
 
   getUniqueId(): number {
     return ++this.counter;
@@ -221,7 +222,7 @@ export class RpcBrowser {
     return promise;
   }
 
-  subscribe(msgId: string, f: Listener): Subscriber {
+  subscribe(msgId: Messages, f: Listener): Subscriber {
     this.subscribers.set(msgId, (this.subscribers.get(msgId) ?? new Set()).add(f));
 
     return {

@@ -8,8 +8,7 @@
   "scripts": {
     "preview": "vite preview",
     "build": "vite build",
-    "test": "vitest run --coverage",
-    "test:watch": "vitest watch --coverage",
+    "test": "vitest --config ./vitest.config.ts --run",
     "format:check": "prettier --check \"src/**/*.ts\"",
     "format:fix": "prettier --write \"src/**/*.{ts,svelte}\"",
     "watch": "vite --mode development build -w",

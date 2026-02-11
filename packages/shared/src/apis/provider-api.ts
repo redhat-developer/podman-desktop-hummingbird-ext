@@ -15,25 +15,10 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
+import type { ProviderContainerConnectionDetailedInfo } from '../models/provider-container-connection-detailed-info';
 
-import { describe, test, expect } from 'vitest';
-import { getFirstParagraphAfterFirstHeading } from './markdown';
+export abstract class ProviderApi {
+  static readonly CHANNEL: string = 'provider-api';
 
-describe('getFirstParagraphAfterFirstHeading', () => {
-  test.each([
-    {
-      name: 'basic case – first paragraph after H1',
-      markdown: `
-# Title
-
-First paragraph.
-
-Second paragraph.
-`,
-      expected: 'First paragraph.',
-    },
-  ])('$name', ({ markdown, expected }) => {
-    const result = getFirstParagraphAfterFirstHeading(markdown);
-    expect(result).toContain(expected);
-  });
-});
+  abstract all(): Promise<ProviderContainerConnectionDetailedInfo[]>;
+}

@@ -1,20 +1,43 @@
 <script lang="ts">
-import type { Repository } from '@podman-desktop/extension-hummingbird-core-api';
+import type {
+  ProviderContainerConnectionDetailedInfo,
+  Repository,
+  SimpleImageInfo,
+} from '@podman-desktop/extension-hummingbird-core-api';
 import { Button, TableDurationColumn } from '@podman-desktop/ui-svelte';
 import { faDownload } from '@fortawesome/free-solid-svg-icons/faDownload';
 import { faExternalLink } from '@fortawesome/free-solid-svg-icons/faExternalLink';
-import { dialogAPI } from '/@/api/client';
+import { dialogAPI, imageAPI } from '/@/api/client';
 import { getFirstParagraphAfterFirstHeading } from '/@/utils/markdown';
 import DOMPurify from 'dompurify';
 
 interface Props {
   object: Repository;
+  pulled?: Promise<SimpleImageInfo | undefined>;
+  connection?: ProviderContainerConnectionDetailedInfo;
 }
 
-let { object: repository }: Props = $props();
+let { object: repository, pulled, connection }: Props = $props();
 
-function pullImage(): void {
-  console.log('not implemented');
+let loading: boolean = $state(false);
+
+async function pullImage(): Promise<void> {
+  if (!connection) throw new Error('connection is not defined');
+
+  loading = true;
+  try {
+    const image = await imageAPI.pull({
+      image: `quay.io/hummingbird/${repository.name}:latest`,
+      connection: connection,
+    });
+    pulled = Promise.resolve(image);
+  } finally {
+    loading = false;
+  }
+}
+
+function navigateToImage(image: SimpleImageInfo): Promise<void> {
+  return imageAPI.navigateToImageDetails(image);
 }
 
 function openExternal(): Promise<boolean> {
@@ -66,9 +89,24 @@ function openExternal(): Promise<boolean> {
     </div>
 
     <!-- card footer -->
-    <div class="flex">
-      <Button type="primary" class="grow" disabled={true} icon={faDownload} aria-label="Pull" onclick={pullImage}
-        >Pull</Button>
+    <div class="flex justify-end">
+      {#await pulled}
+        <div class="animate-pulse grow rounded-[4px] bg-gray-900"></div>
+      {:then result}
+        {#if result}
+          <Button type="secondary" class="grow" aria-label="Open" onclick={navigateToImage.bind(undefined, result)}
+            >Open</Button>
+        {:else}
+          <Button
+            inProgress={loading}
+            type="primary"
+            disabled={!connection}
+            class="grow"
+            icon={faDownload}
+            aria-label="Pull"
+            onclick={pullImage}>Pull</Button>
+        {/if}
+      {/await}
 
       <Button type="link" icon={faExternalLink} aria-label="More details" onclick={openExternal}>More details</Button>
     </div>

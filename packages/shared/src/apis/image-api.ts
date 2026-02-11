@@ -15,25 +15,24 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
+import type { ProviderContainerConnectionIdentifierInfo } from '../models/provider-container-connection-identifier-info';
+import type { SimpleImageInfo } from '../models/simple-image-info';
 
-import { describe, test, expect } from 'vitest';
-import { getFirstParagraphAfterFirstHeading } from './markdown';
+export abstract class ImageApi {
+  static readonly CHANNEL: string = 'image-api';
 
-describe('getFirstParagraphAfterFirstHeading', () => {
-  test.each([
-    {
-      name: 'basic case – first paragraph after H1',
-      markdown: `
-# Title
+  abstract pull(options: {
+    image: string;
+    connection?: ProviderContainerConnectionIdentifierInfo;
+  }): Promise<SimpleImageInfo>;
 
-First paragraph.
-
-Second paragraph.
-`,
-      expected: 'First paragraph.',
-    },
-  ])('$name', ({ markdown, expected }) => {
-    const result = getFirstParagraphAfterFirstHeading(markdown);
-    expect(result).toContain(expected);
-  });
-});
+  abstract all(options: {
+    registry: string;
+    connection?: ProviderContainerConnectionIdentifierInfo;
+    organisation: string;
+  }): Promise<Array<SimpleImageInfo>>;
+  /**
+   * Open the image details page for the given image.
+   */
+  abstract navigateToImageDetails(image: SimpleImageInfo): Promise<void>;
+}

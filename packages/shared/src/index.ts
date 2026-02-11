@@ -23,6 +23,8 @@ export * from './messages';
 export * from './apis/routing-api';
 export * from './apis/hummingbird-api';
 export * from './apis/dialog-api';
+export * from './apis/image-api';
+export * from './apis/provider-api';
 
 // proxy utils
 export * from './messages/message-proxy';
@@ -30,3 +32,6 @@ export * from './messages/message-proxy';
 // models
 export * from './models/repository';
 export * from './models/input-box-options';
+export * from './models/provider-container-connection-identifier-info';
+export * from './models/provider-container-connection-detailed-info';
+export * from './models/simple-image-info';

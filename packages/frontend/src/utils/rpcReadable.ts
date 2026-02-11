@@ -17,13 +17,13 @@
  ***********************************************************************/
 
 import { writable, type Subscriber, type Unsubscriber, type Readable } from 'svelte/store';
-import type { Subscriber as SharedSubscriber } from '@podman-desktop/extension-hummingbird-core-api';
+import type { Messages, Subscriber as SharedSubscriber } from '@podman-desktop/extension-hummingbird-core-api';
 import { rpcBrowser } from '/@/api/client';
 
 export function RPCReadable<T>(
   value: T,
   // The event used to subscribe to a webview postMessage event
-  subscriptionEvents: string[],
+  subscriptionEvents: Messages[],
   // The initialization function that will be called to update the store at creation.
   // For example, you can pass in a custom function such as "getPullingStatuses".
   updater: () => Promise<T>,
