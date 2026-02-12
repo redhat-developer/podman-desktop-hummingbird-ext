@@ -41,7 +41,7 @@
     "jsdom": "^28.0.0",
     "prettier": "^3.8.1",
     "prettier-plugin-svelte": "^3.4.1",
-    "svelte": "5.50.1",
+    "svelte": "5.50.2",
     "svelte-check": "^4.3.5",
     "svelte-fa": "^4.0.4",
     "svelte-markdown": "^0.4.1",
