@@ -16,7 +16,7 @@
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
   },
   "dependencies": {
-    "marked": "^17.0.1",
+    "marked": "^17.0.2",
     "dompurify": "^3.3.1"
   },
   "devDependencies": {
