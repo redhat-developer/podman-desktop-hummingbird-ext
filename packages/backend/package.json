@@ -26,7 +26,7 @@
     "@types/node": "^24",
     "vite": "^7.3.1",
     "vitest": "^4.0.16",
-    "swagger-typescript-api": "^13.2.17"
+    "swagger-typescript-api": "^13.2.18"
   },
   "dependencies": {
     "zod": "^4.3.6"
