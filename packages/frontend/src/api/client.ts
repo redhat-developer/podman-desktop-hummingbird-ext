@@ -24,6 +24,8 @@ import {
   RpcBrowser,
 } from '@podman-desktop/extension-hummingbird-core-api';
 
+import { browser } from '$app/environment';
+
 /**
  * This file is the client side of the API. It is used to communicate with the backend, which allows
  * cross-communication between the frontend and backend through an RPC-like communication.
@@ -32,20 +34,62 @@ import {
 export interface RouterState {
   url: string;
 }
-const podmanDesktopApi = acquirePodmanDesktopApi();
 
-export const rpcBrowser: RpcBrowser = new RpcBrowser(window, podmanDesktopApi);
-// apis
-export const routingAPI: RoutingApi = rpcBrowser.getProxy(RoutingApi);
-export const hummingbirdAPI: HummingbirdApi = rpcBrowser.getProxy(HummingbirdApi);
-export const providerAPI: ProviderApi = rpcBrowser.getProxy(ProviderApi);
-export const imageAPI: ImageApi = rpcBrowser.getProxy(ImageApi);
-export const dialogAPI: DialogApi = rpcBrowser.getProxy(DialogApi);
+let rpcBrowser: RpcBrowser;
+let routingAPI: RoutingApi;
+let hummingbirdAPI: HummingbirdApi;
+let providerAPI: ProviderApi;
+let imageAPI: ImageApi;
+let dialogAPI: DialogApi;
+
+if (browser) {
+  rpcBrowser = new RpcBrowser(window, acquirePodmanDesktopApi());
+
+  // apis
+  routingAPI = rpcBrowser.getProxy(RoutingApi);
+  hummingbirdAPI = rpcBrowser.getProxy(HummingbirdApi);
+  providerAPI = rpcBrowser.getProxy(ProviderApi);
+  imageAPI = rpcBrowser.getProxy(ImageApi);
+  dialogAPI = rpcBrowser.getProxy(DialogApi);
+
+  /**
+   * Making clients available as global properties
+   */
+  Object.defineProperty(window, 'routingAPI', {
+    value: routingAPI,
+  });
+
+  Object.defineProperty(window, 'hummingbirdAPI', {
+    value: hummingbirdAPI,
+  });
+
+  Object.defineProperty(window, 'dialogAPI', {
+    value: dialogAPI,
+  });
+
+  Object.defineProperty(window, 'imageAPI', {
+    value: imageAPI,
+  });
+
+  Object.defineProperty(window, 'providerAPI', {
+    value: providerAPI,
+  });
+}
+
+export {
+  rpcBrowser,
+  routingAPI,
+  hummingbirdAPI,
+  providerAPI,
+  imageAPI,
+  dialogAPI,
+};
+
 
 // The below code is used to save the state of the router in the podmanDesktopApi, so
 // that we can determine the correct route to display when the extension is reloaded.
 export const saveRouterState = (state: RouterState): void => {
-  podmanDesktopApi.setState(state);
+  acquirePodmanDesktopApi().setState(state);
 };
 
 const isRouterState = (value: unknown): value is RouterState => {
@@ -60,30 +104,7 @@ export async function getRouterState(): Promise<RouterState> {
     };
   }
 
-  const state = podmanDesktopApi.getState();
+  const state = acquirePodmanDesktopApi().getState();
   if (isRouterState(state)) return state;
   return { url: '/' };
 }
-
-/**
- * Making clients available as global properties
- */
-Object.defineProperty(window, 'routingAPI', {
-  value: routingAPI,
-});
-
-Object.defineProperty(window, 'hummingbirdAPI', {
-  value: hummingbirdAPI,
-});
-
-Object.defineProperty(window, 'dialogAPI', {
-  value: dialogAPI,
-});
-
-Object.defineProperty(window, 'imageAPI', {
-  value: imageAPI,
-});
-
-Object.defineProperty(window, 'providerAPI', {
-  value: providerAPI,
-});
