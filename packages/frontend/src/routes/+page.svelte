@@ -81,7 +81,7 @@ function refresh(): Promise<void> {
       <div class="flex flex-col w-full h-full">
         <!-- while we fetch the repositories we display skeleton cards -->
         {#await data.repositories}
-          <div class="grid min-[920px]:grid-cols-2 min-[1180px]:grid-cols-3 gap-3">
+          <div class="grid min-[720px]:grid-cols-2 min-[980px]:grid-cols-3 gap-3">
             {#each Array.from({ length: 10 }) as _, index (index)}
               <RepositoryCardSkeleton />
             {/each}
@@ -91,7 +91,7 @@ function refresh(): Promise<void> {
             searchTerm.length > 0
               ? repositories.filter(({ name }) => name.toLowerCase().includes(searchTerm.toLowerCase()))
               : repositories}
-          <div class="grid min-[920px]:grid-cols-2 min-[1180px]:grid-cols-3 gap-3">
+          <div class="grid min-[720px]:grid-cols-2 min-[980px]:grid-cols-3 gap-3">
             {#each filtered as repository (repository.name)}
               {@const pulled = data.pulled?.then(images =>
                 images.find(image => image.name.startsWith(`quay.io/hummingbird/${repository.name}`)),
