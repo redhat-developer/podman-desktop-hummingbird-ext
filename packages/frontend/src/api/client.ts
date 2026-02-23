@@ -76,15 +76,7 @@ if (browser) {
   });
 }
 
-export {
-  rpcBrowser,
-  routingAPI,
-  hummingbirdAPI,
-  providerAPI,
-  imageAPI,
-  dialogAPI,
-};
-
+export { rpcBrowser, routingAPI, hummingbirdAPI, providerAPI, imageAPI, dialogAPI };
 
 // The below code is used to save the state of the router in the podmanDesktopApi, so
 // that we can determine the correct route to display when the extension is reloaded.
