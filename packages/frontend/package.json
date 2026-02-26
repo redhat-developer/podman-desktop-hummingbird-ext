@@ -37,7 +37,7 @@
     "@testing-library/user-event": "^14.6.1",
     "@tsconfig/svelte": "^5.0.8",
     "@types/humanize-duration": "^3.27.4",
-    "autoprefixer": "^10.4.24",
+    "autoprefixer": "^10.4.27",
     "jsdom": "^28.1.0",
     "prettier": "^3.8.1",
     "prettier-plugin-svelte": "^3.5.0",
