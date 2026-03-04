@@ -25,6 +25,7 @@ import {
 } from '@podman-desktop/extension-hummingbird-core-api';
 
 import { browser } from '$app/environment';
+import type { PodmanDesktopApi } from '../../../../types/podman-desktop-api';
 
 /**
  * This file is the client side of the API. It is used to communicate with the backend, which allows
@@ -35,6 +36,7 @@ export interface RouterState {
   url: string;
 }
 
+let api: PodmanDesktopApi;
 let rpcBrowser: RpcBrowser;
 let routingAPI: RoutingApi;
 let hummingbirdAPI: HummingbirdApi;
@@ -43,7 +45,8 @@ let imageAPI: ImageApi;
 let dialogAPI: DialogApi;
 
 if (browser) {
-  rpcBrowser = new RpcBrowser(window, acquirePodmanDesktopApi());
+  api = acquirePodmanDesktopApi();
+  rpcBrowser = new RpcBrowser(window, api);
 
   // apis
   routingAPI = rpcBrowser.getProxy(RoutingApi);
@@ -81,7 +84,7 @@ export { rpcBrowser, routingAPI, hummingbirdAPI, providerAPI, imageAPI, dialogAP
 // The below code is used to save the state of the router in the podmanDesktopApi, so
 // that we can determine the correct route to display when the extension is reloaded.
 export const saveRouterState = (state: RouterState): void => {
-  acquirePodmanDesktopApi().setState(state);
+  api.setState(state);
 };
 
 const isRouterState = (value: unknown): value is RouterState => {
@@ -96,7 +99,7 @@ export async function getRouterState(): Promise<RouterState> {
     };
   }
 
-  const state = acquirePodmanDesktopApi().getState();
+  const state = api.getState();
   if (isRouterState(state)) return state;
   return { url: '/' };
 }
