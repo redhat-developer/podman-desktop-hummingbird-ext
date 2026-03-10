@@ -10,6 +10,7 @@ import { faExternalLink } from '@fortawesome/free-solid-svg-icons/faExternalLink
 import { dialogAPI, imageAPI } from '/@/api/client';
 import { getFirstParagraphAfterFirstHeading } from '/@/utils/markdown';
 import DOMPurify from 'dompurify';
+import RepositoryIcon from '$lib/icons/RepositoryIcon.svelte';
 
 interface Props {
   object: Repository;
@@ -53,10 +54,7 @@ function openExternal(): Promise<boolean> {
     <!-- card body -->
     <div class="flex flex-col w-full">
       <div class="flex flex-row items-center gap-x-2">
-        <svg class="w-6 h-6 text-purple-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2" fill="currentColor" opacity="0.2"></polygon>
-          <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"></polygon>
-        </svg>
+        <RepositoryIcon />
         <div class="flex flex-col">
           <div class="text-(--pd-content-header)">
             {repository.name}
