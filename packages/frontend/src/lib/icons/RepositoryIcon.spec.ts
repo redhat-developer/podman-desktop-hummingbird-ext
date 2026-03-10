@@ -44,7 +44,7 @@ describe('RepositoryIcon', () => {
     expect(paths.length).toBe(2);
     // Dark theme color is #6A4AB2
     expect(paths[0]).toHaveAttribute('fill', '#6A4AB2');
-    expect(paths[1]).toHaveAttribute('fill', '#6A4AB2');
+    expect(paths[1]).toHaveAttribute('fill', '#B393FA');
   });
 
   test('should render with light theme color', async () => {
