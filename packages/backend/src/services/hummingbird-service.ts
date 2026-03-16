@@ -29,7 +29,7 @@ export class HummingbirdService implements Disposable {
     });
   }
 
-  public async getRepositories(): Promise<Array<ImageSummary>> {
+  public async getImages(): Promise<Array<ImageSummary>> {
     if (this.#cache) return this.#cache;
 
     const res = await this.#client.v1.getImages();

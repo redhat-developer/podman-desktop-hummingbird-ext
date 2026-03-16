@@ -29,6 +29,6 @@ export class HummingbirdApiImpl extends HummingbirdApi {
   }
 
   override async all(): Promise<Array<ImageSummary>> {
-    return this.dependencies.hummingbird.getRepositories();
+    return this.dependencies.hummingbird.getImages();
   }
 }
