@@ -17,13 +17,13 @@
  ***********************************************************************/
 import type { LayoutLoad } from './$types';
 import { hummingbirdAPI } from '/@/api/client';
-import type { Repository } from '@podman-desktop/extension-hummingbird-core-api';
+import type { ImageSummary } from '@podman-desktop/extension-hummingbird-core-api';
 
 export const prerender = true;
 export const ssr = false;
 
 export const load: LayoutLoad = async (): Promise<{
-  repositories: Promise<Array<Repository>>;
+  repositories: Promise<Array<ImageSummary>>;
 }> => {
   return {
     repositories: hummingbirdAPI.all(),

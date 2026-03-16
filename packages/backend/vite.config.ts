@@ -18,7 +18,6 @@
 import { join } from 'node:path';
 import { builtinModules } from 'node:module';
 import { defineConfig } from 'vite';
-import { swagger } from './vite-plugins/swagger';
 
 const PACKAGE_ROOT = __dirname;
 
@@ -26,7 +25,6 @@ export default defineConfig({
   mode: process.env.MODE,
   root: PACKAGE_ROOT,
   envDir: process.cwd(),
-  plugins: [swagger()],
   resolve: {
     alias: {
       '/@/': join(PACKAGE_ROOT, 'src') + '/',
@@ -34,7 +32,7 @@ export default defineConfig({
     },
   },
   build: {
-    sourcemap: 'inline',
+    sourcemap: true,
     target: 'esnext',
     outDir: 'dist',
     assetsDir: '.',
