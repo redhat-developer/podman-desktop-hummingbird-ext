@@ -32,7 +32,7 @@ export default defineConfig({
     },
   },
   build: {
-    sourcemap: true,
+    sourcemap: 'inline',
     target: 'esnext',
     outDir: 'dist',
     assetsDir: '.',
