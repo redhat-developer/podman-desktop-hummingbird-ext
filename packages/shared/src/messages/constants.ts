@@ -17,5 +17,6 @@
  ***********************************************************************/
 import { getChannel } from './utils';
 import { ImageApi } from '../apis/image-api';
+import { HummingbirdApi } from '../apis/hummingbird-api';
 
-export const noTimeoutChannels: string[] = [getChannel(ImageApi, 'pull')];
+export const noTimeoutChannels: string[] = [getChannel(ImageApi, 'pull'), getChannel(HummingbirdApi, 'getOptimisationReport')];

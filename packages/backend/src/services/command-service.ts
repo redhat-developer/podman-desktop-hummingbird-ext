@@ -41,6 +41,8 @@ export class CommandService implements AsyncInit, Disposable {
   }
 
   protected async handleImageScan(args: unknown): Promise<void> {
+    console.log('handleImageScan', args);
+
     const result = ImageInfoUISchema.safeParse(args);
     if (!result.success) {
       throw result.error;

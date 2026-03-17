@@ -23,6 +23,7 @@ import type {
   VulnerabilitiesResponse,
   VulnerabilitiesSummary,
 } from '../generated/hummingbird-project';
+import type { ImageInspectInfo } from '@podman-desktop/api';
 
 export interface Alternative {
   image: ImageSummary;
@@ -31,18 +32,18 @@ export interface Alternative {
   vulnerabilities: VulnerabilitiesResponse;
 }
 
-export interface InspectReport {
-  size: number;
-}
-
 export interface SBOMReport {
   count: number;
   packages: string[];
 }
 
-export interface OptimisationReport {
-  alternative?: Alternative;
-  inspect: InspectReport;
+export interface ImageReport {
+  inspect: ImageInspectInfo;
   sbom?: SBOMReport;
   vulnerabilities?: VulnerabilitiesSummary;
+}
+
+export interface OptimisationReport {
+  image: ImageReport;
+  alternative?: Alternative;
 }

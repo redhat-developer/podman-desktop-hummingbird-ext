@@ -1,5 +1,13 @@
-<script>
+<script lang="ts">
 import { colorScheme } from '/@/states/color-scheme.svelte';
+import type { ClassValue } from 'svelte/elements';
+
+interface Props {
+  size?: number;
+  class?: ClassValue;
+}
+
+let { size = 20, class: classes }: Props = $props();
 
 let isDark = $derived(colorScheme.theme === 'dark');
 
@@ -8,7 +16,7 @@ let shieldColor = $derived(isDark ? '#6A4AB2' : '#7E44FF');
 let containerColor = $derived(isDark ? '#B393FA' : '#7E44FF');
 </script>
 
-<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg class={classes} width={size} height={size} viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
   <path
     fill={shieldColor}
     fill-opacity={shieldOpacity}

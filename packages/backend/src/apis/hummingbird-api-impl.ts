@@ -33,6 +33,7 @@ export class HummingbirdApiImpl extends HummingbirdApi {
   }
 
   override async getOptimisationReport(engineId: string, imageId: string): Promise<OptimisationReport> {
+    console.log('[HummingbirdApiImpl]', engineId, imageId);
     return this.dependencies.hummingbird.getOptimisationReport(engineId, imageId);
   }
 }

@@ -15,7 +15,7 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-import type { containerEngine, Disposable, ImageInfo, ImageInspectInfo } from '@podman-desktop/api';
+import type { containerEngine, Disposable, ImageInspectInfo } from '@podman-desktop/api';
 import { Api } from '@podman-desktop/extension-hummingbird-core-api';
 import type {
   Alternative,
@@ -88,10 +88,17 @@ export class HummingbirdService implements Disposable {
   protected async getSBOMReport(image: ImageInspectInfo): Promise<SBOMReport | undefined> {
     if (!this.dependencies.grype.api) return undefined;
 
-    const doc = await this.dependencies.grype.api.sbom.analyse({
-      engineId: image.engineId,
-      Id: image.Id,
-    } as unknown as ImageInfo);
+    const doc = await this.dependencies.grype.api.sbom.analyse(
+      {
+        engineId: image.engineId,
+        Id: image.Id,
+      },
+      {
+        task: {
+          title: `Analysing image ${image.RepoTags[0] ?? image.Id}`,
+        },
+      },
+    );
 
     return {
       count: doc.artifacts.length,
@@ -102,10 +109,17 @@ export class HummingbirdService implements Disposable {
   protected async findVulnerabilities(image: ImageInspectInfo): Promise<VulnerabilitiesSummary | undefined> {
     if (!this.dependencies.grype.api) return undefined;
 
-    const doc = await this.dependencies.grype.api.vulnerability.analyse({
-      engineId: image.engineId,
-      Id: image.Id,
-    } as unknown as ImageInfo);
+    const doc = await this.dependencies.grype.api.vulnerability.analyse(
+      {
+        engineId: image.engineId,
+        Id: image.Id,
+      },
+      {
+        task: {
+          title: `Scanning image ${image.RepoTags[0] ?? image.Id} for vulnerabilities`,
+        },
+      },
+    );
 
     return doc.matches.reduce(
       (accumulator, match) => {
@@ -145,19 +159,17 @@ export class HummingbirdService implements Disposable {
   public async getOptimisationReport(engineId: string, imageId: string): Promise<OptimisationReport> {
     const imageInspectInfo = await this.dependencies.containersAPI.getImageInspect(engineId, imageId);
 
-    const [alternative, sbom, vulns] = await Promise.allSettled([
-      this.findAlternative(imageInspectInfo),
-      this.getSBOMReport(imageInspectInfo),
-      this.findVulnerabilities(imageInspectInfo),
-    ]);
+    const alternative = await this.findAlternative(imageInspectInfo);
+    const sbom = await this.getSBOMReport(imageInspectInfo);
+    const vulnerabilities = await this.findVulnerabilities(imageInspectInfo);
 
     return {
-      alternative: alternative.status === 'fulfilled' ? alternative.value : undefined,
-      inspect: {
-        size: imageInspectInfo.Size,
+      image: {
+        inspect: imageInspectInfo,
+        sbom,
+        vulnerabilities,
       },
-      sbom: sbom.status === 'fulfilled' ? sbom.value : undefined,
-      vulnerabilities: vulns.status === 'fulfilled' ? vulns.value : undefined,
+      alternative: alternative,
     };
   }
 
