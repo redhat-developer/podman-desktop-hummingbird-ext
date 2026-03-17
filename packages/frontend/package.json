@@ -15,7 +15,9 @@
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
   },
-  "dependencies": {},
+  "dependencies": {
+    "chart.js": "^4.5.1"
+  },
   "devDependencies": {
     "@podman-desktop/extension-hummingbird-core-api": "workspace:^",
     "@fortawesome/fontawesome-free": "^7.2.0",

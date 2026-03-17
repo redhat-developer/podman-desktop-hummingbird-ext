@@ -15,24 +15,33 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-import { HummingbirdApi } from '@podman-desktop/extension-hummingbird-core-api';
-import type { ImageSummary, OptimisationReport } from '@podman-desktop/extension-hummingbird-core-api';
-import type { HummingbirdService } from '../services/hummingbird-service';
+import type { extensions, Disposable } from '@podman-desktop/api';
+import type { AsyncInit } from '../../utils/async-init';
+import type { GrypeExtensionApi } from '@podman-desktop/grype-extension-api';
 
 interface Dependencies {
-  hummingbird: HummingbirdService;
+  extensionsAPI: typeof extensions;
 }
 
-export class HummingbirdApiImpl extends HummingbirdApi {
-  constructor(protected readonly dependencies: Dependencies) {
-    super();
+export class GrypeService implements AsyncInit, Disposable {
+  #api: GrypeExtensionApi | undefined;
+
+  constructor(protected readonly dependencies: Dependencies) {}
+
+  get api(): GrypeExtensionApi | undefined {
+    return this.#api;
   }
 
-  override async all(): Promise<Array<ImageSummary>> {
-    return this.dependencies.hummingbird.getImages();
+  dispose(): void {
+    this.#api = undefined;
   }
 
-  override async getOptimisationReport(engineId: string, imageId: string): Promise<OptimisationReport> {
-    return this.dependencies.hummingbird.getOptimisationReport(engineId, imageId);
+  async init(): Promise<void> {
+    const grype = this.dependencies.extensionsAPI.getExtension<GrypeExtensionApi>('podman-desktop.grype');
+    if (grype) {
+      this.#api = grype.exports;
+    } else {
+      console.warn('cannot find the grype extension');
+    }
   }
 }

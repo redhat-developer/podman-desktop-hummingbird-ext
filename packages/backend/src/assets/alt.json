@@ -1,0 +1,13 @@
+{
+  "nginx": {
+    "alts": [
+      "docker.io/library/nginx"
+    ]
+  },
+  "curl": {
+    "alts": [
+      "docker.io/curlimages/curl",
+      "docker.io/alpine/curl"
+    ]
+  }
+}

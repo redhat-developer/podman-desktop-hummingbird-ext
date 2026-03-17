@@ -52,6 +52,8 @@ import { ImageService } from './image-service';
 import { ImageApiImpl } from '../apis/image-api-impl';
 import { ProviderService } from './provider-service';
 import { ProviderApiImpl } from '../apis/provider-api-impl';
+import { CommandService } from './command-service';
+import { GrypeService } from './scanners/grype-service';
 
 interface Dependencies {
   extensionContext: ExtensionContext;
@@ -119,8 +121,18 @@ export class MainService implements Disposable, AsyncInit {
     await providers.init();
     this.#disposables.push(providers);
 
+    // grype
+    const grype = new GrypeService({
+      extensionsAPI: this.dependencies.extensions,
+    });
+    await grype.init();
+    this.#disposables.push(grype);
+
     // hummingbird service
-    const hummingbird = new HummingbirdService();
+    const hummingbird = new HummingbirdService({
+      containersAPI: this.dependencies.containers,
+      grype,
+    });
     this.#disposables.push(hummingbird);
 
     const images = new ImageService({
@@ -133,6 +145,14 @@ export class MainService implements Disposable, AsyncInit {
     });
     await images.init();
     this.#disposables.push(images);
+
+    // commands
+    const commands = new CommandService({
+      commands: this.dependencies.commandsApi,
+      routes: routing,
+    });
+    await commands.init();
+    this.#disposables.push(commands);
 
     /**
      * Creating the api for the frontend IPCs

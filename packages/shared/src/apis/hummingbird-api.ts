@@ -16,9 +16,12 @@
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
 import type { ImageSummary } from '../generated/hummingbird-project';
+import type { OptimisationReport } from '../models/optimisation-report';
 
 export abstract class HummingbirdApi {
   static readonly CHANNEL: string = 'hummingbird-api';
 
   abstract all(): Promise<Array<ImageSummary>>;
+
+  abstract getOptimisationReport(engineId: string, imageId: string): Promise<OptimisationReport>;
 }

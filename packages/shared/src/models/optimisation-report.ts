@@ -15,24 +15,34 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-import { HummingbirdApi } from '@podman-desktop/extension-hummingbird-core-api';
-import type { ImageSummary, OptimisationReport } from '@podman-desktop/extension-hummingbird-core-api';
-import type { HummingbirdService } from '../services/hummingbird-service';
 
-interface Dependencies {
-  hummingbird: HummingbirdService;
+import type {
+  ArchSbom,
+  ImageSummary,
+  Tag,
+  VulnerabilitiesResponse,
+  VulnerabilitiesSummary,
+} from '../generated/hummingbird-project';
+
+export interface Alternative {
+  image: ImageSummary;
+  sbom?: ArchSbom;
+  tags: Tag[];
+  vulnerabilities: VulnerabilitiesResponse;
 }
 
-export class HummingbirdApiImpl extends HummingbirdApi {
-  constructor(protected readonly dependencies: Dependencies) {
-    super();
-  }
+export interface InspectReport {
+  size: number;
+}
 
-  override async all(): Promise<Array<ImageSummary>> {
-    return this.dependencies.hummingbird.getImages();
-  }
+export interface SBOMReport {
+  count: number;
+  packages: string[];
+}
 
-  override async getOptimisationReport(engineId: string, imageId: string): Promise<OptimisationReport> {
-    return this.dependencies.hummingbird.getOptimisationReport(engineId, imageId);
-  }
+export interface OptimisationReport {
+  alternative?: Alternative;
+  inspect: InspectReport;
+  sbom?: SBOMReport;
+  vulnerabilities?: VulnerabilitiesSummary;
 }

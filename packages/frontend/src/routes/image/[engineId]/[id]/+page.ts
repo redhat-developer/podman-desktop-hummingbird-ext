@@ -15,24 +15,21 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-import { HummingbirdApi } from '@podman-desktop/extension-hummingbird-core-api';
-import type { ImageSummary, OptimisationReport } from '@podman-desktop/extension-hummingbird-core-api';
-import type { HummingbirdService } from '../services/hummingbird-service';
+import type { OptimisationReport } from '@podman-desktop/extension-hummingbird-core-api';
+import type { PageLoad } from './$types';
+import { hummingbirdAPI } from '/@/api/client';
 
-interface Dependencies {
-  hummingbird: HummingbirdService;
+interface Data {
+  engineId: string;
+  report: Promise<OptimisationReport>
 }
 
-export class HummingbirdApiImpl extends HummingbirdApi {
-  constructor(protected readonly dependencies: Dependencies) {
-    super();
-  }
+export const load: PageLoad = async ({ params }): Promise<Data> => {
+  const engineId = decodeURIComponent(params.engineId);
+  const imageId = decodeURIComponent(params.id);
 
-  override async all(): Promise<Array<ImageSummary>> {
-    return this.dependencies.hummingbird.getImages();
-  }
-
-  override async getOptimisationReport(engineId: string, imageId: string): Promise<OptimisationReport> {
-    return this.dependencies.hummingbird.getOptimisationReport(engineId, imageId);
-  }
-}
+  return {
+    engineId,
+    report: hummingbirdAPI.getOptimisationReport(engineId, imageId),
+  };
+};

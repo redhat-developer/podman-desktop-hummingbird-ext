@@ -52,6 +52,12 @@ export class RoutingService extends Publisher<string | undefined> implements Dis
     this.dependencies.panel.reveal();
   }
 
+  async openImageAnalysisPage(engineId: string, imageId: string): Promise<void> {
+    return this.write(
+      `/image/${encodeURIComponent(engineId)}/${encodeURIComponent(imageId)}`,
+    );
+  }
+
   override dispose(): void {
     super.dispose();
     this.#route = undefined;
