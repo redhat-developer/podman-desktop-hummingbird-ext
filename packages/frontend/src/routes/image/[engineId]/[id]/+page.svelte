@@ -8,7 +8,7 @@ let { data }: PageProps = $props();
 {#await data.report}
     <span>Loading...</span>
 {:then report}
-    <div class="mx-5">
+    <div class="mx-5 mt-5">
         <OptimisationReport object={report} />
     </div>
 {/await}
