@@ -229,7 +229,7 @@ importers:
         version: 1.25.1
       swagger-typescript-api:
         specifier: ^13.6.2
-        version: 13.6.2(magicast@0.5.1)
+        version: 13.6.5(magicast@0.5.1)
       unplugin-dts:
         specifier: ^1.0.0-beta.6
         version: 1.0.0-beta.6(@microsoft/api-extractor@7.56.0(@types/node@25.2.0))(esbuild@0.27.2)(rollup@4.55.1)(typescript@5.9.3)(vite@7.3.1(@types/node@25.2.0)(jiti@2.6.1)(lightningcss@1.31.1)(yaml@2.8.2))
