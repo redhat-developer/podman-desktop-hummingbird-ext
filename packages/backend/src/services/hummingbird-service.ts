@@ -15,26 +15,26 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-import type { QuayIOService } from './quay-io-service';
 import type { Disposable } from '@podman-desktop/api';
-import type { Repository } from '@podman-desktop/extension-hummingbird-core-api';
-
-export const QUAY_HUMMING_BIRD_ORGANISATION = 'hummingbird';
-
-interface Dependencies {
-  quay: QuayIOService;
-}
+import type { ImageSummary } from '@podman-desktop/extension-hummingbird-core-api';
+import { Api } from '@podman-desktop/extension-hummingbird-core-api';
 
 export class HummingbirdService implements Disposable {
-  #cache: Array<Repository> | undefined;
+  #cache: Array<ImageSummary> | undefined;
+  #client: Api<unknown>;
 
-  constructor(protected readonly dependencies: Dependencies) {}
+  constructor() {
+    this.#client = new Api({
+      baseUrl: 'https://api-rawhide.hummingbird-project.io',
+    });
+  }
 
-  public async getRepositories(): Promise<Array<Repository>> {
+  public async getImages(): Promise<Array<ImageSummary>> {
     if (this.#cache) return this.#cache;
 
-    const results = await this.dependencies.quay.listRepos({ organisation: QUAY_HUMMING_BIRD_ORGANISATION });
-    this.#cache = results.repositories;
+    const res = await this.#client.v1.getImages();
+    this.#cache = res.data.images;
+
     return this.#cache;
   }
 

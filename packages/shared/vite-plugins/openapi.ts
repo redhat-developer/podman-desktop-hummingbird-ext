@@ -20,26 +20,26 @@ import { generateApi } from 'swagger-typescript-api';
 import { writeFile, mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
 
-export const QUAY_IO_SWAGGER_URL = 'https://quay.io/api/v1/discovery';
+export const HUMMINGBIRD_SERVER_OPEN_API_URL = 'https://api-rawhide.hummingbird-project.io/v1/openapi.json';
 
-export function swagger(): Plugin {
+export function openapi(): Plugin {
   return {
-    name: 'vite-plugin-swagger',
+    name: 'vite-plugin-openapi',
     enforce: 'pre',
     configResolved: async (resolved): Promise<void> => {
-      const generated = join(resolved.root, 'generated');
+      const generated = join(resolved.root, 'src', 'generated');
       await mkdir(generated, { recursive: true });
 
-      const swaggerPath = join(generated, 'swagger.json');
+      const swaggerPath = join(generated, 'openapi.json');
 
-      const response = await fetch(QUAY_IO_SWAGGER_URL);
+      const response = await fetch(HUMMINGBIRD_SERVER_OPEN_API_URL);
 
       await writeFile(swaggerPath, JSON.stringify(await response.json(), undefined, 2), 'utf-8');
 
       await generateApi({
         input: swaggerPath,
         output: generated,
-        fileName: 'quay-io-api.ts',
+        fileName: 'hummingbird-project.ts',
       });
     },
   };

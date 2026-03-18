@@ -44,7 +44,6 @@ import type { AsyncInit } from '../utils/async-init';
 
 import { RoutingService } from './routing-service';
 import { RoutingApiImpl } from '../apis/routing-api-impl';
-import { QuayIOService } from './quay-io-service';
 import { HummingbirdService } from './hummingbird-service';
 import { HummingbirdApiImpl } from '../apis/hummingbird-api-impl';
 import { DialogApiImpl } from '../apis/dialog-api-impl';
@@ -112,12 +111,6 @@ export class MainService implements Disposable, AsyncInit {
       telemetry: this.#telemetry,
     });
 
-    // quay service
-    const quay = new QuayIOService({
-      fetch,
-    });
-    this.#disposables.push(quay);
-
     // The provider service register subscribers events for provider updates
     const providers = new ProviderService({
       providers: this.dependencies.providers,
@@ -127,9 +120,7 @@ export class MainService implements Disposable, AsyncInit {
     this.#disposables.push(providers);
 
     // hummingbird service
-    const hummingbird = new HummingbirdService({
-      quay,
-    });
+    const hummingbird = new HummingbirdService();
     this.#disposables.push(hummingbird);
 
     const images = new ImageService({

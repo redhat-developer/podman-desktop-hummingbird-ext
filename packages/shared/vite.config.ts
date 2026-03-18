@@ -18,7 +18,8 @@
 import { join } from 'node:path';
 
 import { defineConfig } from 'vite';
-import dts from 'vite-plugin-dts';
+import dts from 'unplugin-dts/vite';
+import { openapi } from './vite-plugins/openapi';
 
 const PACKAGE_ROOT = __dirname;
 
@@ -35,7 +36,14 @@ export default defineConfig({
       '/@/': join(PACKAGE_ROOT, 'src') + '/',
     },
   },
-  plugins: [dts()],
+  plugins: [
+    openapi(),
+    dts({
+      copyDtsFiles: true,
+      root: PACKAGE_ROOT,
+      tsconfigPath: join(PACKAGE_ROOT, 'tsconfig.json'),
+    }),
+  ],
   build: {
     sourcemap: 'inline',
     target: 'esnext',

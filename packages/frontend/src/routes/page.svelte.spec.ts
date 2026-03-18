@@ -21,7 +21,7 @@ import '@testing-library/jest-dom/vitest';
 import { render, within } from '@testing-library/svelte';
 
 import { beforeEach, describe, expect, test, vi } from 'vitest';
-import type { Repository } from '@podman-desktop/extension-hummingbird-core-api';
+import type { ImageSummary } from '@podman-desktop/extension-hummingbird-core-api';
 import Page from './+page.svelte';
 import { invalidateAll } from '$app/navigation';
 import { rpcBrowser } from '/@/api/client';
@@ -32,13 +32,16 @@ vi.mock(import('$app/navigation'));
 vi.mock(import('/@/api/client'));
 vi.mock(import('/@/stores/connections'));
 
-const REPOSITORIES: Array<Repository> = [
+const REPOSITORIES: Array<ImageSummary> = [
   {
     name: 'curl',
-    namespace: 'hummingbird',
-    is_public: true,
-    last_modified: new Date().getTime() / 1000,
-    description: 'Dummy desc',
+    architectures: [],
+    description: '',
+    latest_tag: '',
+    pull_url: '',
+    streams: [],
+    tag_count: 0,
+    variants: [],
   },
 ];
 
@@ -57,7 +60,7 @@ describe('error', () => {
   test('promise date reject should display empty screen with error', async () => {
     const { getByLabelText } = render(Page, {
       data: {
-        repositories: Promise.reject<Array<Repository>>(ERROR_MOCK),
+        repositories: Promise.reject<Array<ImageSummary>>(ERROR_MOCK),
       },
       params: {},
     });
@@ -72,7 +75,7 @@ describe('error', () => {
   test('retry button should call invalidateAll', async () => {
     const { getByLabelText } = render(Page, {
       data: {
-        repositories: Promise.reject<Array<Repository>>(ERROR_MOCK),
+        repositories: Promise.reject<Array<ImageSummary>>(ERROR_MOCK),
       },
       params: {},
     });
@@ -94,7 +97,7 @@ describe('loading', () => {
     // We pass a promise that never resolves (or at least doesn't resolve immediately)
     const { getAllByLabelText } = render(Page, {
       data: {
-        repositories: new Promise<Array<Repository>>(vi.fn()),
+        repositories: new Promise<Array<ImageSummary>>(vi.fn()),
       },
       params: {},
     });

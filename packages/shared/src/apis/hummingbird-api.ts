@@ -15,10 +15,10 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-import type { Repository } from '../models/repository';
+import type { ImageSummary } from '../generated/hummingbird-project';
 
 export abstract class HummingbirdApi {
   static readonly CHANNEL: string = 'hummingbird-api';
 
-  abstract all(): Promise<Array<Repository>>;
+  abstract all(): Promise<Array<ImageSummary>>;
 }

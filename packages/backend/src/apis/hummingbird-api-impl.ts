@@ -16,7 +16,7 @@
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
 import { HummingbirdApi } from '@podman-desktop/extension-hummingbird-core-api';
-import type { Repository } from '@podman-desktop/extension-hummingbird-core-api';
+import type { ImageSummary } from '@podman-desktop/extension-hummingbird-core-api';
 import type { HummingbirdService } from '../services/hummingbird-service';
 
 interface Dependencies {
@@ -28,7 +28,7 @@ export class HummingbirdApiImpl extends HummingbirdApi {
     super();
   }
 
-  override async all(): Promise<Array<Repository>> {
-    return this.dependencies.hummingbird.getRepositories();
+  override async all(): Promise<Array<ImageSummary>> {
+    return this.dependencies.hummingbird.getImages();
   }
 }

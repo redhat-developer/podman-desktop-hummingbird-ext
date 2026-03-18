@@ -5,5 +5,5 @@ dist
 **/coverage
 .idea
 output
-packages/*/generated
+packages/shared/src/generated
 packages/frontend/.svelte-kit

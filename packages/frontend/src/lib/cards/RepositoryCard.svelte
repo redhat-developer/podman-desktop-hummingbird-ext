@@ -1,24 +1,22 @@
 <script lang="ts">
 import type {
   ProviderContainerConnectionDetailedInfo,
-  Repository,
+  ImageSummary,
   SimpleImageInfo,
 } from '@podman-desktop/extension-hummingbird-core-api';
 import { Button, TableDurationColumn } from '@podman-desktop/ui-svelte';
 import { faDownload } from '@fortawesome/free-solid-svg-icons/faDownload';
 import { faExternalLink } from '@fortawesome/free-solid-svg-icons/faExternalLink';
 import { dialogAPI, imageAPI } from '/@/api/client';
-import { getFirstParagraphAfterFirstHeading } from '/@/utils/markdown';
-import DOMPurify from 'dompurify';
 import RepositoryIcon from '$lib/icons/RepositoryIcon.svelte';
 
 interface Props {
-  object: Repository;
+  object: ImageSummary;
   pulled?: Promise<SimpleImageInfo | undefined>;
   connection?: ProviderContainerConnectionDetailedInfo;
 }
 
-let { object: repository, pulled, connection }: Props = $props();
+let { object: image, pulled, connection }: Props = $props();
 
 let loading: boolean = $state(false);
 
@@ -27,11 +25,11 @@ async function pullImage(): Promise<void> {
 
   loading = true;
   try {
-    const image = await imageAPI.pull({
-      image: `quay.io/hummingbird/${repository.name}:latest`,
+    const imageInfo = await imageAPI.pull({
+      image: `quay.io/hummingbird/${image.name}:latest`,
       connection: connection,
     });
-    pulled = Promise.resolve(image);
+    pulled = Promise.resolve(imageInfo);
   } finally {
     loading = false;
   }
@@ -42,14 +40,14 @@ function navigateToImage(image: SimpleImageInfo): Promise<void> {
 }
 
 function openExternal(): Promise<boolean> {
-  return dialogAPI.openExternal(`https://quay.io/repository/hummingbird/${repository.name}`);
+  return dialogAPI.openExternal(`https://quay.io/repository/hummingbird/${image.name}`);
 }
 </script>
 
 <div
   class="rounded-lg border border-[var(--pd-content-bg)] flex flex-col bg-[var(--pd-content-card-bg)] hover:border-[var(--pd-content-card-border-selected)] min-h-48 max-h-48"
   role="group"
-  aria-label={repository.name}>
+  aria-label={image.name}>
   <div class="p-3 h-full w-full flex flex-col gap-y-4 justify-between">
     <!-- card body -->
     <div class="flex flex-col w-full">
@@ -57,32 +55,33 @@ function openExternal(): Promise<boolean> {
         <RepositoryIcon />
         <div class="flex flex-col">
           <div class="text-(--pd-content-header)">
-            {repository.name}
+            {image.name}
           </div>
           <div class="text-(--pd-content-text) text-purple-400">
-            quay.io/hummingbird/{repository.name}
+            quay.io/hummingbird/{image.name}
           </div>
         </div>
       </div>
 
       <div class="flex flex-col gap-y-2 divide-y divide-[var(--pd-content-divider)]">
-        {#if repository.description}
+        {#if image.description}
           <div class="py-2 text-(--pd-content-text)">
             <article class="line-clamp-2 overflow-hidden">
-              <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-              {@html DOMPurify.sanitize(getFirstParagraphAfterFirstHeading(repository.description) ?? '')}
+              <span>{image.description}</span>
             </article>
           </div>
         {/if}
-        <div class="flex">
-          <div class="flex flex row justify-between w-full text-(--pd-content-text)">
-            <span>Last updated</span>
-            <span class="flex gap-x-1">
-              <TableDurationColumn object={new Date(repository.last_modified * 1000)} />
-              ago
-            </span>
+        {#if image.oldest_created}
+          <div class="flex">
+            <div class="flex flex row justify-between w-full text-(--pd-content-text)">
+              <span>Last updated</span>
+              <span class="flex gap-x-1">
+                <TableDurationColumn object={new Date(image.oldest_created)} />
+                ago
+              </span>
+            </div>
           </div>
-        </div>
+        {/if}
       </div>
     </div>
 
