@@ -65,7 +65,7 @@ beforeEach(() => {
   } as HttpResponse<DirectoryResponse, ErrorResponse>);
 });
 
-test('HummingbirdService#getRepositories should call api and return images', async () => {
+test('HummingbirdService#getImages should call api and return images', async () => {
   const service = new HummingbirdService();
   const repositories = await service.getImages();
 
@@ -73,7 +73,7 @@ test('HummingbirdService#getRepositories should call api and return images', asy
   expect(repositories).toEqual(IMAGES_SUMMARY_MOCK);
 });
 
-test('HummingbirdService#getRepositories should use cache on second call', async () => {
+test('HummingbirdService#getImages should use cache on second call', async () => {
   const service = new HummingbirdService();
 
   // First call
