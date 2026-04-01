@@ -38,6 +38,8 @@ const IMAGES_SUMMARY_MOCK: Array<ImageSummary> = [
     streams: [],
     tag_count: 0,
     variants: [],
+    application_category: '',
+    summary: '',
   },
 ];
 
