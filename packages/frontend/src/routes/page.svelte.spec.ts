@@ -42,6 +42,8 @@ const REPOSITORIES: Array<ImageSummary> = [
     streams: [],
     tag_count: 0,
     variants: [],
+    application_category: '',
+    summary: '',
   },
 ];
 
