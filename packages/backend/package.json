@@ -34,21 +34,7 @@
         "title": "Hummingbird: scan",
         "hidden": true
       }
-    ],
-    "views": {
-      "badges/image": [
-        {
-          "when": "io.hummingbird-project.repository in imageLabelKeys",
-          "badge": {
-            "label": "hummingbird",
-            "color": {
-              "dark": "#7dd3fc",
-              "light": "#7dd3fc"
-            }
-          }
-        }
-      ]
-    }
+    ]
   },
   "devDependencies": {
     "@podman-desktop/extension-hummingbird-core-api": "workspace:^",

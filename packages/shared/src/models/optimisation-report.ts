@@ -25,7 +25,7 @@ import type {
 } from '../generated/hummingbird-project';
 import type { ImageInspectInfo } from '@podman-desktop/api';
 
-export interface Alternative {
+export interface AlternativeReport {
   image: ImageSummary;
   sbom?: ArchSbom;
   tags: Tag[];
@@ -45,5 +45,5 @@ export interface ImageReport {
 
 export interface OptimisationReport {
   image: ImageReport;
-  alternative?: Alternative;
+  alternative?: AlternativeReport;
 }
