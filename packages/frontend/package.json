@@ -43,7 +43,7 @@
     "svelte-fa": "^4.0.4",
     "svelte-markdown": "^0.4.1",
     "tailwindcss": "^4.2.2",
-    "vite": "^8.0.5",
+    "vite": "^8.0.7",
     "vitest": "^4.0.16",
     "@codecov/vite-plugin": "^1.9.1",
     "svelte-select": "^5.8.3"
