@@ -5,6 +5,11 @@ html, body {
     height: 100%;
 }
 
+@theme {
+    --spacing-leftnavbar: 48px;
+    --spacing-leftsidebar: 170px;
+}
+
 .monaco-glyph {
     width: 20px;
     margin-left: 1rem;
