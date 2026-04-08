@@ -24,9 +24,11 @@ import { WebviewService } from './webview-service';
 import { ImageService } from './image-service';
 import { RoutingService } from './routing-service';
 import { ProviderService } from './provider-service';
+import { GrypeService } from './scanners/grype-service';
 import { PodmanService } from './podman-service';
 
 const module = new ContainerModule(options => {
+  options.bind<GrypeService>(GrypeService).toSelf().inSingletonScope();
   options.bind<DialogService>(DialogService).toSelf().inSingletonScope();
   options.bind<HummingbirdService>(HummingbirdService).toSelf().inSingletonScope();
   options.bind<ImageService>(ImageService).toSelf().inSingletonScope();
