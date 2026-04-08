@@ -15,31 +15,7 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-import type { Disposable } from '@podman-desktop/api';
-import type { ImageSummary } from '@podman-desktop/extension-hummingbird-core-api';
-import { Api } from '@podman-desktop/extension-hummingbird-core-api';
-import { injectable, preDestroy } from 'inversify';
+export const ExtensionContextSymbol = Symbol.for('ExtensionContext');
+export const TelemetryLoggerSymbol = Symbol('TelemetryLogger');
 
-@injectable()
-export class HummingbirdService implements Disposable {
-  #cache: Array<ImageSummary> | undefined;
-  #client: Api<unknown>;
-
-  constructor() {
-    this.#client = new Api({
-      baseUrl: 'https://api-rawhide.hummingbird-project.io',
-    });
-  }
-
-  public async getImages(): Promise<Array<ImageSummary>> {
-    if (this.#cache) return this.#cache;
-
-    const res = await this.#client.v1.getImages();
-    this.#cache = res.data.images;
-
-    return this.#cache;
-  }
-
-  @preDestroy()
-  dispose(): void {}
-}
+export const StartupSymbol = Symbol('StartupSymbol');

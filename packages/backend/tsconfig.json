@@ -15,7 +15,9 @@
     },
     "noImplicitOverride": true,
     "noImplicitReturns": true,
-    "noUnusedLocals": true
+    "noUnusedLocals": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   },
   "include": ["src", "vitest.setup.*", "types/*.d.ts", "../../types/*.d.ts"],
   "exclude": ["vite.config.ts", "vitest.config.ts"]

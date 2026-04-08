@@ -15,22 +15,7 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-import type {
-  Disposable,
-  env,
-  ExtensionContext,
-  extensions,
-  process as processApi,
-  commands as commandsApi,
-  provider,
-  window,
-  configuration as configurationAPI,
-  cli as cliApi,
-  navigation as navigationApi,
-  containerEngine,
-  TelemetryLogger,
-} from '@podman-desktop/api';
-import { WebviewService } from './webview-service';
+import type { ExtensionContext } from '@podman-desktop/api';
 import {
   RpcExtension,
   RoutingApi,
@@ -42,131 +27,38 @@ import {
 
 import type { AsyncInit } from '../utils/async-init';
 
-import { RoutingService } from './routing-service';
 import { RoutingApiImpl } from '../apis/routing-api-impl';
-import { HummingbirdService } from './hummingbird-service';
 import { HummingbirdApiImpl } from '../apis/hummingbird-api-impl';
 import { DialogApiImpl } from '../apis/dialog-api-impl';
-import { DialogService } from './dialog-service';
-import { ImageService } from './image-service';
 import { ImageApiImpl } from '../apis/image-api-impl';
-import { ProviderService } from './provider-service';
 import { ProviderApiImpl } from '../apis/provider-api-impl';
+import { InversifyBinding } from '../inject/inversify-binding';
+import type { IAsyncDisposable } from '../utils/async-disposable';
 
-interface Dependencies {
-  extensionContext: ExtensionContext;
-  window: typeof window;
-  env: typeof env;
-  extensions: typeof extensions;
-  processApi: typeof processApi;
-  providers: typeof provider;
-  cliApi: typeof cliApi;
-  commandsApi: typeof commandsApi;
-  navigationApi: typeof navigationApi;
-  containers: typeof containerEngine;
-  configuration: typeof configurationAPI;
-}
+export class MainService implements IAsyncDisposable, AsyncInit<ExtensionContext> {
+  #inversify: InversifyBinding | undefined;
 
-export class MainService implements Disposable, AsyncInit {
-  readonly #disposables: Disposable[] = [];
-  readonly #telemetry: TelemetryLogger;
+  constructor() {}
 
-  constructor(private dependencies: Dependencies) {
-    this.#telemetry = dependencies.env.createTelemetryLogger();
+  async asyncDispose(): Promise<void> {
+    try {
+      await this.#inversify?.asyncDispose();
+    } finally {
+      this.#inversify = undefined;
+    }
   }
 
-  dispose(): void {
-    this.#disposables.forEach(disposable => disposable.dispose());
-    this.#telemetry.dispose();
-  }
+  async init(context: ExtensionContext): Promise<void> {
+    this.#inversify = new InversifyBinding(context);
+    const container = await this.#inversify.init();
 
-  async init(): Promise<void> {
-    /**
-     * Creating and init Services
-     */
-    // init webview
-    const webview = new WebviewService({
-      extensionUri: this.dependencies.extensionContext.extensionUri,
-      window: this.dependencies.window,
-    });
-    await webview.init();
-    this.#disposables.push(webview);
-
-    // init IPC system
-    const rpcExtension = new RpcExtension(webview.getPanel().webview);
-    rpcExtension.init();
-    this.#disposables.push(rpcExtension);
-
-    // routing service
-    const routing = new RoutingService({
-      panel: webview.getPanel(),
-    });
-    await routing.init();
-    this.#disposables.push(routing);
-
-    // dialog service
-    const dialog = new DialogService({
-      windowApi: this.dependencies.window,
-      envApi: this.dependencies.env,
-      telemetry: this.#telemetry,
-    });
-
-    // The provider service register subscribers events for provider updates
-    const providers = new ProviderService({
-      providers: this.dependencies.providers,
-      webview: webview.getPanel().webview,
-    });
-    await providers.init();
-    this.#disposables.push(providers);
-
-    // hummingbird service
-    const hummingbird = new HummingbirdService();
-    this.#disposables.push(hummingbird);
-
-    const images = new ImageService({
-      windowApi: this.dependencies.window,
-      containers: this.dependencies.containers,
-      providers: providers,
-      navigation: this.dependencies.navigationApi,
-      webview: webview.getPanel().webview,
-      telemetry: this.#telemetry,
-    });
-    await images.init();
-    this.#disposables.push(images);
-
-    /**
-     * Creating the api for the frontend IPCs
-     */
+    const rpcExtension = await container.getAsync(RpcExtension);
 
     // routing api
-    const routingApiImpl = new RoutingApiImpl({
-      routing: routing,
-    });
-    rpcExtension.registerInstance<RoutingApi>(RoutingApi, routingApiImpl);
-
-    // provider api
-    const providerApiImpl = new ProviderApiImpl({
-      providers: providers,
-    });
-    rpcExtension.registerInstance<ProviderApi>(ProviderApi, providerApiImpl);
-
-    // hummingbird api
-    const hummingbirdApiImpl = new HummingbirdApiImpl({
-      hummingbird,
-    });
-    rpcExtension.registerInstance<HummingbirdApi>(HummingbirdApi, hummingbirdApiImpl);
-
-    // dialog api
-    const dialogApiImpl = new DialogApiImpl({
-      dialog: dialog,
-    });
-    rpcExtension.registerInstance<DialogApi>(DialogApi, dialogApiImpl);
-
-    // image api
-    const imageApiImpl = new ImageApiImpl({
-      images,
-      providers,
-    });
-    rpcExtension.registerInstance<ImageApi>(ImageApi, imageApiImpl);
+    rpcExtension.registerInstance<RoutingApi>(RoutingApi, await container.getAsync(RoutingApiImpl));
+    rpcExtension.registerInstance<ProviderApi>(ProviderApi, await container.getAsync(ProviderApiImpl));
+    rpcExtension.registerInstance<HummingbirdApi>(HummingbirdApi, await container.getAsync(HummingbirdApiImpl));
+    rpcExtension.registerInstance<DialogApi>(DialogApi, await container.getAsync(DialogApiImpl));
+    rpcExtension.registerInstance<ImageApi>(ImageApi, await container.getAsync(ImageApiImpl));
   }
 }

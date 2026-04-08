@@ -16,18 +16,19 @@
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
 import { RoutingApi } from '@podman-desktop/extension-hummingbird-core-api';
-import type { RoutingService } from '../services/routing-service';
+import { RoutingService } from '../services/routing-service';
+import { inject, injectable } from 'inversify';
 
-interface Dependencies {
-  routing: RoutingService;
-}
-
+@injectable()
 export class RoutingApiImpl extends RoutingApi {
-  constructor(protected dependencies: Dependencies) {
+  constructor(
+    @inject(RoutingService)
+    protected readonly routing: RoutingService,
+  ) {
     super();
   }
 
   override async readRoute(): Promise<string | undefined> {
-    return this.dependencies.routing.read();
+    return this.routing.read();
   }
 }

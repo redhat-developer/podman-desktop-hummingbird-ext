@@ -29,18 +29,14 @@ beforeEach(() => {
 
 test('expect result to be properly propagated from DialogService', async () => {
   vi.mocked(DIALOG_SERVICE_MOCK.showWarningMessage).mockResolvedValue('No');
-  const dialog = new DialogApiImpl({
-    dialog: DIALOG_SERVICE_MOCK,
-  });
+  const dialog = new DialogApiImpl(DIALOG_SERVICE_MOCK);
   const result = await dialog.showWarningMessage('Are you sure?', 'Yes', 'No');
   expect(result).toStrictEqual('No');
 });
 
 test('expect error to be propagated', async () => {
   vi.mocked(DIALOG_SERVICE_MOCK.showWarningMessage).mockRejectedValue(new Error('Something went wrong'));
-  const dialog = new DialogApiImpl({
-    dialog: DIALOG_SERVICE_MOCK,
-  });
+  const dialog = new DialogApiImpl(DIALOG_SERVICE_MOCK);
 
   await expect(() => {
     return dialog.showWarningMessage('Are you sure?', 'Yes', 'No');

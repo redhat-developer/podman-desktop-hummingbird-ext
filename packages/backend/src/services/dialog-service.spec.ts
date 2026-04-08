@@ -15,7 +15,8 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-import type { env, InputBoxOptions, window, TelemetryLogger } from '@podman-desktop/api';
+import type { InputBoxOptions, TelemetryLogger } from '@podman-desktop/api';
+import { window as windowAPI } from '@podman-desktop/api';
 
 import { beforeEach, vi, test, expect } from 'vitest';
 import { DialogService } from './dialog-service';
@@ -23,16 +24,6 @@ import { DialogService } from './dialog-service';
 beforeEach(() => {
   vi.resetAllMocks();
 });
-
-const WINDOWS_API_MOCK: typeof window = {
-  showWarningMessage: vi.fn(),
-  showInputBox: vi.fn(),
-  showInformationMessage: vi.fn(),
-} as unknown as typeof window;
-
-const ENV_API_MOCK: typeof env = {
-  openExternal: vi.fn(),
-} as unknown as typeof env;
 
 const TELEMETRY_LOGGER_MOCK: TelemetryLogger = {
   logUsage: vi.fn(),
@@ -44,25 +35,21 @@ const TELEMETRY_LOGGER_MOCK: TelemetryLogger = {
 };
 
 function getDialogService(): DialogService {
-  return new DialogService({
-    windowApi: WINDOWS_API_MOCK,
-    envApi: ENV_API_MOCK,
-    telemetry: TELEMETRY_LOGGER_MOCK,
-  });
+  return new DialogService(TELEMETRY_LOGGER_MOCK);
 }
 
 test('expect DialogService#showWarningMessage to use windowApi#showWarningMessage', async () => {
-  vi.mocked(WINDOWS_API_MOCK.showWarningMessage).mockResolvedValue('hello');
+  vi.mocked(windowAPI.showWarningMessage).mockResolvedValue('hello');
 
   const dialog = getDialogService();
   const result = await dialog.showWarningMessage('foo.bar', 'hello', 'world');
   expect(result).toStrictEqual('hello');
 
-  expect(WINDOWS_API_MOCK.showWarningMessage).toHaveBeenCalledWith('foo.bar', 'hello', 'world');
+  expect(windowAPI.showWarningMessage).toHaveBeenCalledWith('foo.bar', 'hello', 'world');
 });
 
 test('expect DialogService#showInputBox to use windowApi#showInputBox', async () => {
-  vi.mocked(WINDOWS_API_MOCK.showInputBox).mockResolvedValue('hello');
+  vi.mocked(windowAPI.showInputBox).mockResolvedValue('hello');
   const options: InputBoxOptions = {
     title: 'Foo title',
   };
@@ -71,15 +58,15 @@ test('expect DialogService#showInputBox to use windowApi#showInputBox', async ()
   const result = await dialog.showInputBox(options);
   expect(result).toStrictEqual('hello');
 
-  expect(WINDOWS_API_MOCK.showInputBox).toHaveBeenCalledWith(options);
+  expect(windowAPI.showInputBox).toHaveBeenCalledWith(options);
 });
 
 test('expect DialogService#showInformationMessage to use windowApi#showInformationMessage', async () => {
-  vi.mocked(WINDOWS_API_MOCK.showInformationMessage).mockResolvedValue('hello');
+  vi.mocked(windowAPI.showInformationMessage).mockResolvedValue('hello');
 
   const dialog = getDialogService();
   const result = await dialog.showInformationMessage('foo.bar', 'hello', 'world');
   expect(result).toStrictEqual('hello');
 
-  expect(WINDOWS_API_MOCK.showInformationMessage).toHaveBeenCalledWith('foo.bar', 'hello', 'world');
+  expect(windowAPI.showInformationMessage).toHaveBeenCalledWith('foo.bar', 'hello', 'world');
 });

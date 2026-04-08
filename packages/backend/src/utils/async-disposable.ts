@@ -1,4 +1,4 @@
-/**********************************************************************
+/*********************************************************************
  * Copyright (C) 2026 Red Hat, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,8 @@
  * limitations under the License.
  *
  * SPDX-License-Identifier: Apache-2.0
- ***********************************************************************/
-export interface AsyncInit<IN = never, OUT = void> {
-  init(args: IN): Promise<OUT>;
+ ********************************************************************/
+
+export interface IAsyncDisposable {
+  asyncDispose(): Promise<void>;
 }

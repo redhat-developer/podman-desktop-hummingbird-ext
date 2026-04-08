@@ -17,18 +17,19 @@
  ***********************************************************************/
 import { HummingbirdApi } from '@podman-desktop/extension-hummingbird-core-api';
 import type { ImageSummary } from '@podman-desktop/extension-hummingbird-core-api';
-import type { HummingbirdService } from '../services/hummingbird-service';
+import { HummingbirdService } from '../services/hummingbird-service';
+import { inject, injectable } from 'inversify';
 
-interface Dependencies {
-  hummingbird: HummingbirdService;
-}
-
+@injectable()
 export class HummingbirdApiImpl extends HummingbirdApi {
-  constructor(protected readonly dependencies: Dependencies) {
+  constructor(
+    @inject(HummingbirdService)
+    protected readonly hummingbird: HummingbirdService,
+  ) {
     super();
   }
 
   override async all(): Promise<Array<ImageSummary>> {
-    return this.dependencies.hummingbird.getImages();
+    return this.hummingbird.getImages();
   }
 }

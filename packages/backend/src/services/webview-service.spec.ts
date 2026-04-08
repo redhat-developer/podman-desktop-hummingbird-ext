@@ -16,22 +16,15 @@
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
 import { expect, test, vi, beforeEach } from 'vitest';
-import type { WebviewPanel, window as windowsApi } from '@podman-desktop/api';
-import { Uri } from '@podman-desktop/api';
+import type { ExtensionContext, WebviewPanel } from '@podman-desktop/api';
+import { window as windowsAPI, Uri } from '@podman-desktop/api';
 import { WebviewService } from './webview-service';
 import { readFile } from 'node:fs/promises';
 
 vi.mock(import('node:fs/promises'));
 
-const windowMock: typeof windowsApi = {
-  createWebviewPanel: vi.fn(),
-} as unknown as typeof windowsApi;
-
 function getWebviewService(): WebviewService {
-  return new WebviewService({
-    window: windowMock,
-    extensionUri: {} as unknown as Uri,
-  });
+  return new WebviewService({} as ExtensionContext);
 }
 
 const webviewPanelMock: WebviewPanel = {
@@ -46,7 +39,7 @@ const mockedHTML = '<div>Hello</div>';
 beforeEach(() => {
   vi.resetAllMocks();
 
-  vi.mocked(windowMock.createWebviewPanel).mockReturnValue(webviewPanelMock);
+  vi.mocked(windowsAPI.createWebviewPanel).mockReturnValue(webviewPanelMock);
   vi.mocked(Uri.joinPath).mockReturnValue({
     fsPath: '',
   } as unknown as Uri);

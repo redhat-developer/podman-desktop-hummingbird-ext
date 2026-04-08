@@ -20,16 +20,18 @@ import type {
   SimpleImageInfo,
 } from '@podman-desktop/extension-hummingbird-core-api';
 import { ImageApi } from '@podman-desktop/extension-hummingbird-core-api';
-import type { ImageService } from '../services/image-service';
-import type { ProviderService } from '../services/provider-service';
+import { ImageService } from '../services/image-service';
+import { ProviderService } from '../services/provider-service';
+import { inject, injectable } from 'inversify';
 
-interface Dependencies {
-  images: ImageService;
-  providers: ProviderService;
-}
-
+@injectable()
 export class ImageApiImpl extends ImageApi {
-  constructor(protected readonly dependencies: Dependencies) {
+  constructor(
+    @inject(ProviderService)
+    protected readonly providers: ProviderService,
+    @inject(ImageService)
+    protected readonly images: ImageService,
+  ) {
     super();
   }
 
@@ -37,8 +39,8 @@ export class ImageApiImpl extends ImageApi {
     image: string;
     connection: ProviderContainerConnectionIdentifierInfo;
   }): Promise<SimpleImageInfo> {
-    const connection = this.dependencies.providers.getProviderContainerConnection(options.connection);
-    return this.dependencies.images.pull({
+    const connection = this.providers.getProviderContainerConnection(options.connection);
+    return this.images.pull({
       image: options.image,
       connection,
     });
@@ -49,8 +51,8 @@ export class ImageApiImpl extends ImageApi {
     organisation: string;
     connection: ProviderContainerConnectionIdentifierInfo;
   }): Promise<Array<SimpleImageInfo>> {
-    const connection = this.dependencies.providers.getProviderContainerConnection(options.connection);
-    return this.dependencies.images.all({
+    const connection = this.providers.getProviderContainerConnection(options.connection);
+    return this.images.all({
       registry: options.registry,
       organisation: options.organisation,
       connection,
@@ -58,6 +60,6 @@ export class ImageApiImpl extends ImageApi {
   }
 
   override navigateToImageDetails(image: SimpleImageInfo): Promise<void> {
-    return this.dependencies.images.navigateToImageDetails(image);
+    return this.images.navigateToImageDetails(image);
   }
 }

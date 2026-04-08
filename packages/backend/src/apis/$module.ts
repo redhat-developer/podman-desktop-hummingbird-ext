@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (C) 2026 Red Hat, Inc.
+ * Copyright (C) 2025 Red Hat, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,25 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-export interface AsyncInit<IN = never, OUT = void> {
-  init(args: IN): Promise<OUT>;
-}
+import { DialogApiImpl } from './dialog-api-impl';
+import { ContainerModule } from 'inversify';
+import { HummingbirdApiImpl } from './hummingbird-api-impl';
+import { ImageApiImpl } from './image-api-impl';
+import { ProviderApiImpl } from './provider-api-impl';
+import { RoutingApiImpl } from './routing-api-impl';
+
+const module = new ContainerModule(options => {
+  const impls: Array<new (...args: never[]) => unknown> = [
+    DialogApiImpl,
+    HummingbirdApiImpl,
+    ImageApiImpl,
+    ProviderApiImpl,
+    RoutingApiImpl,
+  ];
+
+  impls.forEach(implementation => {
+    options.bind(implementation).toSelf().inSingletonScope();
+  });
+});
+
+export { module };
