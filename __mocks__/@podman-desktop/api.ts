@@ -83,7 +83,9 @@ const plugin = {
   commands: {
     registerCommand: vi.fn(),
   } as unknown as typeof podmanDesktopApi.commands,
-  extensions: {} as unknown as typeof podmanDesktopApi.extensions,
+  extensions: {
+    getExtension: vi.fn(),
+  } as unknown as typeof podmanDesktopApi.extensions,
   provider: {
     getContainerConnections: vi.fn(),
     onDidRegisterContainerConnection: vi.fn(),
@@ -92,6 +94,7 @@ const plugin = {
   } as unknown as typeof podmanDesktopApi.provider,
   containerEngine: {
     saveImage: vi.fn(),
+    listInfos: vi.fn(),
   } as unknown as typeof podmanDesktopApi.containerEngine,
   configuration: {} as unknown as typeof podmanDesktopApi.configuration,
   authentication: {} as unknown as typeof podmanDesktopApi.authentication,
