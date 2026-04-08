@@ -24,7 +24,7 @@
     "@podman-desktop/extension-hummingbird-core-api": "workspace:^",
     "@podman-desktop/api": "^1.26.1",
     "@types/node": "^24",
-    "vite": "^8.0.5",
+    "vite": "^8.0.7",
     "vitest": "^4.0.16",
     "swagger-typescript-api": "^13.6.7"
   },
