@@ -31,8 +31,6 @@ onMount(() => {
 </script>
 
 <div class="flex flex-row w-full h-full">
-    <Navigation/>
-    {@render children()}
+  <Navigation />
+  {@render children()}
 </div>
-
-
