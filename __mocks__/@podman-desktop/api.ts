@@ -29,30 +29,28 @@ function getVersionExtensionAPIVersion(): string {
 const version = getVersionExtensionAPIVersion();
 
 const plugin = {
-  EventEmitter: vi.fn(
-    class<T> implements podmanDesktopApi.EventEmitter<T> {
-      #set: Set<(t: T) => void> = new Set();
+  EventEmitter: class<T> implements podmanDesktopApi.EventEmitter<T> {
+    #set: Set<(t: T) => void> = new Set();
 
-      get event(): podmanDesktopApi.Event<T> {
-        return listener => {
-          this.#set.add(listener);
-          return {
-            dispose: (): void => {
-              this.#set.delete(listener);
-            },
-          };
+    get event(): podmanDesktopApi.Event<T> {
+      return listener => {
+        this.#set.add(listener);
+        return {
+          dispose: (): void => {
+            this.#set.delete(listener);
+          },
         };
-      }
+      };
+    }
 
-      fire(data: T): void {
-        this.#set.forEach(listener => listener(data));
-      }
+    fire(data: T): void {
+      this.#set.forEach(listener => listener(data));
+    }
 
-      dispose(): void {
-        this.#set.clear();
-      }
-    },
-  ),
+    dispose(): void {
+      this.#set.clear();
+    }
+  },
   ProgressLocation: {
     APP_ICON: 1,
     TASK_WIDGET: 2,
@@ -76,13 +74,22 @@ const plugin = {
   window: {
     showQuickPick: vi.fn(),
     withProgress: vi.fn(),
+    showInformationMessage: vi.fn(),
+    showInputBox: vi.fn(),
+    showWarningMessage: vi.fn(),
+    createWebviewPanel: vi.fn(),
   } as unknown as typeof podmanDesktopApi.window,
   navigation: {} as unknown as typeof podmanDesktopApi.navigation,
   commands: {
     registerCommand: vi.fn(),
   } as unknown as typeof podmanDesktopApi.commands,
   extensions: {} as unknown as typeof podmanDesktopApi.extensions,
-  provider: {} as unknown as typeof podmanDesktopApi.provider,
+  provider: {
+    getContainerConnections: vi.fn(),
+    onDidRegisterContainerConnection: vi.fn(),
+    onDidUnregisterContainerConnection: vi.fn(),
+    onDidUpdateContainerConnection: vi.fn(),
+  } as unknown as typeof podmanDesktopApi.provider,
   containerEngine: {
     saveImage: vi.fn(),
   } as unknown as typeof podmanDesktopApi.containerEngine,
