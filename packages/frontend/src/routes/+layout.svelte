@@ -12,7 +12,7 @@ import Navigation from '$lib/navigations/Navigation.svelte';
 let { children } = $props();
 
 const state = await getRouterState();
-if(state.url !== page.url.pathname) {
+if (state.url !== page.url.pathname) {
   // eslint-disable-next-line svelte/no-navigation-without-resolve
   goto(state.url).catch(console.error);
 }
