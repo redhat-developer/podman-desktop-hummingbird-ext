@@ -15,17 +15,6 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-import type { LayoutLoad } from './$types';
-import { hummingbirdAPI } from '/@/api/client';
-import type { ImageSummary } from '@podman-desktop/extension-hummingbird-core-api';
 
 export const prerender = true;
 export const ssr = false;
-
-export const load: LayoutLoad = async (): Promise<{
-  repositories: Promise<Array<ImageSummary>>;
-}> => {
-  return {
-    repositories: hummingbirdAPI.all(),
-  };
-};
