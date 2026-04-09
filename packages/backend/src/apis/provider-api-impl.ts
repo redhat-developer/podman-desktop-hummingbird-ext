@@ -18,18 +18,19 @@
 
 import { ProviderApi } from '@podman-desktop/extension-hummingbird-core-api';
 import type { ProviderContainerConnectionDetailedInfo } from '@podman-desktop/extension-hummingbird-core-api';
-import type { ProviderService } from '../services/provider-service';
+import { ProviderService } from '../services/provider-service';
+import { inject, injectable } from 'inversify';
 
-interface Dependencies {
-  providers: ProviderService;
-}
-
+@injectable()
 export class ProviderApiImpl extends ProviderApi {
-  constructor(protected dependencies: Dependencies) {
+  constructor(
+    @inject(ProviderService)
+    protected readonly providers: ProviderService,
+  ) {
     super();
   }
 
   override async all(): Promise<ProviderContainerConnectionDetailedInfo[]> {
-    return this.dependencies.providers.all();
+    return this.providers.all();
   }
 }

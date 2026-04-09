@@ -29,6 +29,5 @@ export default mergeConfig(viteConfig, {
     alias: {
       '@podman-desktop/api': resolve(WORKSPACE_ROOT, '__mocks__', '@podman-desktop', 'api.ts'),
     },
-    setupFiles: ['./vitest.setup.ts'],
   },
 });

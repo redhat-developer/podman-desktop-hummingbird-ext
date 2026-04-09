@@ -15,22 +15,23 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-import { Uri } from '@podman-desktop/api';
-import type { Disposable, WebviewOptions, WebviewPanel, window } from '@podman-desktop/api';
+import type { Disposable, WebviewOptions, WebviewPanel, ExtensionContext } from '@podman-desktop/api';
+import { window as windowAPI, Uri } from '@podman-desktop/api';
 import { readFile } from 'node:fs/promises';
 import type { AsyncInit } from '../utils/async-init';
+import { inject, injectable, postConstruct, preDestroy } from 'inversify';
+import { ExtensionContextSymbol } from '../inject/symbol';
 
-interface Dependencies {
-  extensionUri: Uri;
-  window: typeof window;
-}
-
+@injectable()
 export class WebviewService implements Disposable, AsyncInit {
   readonly #mediaPath: Uri;
   #panel: WebviewPanel | undefined;
 
-  constructor(protected dependencies: Dependencies) {
-    this.#mediaPath = Uri.joinPath(this.dependencies.extensionUri, 'media');
+  constructor(
+    @inject(ExtensionContextSymbol)
+    protected readonly context: ExtensionContext,
+  ) {
+    this.#mediaPath = Uri.joinPath(context.extensionUri, 'media');
   }
 
   getPanel(): WebviewPanel {
@@ -38,9 +39,10 @@ export class WebviewService implements Disposable, AsyncInit {
     return this.#panel;
   }
 
+  @postConstruct()
   async init(): Promise<void> {
     // register webview
-    const panel = this.dependencies.window.createWebviewPanel('hummingbird', 'Hummingbird', this.getWebviewOptions());
+    const panel = windowAPI.createWebviewPanel('hummingbird', 'Hummingbird', this.getWebviewOptions());
 
     // update html
     const indexHtmlUri = Uri.joinPath(this.#mediaPath, 'index.html');
@@ -92,6 +94,7 @@ export class WebviewService implements Disposable, AsyncInit {
     };
   }
 
+  @preDestroy()
   dispose(): void {
     this.#panel?.dispose();
     this.#panel = undefined;

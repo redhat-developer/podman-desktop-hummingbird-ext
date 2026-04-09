@@ -15,32 +15,33 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-import type { DialogService } from '../services/dialog-service';
+import { DialogService } from '../services/dialog-service';
 import { DialogApi } from '@podman-desktop/extension-hummingbird-core-api';
 import type { InputBoxOptions } from '@podman-desktop/extension-hummingbird-core-api';
+import { inject, injectable } from 'inversify';
 
-interface Dependencies {
-  dialog: DialogService;
-}
-
+@injectable()
 export class DialogApiImpl extends DialogApi {
-  constructor(protected dependencies: Dependencies) {
+  constructor(
+    @inject(DialogService)
+    protected readonly dialog: DialogService,
+  ) {
     super();
   }
 
   override showWarningMessage(message: string, ...items: string[]): Promise<string | undefined> {
-    return this.dependencies.dialog.showWarningMessage(message, ...items);
+    return this.dialog.showWarningMessage(message, ...items);
   }
 
   override showInformationMessage(message: string, ...items: string[]): Promise<string | undefined> {
-    return this.dependencies.dialog.showInformationMessage(message, ...items);
+    return this.dialog.showInformationMessage(message, ...items);
   }
 
   override showInputBox(options: InputBoxOptions): Promise<string | undefined> {
-    return this.dependencies.dialog.showInputBox(options);
+    return this.dialog.showInputBox(options);
   }
 
   override openExternal(href: string): Promise<boolean> {
-    return this.dependencies.dialog.openExternal(href);
+    return this.dialog.openExternal(href);
   }
 }

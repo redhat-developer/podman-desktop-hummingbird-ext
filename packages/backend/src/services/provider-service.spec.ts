@@ -15,17 +15,16 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-import type { provider as Provider, ProviderContainerConnection, Webview } from '@podman-desktop/api';
+import type { ProviderContainerConnection, Webview, WebviewPanel } from '@podman-desktop/api';
+import { provider as providerAPI } from '@podman-desktop/api';
 
 import { expect, test, vi, beforeEach, describe } from 'vitest';
 import { ProviderService } from './provider-service';
+import type { WebviewService } from './webview-service';
 
-const PROVIDER_API_MOCK: typeof Provider = {
-  getContainerConnections: vi.fn(),
-  onDidRegisterContainerConnection: vi.fn(),
-  onDidUnregisterContainerConnection: vi.fn(),
-  onDidUpdateContainerConnection: vi.fn(),
-} as unknown as typeof Provider;
+const WEBVIEW_SERVICE_MOCK: WebviewService = {
+  getPanel: vi.fn(),
+} as unknown as WebviewService;
 
 const WEBVIEW_MOCK: Webview = {
   postMessage: vi.fn(),
@@ -44,18 +43,18 @@ const WSL_PROVIDER_CONNECTION_MOCK: ProviderContainerConnection = {
 beforeEach(() => {
   vi.resetAllMocks();
 
+  vi.mocked(WEBVIEW_SERVICE_MOCK.getPanel).mockReturnValue({
+    webview: WEBVIEW_MOCK,
+  } as unknown as WebviewPanel);
   vi.mocked(WEBVIEW_MOCK.postMessage).mockResolvedValue(true);
 });
 
 function getProviderService(): ProviderService {
-  return new ProviderService({
-    providers: PROVIDER_API_MOCK,
-    webview: WEBVIEW_MOCK,
-  });
+  return new ProviderService(WEBVIEW_SERVICE_MOCK);
 }
 
 test('ProviderService#all should use provider api', async () => {
-  vi.mocked(PROVIDER_API_MOCK.getContainerConnections).mockReturnValue([WSL_PROVIDER_CONNECTION_MOCK]);
+  vi.mocked(providerAPI.getContainerConnections).mockReturnValue([WSL_PROVIDER_CONNECTION_MOCK]);
 
   const providers = getProviderService();
   const connections = providers.all();
@@ -70,7 +69,7 @@ test('ProviderService#all should use provider api', async () => {
 
 describe('init', () => {
   beforeEach(() => {
-    vi.mocked(PROVIDER_API_MOCK.getContainerConnections).mockReturnValue([]);
+    vi.mocked(providerAPI.getContainerConnections).mockReturnValue([]);
   });
 
   test('should register container connections listener', async () => {
@@ -78,13 +77,13 @@ describe('init', () => {
     await providers.init();
 
     // listen to new container connection
-    expect(PROVIDER_API_MOCK.onDidRegisterContainerConnection).toHaveBeenCalledExactlyOnceWith(expect.any(Function));
+    expect(providerAPI.onDidRegisterContainerConnection).toHaveBeenCalledExactlyOnceWith(expect.any(Function));
 
     // listen to remove of container connection
-    expect(PROVIDER_API_MOCK.onDidUnregisterContainerConnection).toHaveBeenCalledExactlyOnceWith(expect.any(Function));
+    expect(providerAPI.onDidUnregisterContainerConnection).toHaveBeenCalledExactlyOnceWith(expect.any(Function));
 
     // listen to update of container connection
-    expect(PROVIDER_API_MOCK.onDidUpdateContainerConnection).toHaveBeenCalledExactlyOnceWith(expect.any(Function));
+    expect(providerAPI.onDidUpdateContainerConnection).toHaveBeenCalledExactlyOnceWith(expect.any(Function));
   });
 
   test('container connection update should notify for events', async () => {
@@ -96,7 +95,7 @@ describe('init', () => {
     // register a listener to the ProviderService
     providers.event(listener);
 
-    const registerListener = vi.mocked(PROVIDER_API_MOCK.onDidRegisterContainerConnection).mock.calls[0][0];
+    const registerListener = vi.mocked(providerAPI.onDidRegisterContainerConnection).mock.calls[0][0];
     registerListener(WSL_PROVIDER_CONNECTION_MOCK);
 
     expect(listener).toHaveBeenCalledOnce();

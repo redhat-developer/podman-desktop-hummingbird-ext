@@ -16,7 +16,8 @@
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
 
-import type { Disposable, provider as Provider, ProviderContainerConnection, Webview } from '@podman-desktop/api';
+import type { Disposable, ProviderContainerConnection } from '@podman-desktop/api';
+import { provider as providerAPI } from '@podman-desktop/api';
 import type { AsyncInit } from '../utils/async-init';
 import { Publisher } from '../utils/publisher';
 import type {
@@ -24,29 +25,31 @@ import type {
   ProviderContainerConnectionIdentifierInfo,
 } from '@podman-desktop/extension-hummingbird-core-api';
 import { Messages } from '@podman-desktop/extension-hummingbird-core-api';
+import { inject, injectable, postConstruct, preDestroy } from 'inversify';
+import { WebviewService } from './webview-service';
 
-interface Dependencies {
-  providers: typeof Provider;
-  webview: Webview;
-}
-
+@injectable()
 export class ProviderService
   extends Publisher<ProviderContainerConnectionDetailedInfo[]>
   implements Disposable, AsyncInit
 {
   #disposables: Disposable[] = [];
 
-  constructor(protected dependencies: Dependencies) {
-    super(dependencies.webview, Messages.UPDATE_PROVIDERS, () => this.all());
+  constructor(
+    @inject(WebviewService)
+    webviewService: WebviewService,
+  ) {
+    super(webviewService, Messages.UPDATE_PROVIDERS, () => this.all());
   }
 
+  @preDestroy()
   override dispose(): void {
     super.dispose();
     this.#disposables.forEach((disposable: Disposable) => disposable.dispose());
   }
 
   getContainerConnections(): ProviderContainerConnection[] {
-    return this.dependencies.providers.getContainerConnections();
+    return providerAPI.getContainerConnections();
   }
 
   public all(): ProviderContainerConnectionDetailedInfo[] {
@@ -78,12 +81,13 @@ export class ProviderService
     return provider;
   }
 
+  @postConstruct()
   async init(): Promise<void> {
     // register
-    this.#disposables.push(this.dependencies.providers.onDidRegisterContainerConnection(this.notify.bind(this)));
+    this.#disposables.push(providerAPI.onDidRegisterContainerConnection(this.notify.bind(this)));
     // unregister
-    this.#disposables.push(this.dependencies.providers.onDidUnregisterContainerConnection(this.notify.bind(this)));
+    this.#disposables.push(providerAPI.onDidUnregisterContainerConnection(this.notify.bind(this)));
     // update container connection (start / stop )
-    this.#disposables.push(this.dependencies.providers.onDidUpdateContainerConnection(this.notify.bind(this)));
+    this.#disposables.push(providerAPI.onDidUpdateContainerConnection(this.notify.bind(this)));
   }
 }

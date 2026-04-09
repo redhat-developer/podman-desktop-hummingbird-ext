@@ -15,29 +15,29 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-import type { InputBoxOptions, window, env, TelemetryLogger } from '@podman-desktop/api';
-import { Uri } from '@podman-desktop/api';
+import type { InputBoxOptions, TelemetryLogger } from '@podman-desktop/api';
+import { window as windowAPI, env as envAPI, Uri } from '@podman-desktop/api';
 import { TelemetryEvents } from '../utils/telemetry-events';
+import { injectable, inject } from 'inversify';
+import { TelemetryLoggerSymbol } from '../inject/symbol';
 
-interface Dependencies {
-  windowApi: typeof window;
-  envApi: typeof env;
-  telemetry: TelemetryLogger;
-}
-
+@injectable()
 export class DialogService {
-  constructor(protected dependencies: Dependencies) {}
+  constructor(
+    @inject(TelemetryLoggerSymbol)
+    protected readonly telemetryLogger: TelemetryLogger,
+  ) {}
 
   showWarningMessage(message: string, ...items: string[]): Promise<string | undefined> {
-    return this.dependencies.windowApi.showWarningMessage(message, ...items);
+    return windowAPI.showWarningMessage(message, ...items);
   }
 
   showInputBox(options: InputBoxOptions): Promise<string | undefined> {
-    return this.dependencies.windowApi.showInputBox(options);
+    return windowAPI.showInputBox(options);
   }
 
   showInformationMessage(message: string, ...items: string[]): Promise<string | undefined> {
-    return this.dependencies.windowApi.showInformationMessage(message, ...items);
+    return windowAPI.showInformationMessage(message, ...items);
   }
 
   async openExternal(href: string): Promise<boolean> {
@@ -45,11 +45,11 @@ export class DialogService {
       href,
     };
     try {
-      const result = await this.dependencies.envApi.openExternal(Uri.parse(href));
+      const result = await envAPI.openExternal(Uri.parse(href));
       telemetry['opened'] = result;
       return result;
     } finally {
-      this.dependencies.telemetry.logUsage(TelemetryEvents.OPEN_EXTERNAL, telemetry);
+      this.telemetryLogger.logUsage(TelemetryEvents.OPEN_EXTERNAL, telemetry);
     }
   }
 }

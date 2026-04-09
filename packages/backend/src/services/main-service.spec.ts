@@ -15,25 +15,10 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-import type {
-  env,
-  ExtensionContext,
-  extensions,
-  process as processApi,
-  commands as commandsApi,
-  configuration as configurationApi,
-  provider,
-  window,
-  cli as cliApi,
-  containerEngine,
-  Webview,
-  WebviewPanel,
-  navigation as navigationApi,
-} from '@podman-desktop/api';
+import type { ExtensionContext } from '@podman-desktop/api';
 
 import { expect, test, vi, beforeEach } from 'vitest';
 import { MainService } from './main-service';
-import { WebviewService } from './webview-service';
 import {
   RpcExtension,
   RoutingApi,
@@ -42,76 +27,45 @@ import {
   HummingbirdApi,
   ProviderApi,
 } from '@podman-desktop/extension-hummingbird-core-api';
-import { RoutingApiImpl } from '../apis/routing-api-impl';
-import { DialogApiImpl } from '../apis/dialog-api-impl';
-import { ImageApiImpl } from '../apis/image-api-impl';
-import { HummingbirdApiImpl } from '../apis/hummingbird-api-impl';
-import { ProviderApiImpl } from '../apis/provider-api-impl';
+import { InversifyBinding } from '../inject/inversify-binding';
+import type { Container } from 'inversify';
 
-// mock message-proxy
-vi.mock(import('@podman-desktop/extension-hummingbird-core-api'));
-// mock services
-vi.mock(import('./webview-service'));
-vi.mock(import('./routing-service'));
-vi.mock(import('./dialog-service'));
-vi.mock(import('./hummingbird-service'));
-vi.mock(import('./image-service'));
-vi.mock(import('./provider-service'));
+// mock inversify binding
+vi.mock(import('../inject/inversify-binding'));
 
 const EXTENSION_CONTEXT_MOCK: ExtensionContext = {} as unknown as ExtensionContext;
-const WINDOW_API_MOCK: typeof window = {} as unknown as typeof window;
-const ENV_API_MOCK: typeof env = {
-  createTelemetryLogger: vi.fn(),
-} as unknown as typeof env;
-const EXTENSION_API_MOCK: typeof extensions = {} as unknown as typeof extensions;
-const PROCESS_API_MOCK: typeof processApi = {} as unknown as typeof processApi;
-const PROVIDERS_API_MOCK: typeof provider = {} as unknown as typeof provider;
-const CLI_API_MOCK: typeof cliApi = {} as unknown as typeof cliApi;
-const COMMANDS_API_MOCK: typeof commandsApi = {} as unknown as typeof commandsApi;
-const CONTAINER_API_MOCK: typeof containerEngine = {} as unknown as typeof containerEngine;
-const CONFIGURATION_API_MOCK: typeof configurationApi = {} as unknown as typeof configurationApi;
-const NAVIGATION_API_MOCK: typeof navigationApi = {} as unknown as typeof navigationApi;
-
-const WEBVIEW_PANEL: WebviewPanel = {
-  webview: {
-    onDidReceiveMessage: vi.fn(),
-  } as unknown as Webview,
-} as unknown as WebviewPanel;
+const INVERSIFY_CONTAINER_MOCK: Container = {
+  getAsync: vi.fn(),
+  get: vi.fn(),
+} as unknown as Container;
+const RPC_EXTENSION_MOCK: RpcExtension = {
+  registerInstance: vi.fn(),
+} as unknown as RpcExtension;
 
 beforeEach(() => {
   vi.resetAllMocks();
-  vi.mocked(WebviewService.prototype.getPanel).mockReturnValue(WEBVIEW_PANEL);
+  vi.mocked(InversifyBinding.prototype.init).mockResolvedValue(INVERSIFY_CONTAINER_MOCK);
+  vi.mocked(INVERSIFY_CONTAINER_MOCK.getAsync).mockImplementation(async identifier => {
+    switch (identifier) {
+      case RpcExtension:
+        return RPC_EXTENSION_MOCK;
+      default:
+        return {};
+    }
+  });
 });
 
 function getMainService(): MainService {
-  return new MainService({
-    extensionContext: EXTENSION_CONTEXT_MOCK,
-    window: WINDOW_API_MOCK,
-    env: ENV_API_MOCK,
-    extensions: EXTENSION_API_MOCK,
-    processApi: PROCESS_API_MOCK,
-    providers: PROVIDERS_API_MOCK,
-    cliApi: CLI_API_MOCK,
-    commandsApi: COMMANDS_API_MOCK,
-    containers: CONTAINER_API_MOCK,
-    configuration: CONFIGURATION_API_MOCK,
-    navigationApi: NAVIGATION_API_MOCK,
-  });
+  return new MainService();
 }
 
 test('ensure init register all APIs', async () => {
   const main = getMainService();
-  await main.init();
+  await main.init(EXTENSION_CONTEXT_MOCK);
 
-  const APIS = new Map<{ CHANNEL: string }, unknown>([
-    [RoutingApi, RoutingApiImpl],
-    [DialogApi, DialogApiImpl],
-    [ImageApi, ImageApiImpl],
-    [HummingbirdApi, HummingbirdApiImpl],
-    [ProviderApi, ProviderApiImpl],
-  ]);
+  const APIS: Array<{ CHANNEL: string }> = [RoutingApi, DialogApi, ImageApi, HummingbirdApi, ProviderApi];
 
-  for (const [key, value] of APIS.entries()) {
-    expect(RpcExtension.prototype.registerInstance).toHaveBeenCalledWith(key, expect.any(value));
+  for (const key of APIS) {
+    expect(RPC_EXTENSION_MOCK.registerInstance).toHaveBeenCalledWith(key, expect.anything());
   }
 });

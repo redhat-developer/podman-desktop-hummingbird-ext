@@ -17,8 +17,13 @@
  ***********************************************************************/
 import { beforeEach, expect, test, vi } from 'vitest';
 import { Publisher } from './publisher';
-import type { Webview } from '@podman-desktop/api';
+import type { Webview, WebviewPanel } from '@podman-desktop/api';
 import { Messages } from '@podman-desktop/extension-hummingbird-core-api';
+import type { WebviewService } from '../services/webview-service';
+
+const WEBVIEW_SERVICE_MOCK: WebviewService = {
+  getPanel: vi.fn(),
+} as unknown as WebviewService;
 
 const WEBVIEW_MOCK: Webview = {
   postMessage: vi.fn(),
@@ -26,12 +31,15 @@ const WEBVIEW_MOCK: Webview = {
 
 beforeEach(() => {
   vi.resetAllMocks();
+  vi.mocked(WEBVIEW_SERVICE_MOCK.getPanel).mockReturnValue({
+    webview: WEBVIEW_MOCK,
+  } as unknown as WebviewPanel);
   vi.mocked(WEBVIEW_MOCK.postMessage).mockResolvedValue(true);
 });
 
 test('ensure publisher properly use getter', async () => {
   const getterMock = vi.fn().mockReturnValue('dummyValue');
-  const publisher = new Publisher<string>(WEBVIEW_MOCK, Messages.TEST_PURPOSE, getterMock);
+  const publisher = new Publisher<string>(WEBVIEW_SERVICE_MOCK, Messages.TEST_PURPOSE, getterMock);
   publisher.notify();
 
   await vi.waitFor(() => {
@@ -45,7 +53,7 @@ test('ensure publisher properly use getter', async () => {
 
 test('publisher should notify all listeners', async () => {
   const getterMock = vi.fn().mockReturnValue('dummyValue');
-  const publisher = new Publisher<string>(WEBVIEW_MOCK, Messages.TEST_PURPOSE, getterMock);
+  const publisher = new Publisher<string>(WEBVIEW_SERVICE_MOCK, Messages.TEST_PURPOSE, getterMock);
 
   const listeners = Array.from({ length: 10 }).map(() => vi.fn());
   listeners.forEach(listener => publisher.event(listener));

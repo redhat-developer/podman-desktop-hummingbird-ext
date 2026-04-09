@@ -16,41 +16,20 @@
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
 import type { ExtensionContext } from '@podman-desktop/api';
-import {
-  containerEngine,
-  extensions,
-  provider,
-  process as processApi,
-  env,
-  window,
-  cli as cliApi,
-  commands as commandsApi,
-  configuration as configurationApi,
-  navigation as navigationApi,
-} from '@podman-desktop/api';
 import { MainService } from './services/main-service';
 
 let main: MainService | undefined;
 
 // Initialize the activation of the extension.
 export async function activate(extensionContext: ExtensionContext): Promise<void> {
-  main = new MainService({
-    window: window,
-    extensionContext,
-    env,
-    extensions,
-    processApi: processApi,
-    providers: provider,
-    cliApi: cliApi,
-    commandsApi: commandsApi,
-    containers: containerEngine,
-    configuration: configurationApi,
-    navigationApi: navigationApi,
-  });
-  return main.init();
+  main = new MainService();
+  return main.init(extensionContext);
 }
 
 export async function deactivate(): Promise<void> {
-  main?.dispose();
-  main = undefined;
+  try {
+    await main?.asyncDispose();
+  } finally {
+    main = undefined;
+  }
 }

@@ -16,21 +16,24 @@
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
 import type { AsyncInit } from '../utils/async-init';
-import type { Disposable, WebviewPanel } from '@podman-desktop/api';
+import type { Disposable } from '@podman-desktop/api';
 import { Publisher } from '../utils/publisher';
 import { Messages } from '@podman-desktop/extension-hummingbird-core-api';
+import { inject, injectable, postConstruct } from 'inversify';
+import { WebviewService } from './webview-service';
 
-interface Dependencies {
-  panel: WebviewPanel;
-}
-
+@injectable()
 export class RoutingService extends Publisher<string | undefined> implements Disposable, AsyncInit {
   #route: string | undefined = undefined;
 
-  constructor(protected dependencies: Dependencies) {
-    super(dependencies.panel.webview, Messages.ROUTE_UPDATE, () => this.#route);
+  constructor(
+    @inject(WebviewService)
+    webviewService: WebviewService,
+  ) {
+    super(webviewService, Messages.ROUTE_UPDATE, () => this.#route);
   }
 
+  @postConstruct()
   async init(): Promise<void> {}
 
   /**
@@ -49,7 +52,7 @@ export class RoutingService extends Publisher<string | undefined> implements Dis
     // notify
     this.notify();
     // reveal
-    this.dependencies.panel.reveal();
+    this.webviewService.getPanel()?.reveal();
   }
 
   override dispose(): void {

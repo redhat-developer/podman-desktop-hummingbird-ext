@@ -15,16 +15,17 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-import type { Event, Webview, Disposable } from '@podman-desktop/api';
+import type { Event, Disposable } from '@podman-desktop/api';
 import { EventEmitter } from '@podman-desktop/api';
 import type { Messages } from '@podman-desktop/extension-hummingbird-core-api';
+import type { WebviewService } from '../services/webview-service';
 
 export class Publisher<T> implements Disposable {
   private readonly _onEvent = new EventEmitter<T>();
   readonly event: Event<T> = this._onEvent.event;
 
   constructor(
-    private webview: Webview,
+    protected webviewService: WebviewService,
     private channel: Messages,
     private getter: () => T,
   ) {
@@ -34,8 +35,9 @@ export class Publisher<T> implements Disposable {
 
   protected postMessage(content: T): void {
     // side-case: the notify function may be called during the constructor so this may be undefined.
-    this?.webview
-      .postMessage({
+    this?.webviewService
+      ?.getPanel()
+      ?.webview?.postMessage({
         id: this.channel,
         body: content,
       })
