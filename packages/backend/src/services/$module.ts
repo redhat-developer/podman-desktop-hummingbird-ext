@@ -24,11 +24,13 @@ import { WebviewService } from './webview-service';
 import { ImageService } from './image-service';
 import { RoutingService } from './routing-service';
 import { ProviderService } from './provider-service';
+import { PodmanService } from './podman-service';
 
 const module = new ContainerModule(options => {
   options.bind<DialogService>(DialogService).toSelf().inSingletonScope();
   options.bind<HummingbirdService>(HummingbirdService).toSelf().inSingletonScope();
   options.bind<ImageService>(ImageService).toSelf().inSingletonScope();
+  options.bind<PodmanService>(PodmanService).toSelf().inSingletonScope();
   options.bind<ProviderService>(ProviderService).toSelf().inSingletonScope();
   options.bind<WebviewService>(WebviewService).toSelf().inSingletonScope();
   options.bind<RoutingService>(RoutingService).toSelf().inSingletonScope();
