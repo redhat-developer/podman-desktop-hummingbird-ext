@@ -26,9 +26,11 @@ import { RoutingService } from './routing-service';
 import { ProviderService } from './provider-service';
 import { GrypeService } from './scanners/grype-service';
 import { PodmanService } from './podman-service';
+import { AlternativeService } from './alternative-service';
 
 const module = new ContainerModule(options => {
   options.bind<GrypeService>(GrypeService).toSelf().inSingletonScope();
+  options.bind<GrypeService>(AlternativeService).toSelf().inSingletonScope();
   options.bind<DialogService>(DialogService).toSelf().inSingletonScope();
   options.bind<HummingbirdService>(HummingbirdService).toSelf().inSingletonScope();
   options.bind<ImageService>(ImageService).toSelf().inSingletonScope();

@@ -95,6 +95,7 @@ const plugin = {
   containerEngine: {
     saveImage: vi.fn(),
     listInfos: vi.fn(),
+    listImages: vi.fn(),
   } as unknown as typeof podmanDesktopApi.containerEngine,
   configuration: {} as unknown as typeof podmanDesktopApi.configuration,
   authentication: {} as unknown as typeof podmanDesktopApi.authentication,

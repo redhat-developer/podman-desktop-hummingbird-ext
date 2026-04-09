@@ -23,6 +23,7 @@ import {
   DialogApi,
   ImageApi,
   ProviderApi,
+  AlternativesApi,
 } from '@podman-desktop/extension-hummingbird-core-api';
 
 import type { AsyncInit } from '../utils/async-init';
@@ -34,6 +35,7 @@ import { ImageApiImpl } from '../apis/image-api-impl';
 import { ProviderApiImpl } from '../apis/provider-api-impl';
 import { InversifyBinding } from '../inject/inversify-binding';
 import type { IAsyncDisposable } from '../utils/async-disposable';
+import { AlternativesApiImpl } from '../apis/alternatives-api-impl';
 
 export class MainService implements IAsyncDisposable, AsyncInit<ExtensionContext> {
   #inversify: InversifyBinding | undefined;
@@ -60,5 +62,6 @@ export class MainService implements IAsyncDisposable, AsyncInit<ExtensionContext
     rpcExtension.registerInstance<HummingbirdApi>(HummingbirdApi, await container.getAsync(HummingbirdApiImpl));
     rpcExtension.registerInstance<DialogApi>(DialogApi, await container.getAsync(DialogApiImpl));
     rpcExtension.registerInstance<ImageApi>(ImageApi, await container.getAsync(ImageApiImpl));
+    rpcExtension.registerInstance<AlternativesApi>(AlternativesApi, await container.getAsync(AlternativesApiImpl));
   }
 }

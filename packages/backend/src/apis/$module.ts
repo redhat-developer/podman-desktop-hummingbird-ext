@@ -21,9 +21,11 @@ import { HummingbirdApiImpl } from './hummingbird-api-impl';
 import { ImageApiImpl } from './image-api-impl';
 import { ProviderApiImpl } from './provider-api-impl';
 import { RoutingApiImpl } from './routing-api-impl';
+import { AlternativesApiImpl } from './alternatives-api-impl';
 
 const module = new ContainerModule(options => {
   const impls: Array<new (...args: never[]) => unknown> = [
+    AlternativesApiImpl,
     DialogApiImpl,
     HummingbirdApiImpl,
     ImageApiImpl,

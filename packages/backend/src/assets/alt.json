@@ -1,0 +1,80 @@
+{
+  "aspnet-runtime": {
+    "alts": ["docker.io/library/microsoft/aspnetcore", "mcr.microsoft.com/dotnet/aspnet"]
+  },
+  "caddy": {
+    "alts": ["docker.io/library/caddy"]
+  },
+  "core-runtime": {
+    "alts": ["mcr.microsoft.com/dotnet/runtime"]
+  },
+  "curl": {
+    "alts": ["docker.io/curlimages/curl", "docker.io/alpine/curl"]
+  },
+  "dotnet-runtime": {
+    "alts": ["mcr.microsoft.com/dotnet/runtime", "docker.io/library/microsoft/dotnet"]
+  },
+  "dotnet-sdk": {
+    "alts": ["mcr.microsoft.com/dotnet/sdk", "docker.io/library/microsoft/dotnet-sdk"]
+  },
+  "git": {
+    "alts": ["docker.io/alpine/git", "docker.io/bitnami/git"]
+  },
+  "go": {
+    "alts": ["docker.io/library/golang"]
+  },
+  "haproxy": {
+    "alts": ["docker.io/library/haproxy"]
+  },
+  "httpd": {
+    "alts": ["docker.io/library/httpd"]
+  },
+  "jq": {
+    "alts": ["docker.io/stedolan/jq", "docker.io/alpine/jq"]
+  },
+  "mariadb": {
+    "alts": ["docker.io/library/mariadb"]
+  },
+  "memcached": {
+    "alts": ["docker.io/library/memcached"]
+  },
+  "minio": {
+    "alts": ["docker.io/minio/minio", "quay.io/minio/minio"]
+  },
+  "minio-client": {
+    "alts": ["docker.io/minio/mc", "quay.io/minio/mc"]
+  },
+  "nginx": {
+    "alts": ["docker.io/library/nginx"]
+  },
+  "nodejs": {
+    "alts": ["docker.io/library/node"]
+  },
+  "openjdk": {
+    "alts": ["docker.io/library/openjdk", "docker.io/library/eclipse-temurin"]
+  },
+  "php": {
+    "alts": ["docker.io/library/php"]
+  },
+  "postgresql": {
+    "alts": ["docker.io/library/postgres"]
+  },
+  "python": {
+    "alts": ["docker.io/library/python"]
+  },
+  "ruby": {
+    "alts": ["docker.io/library/ruby"]
+  },
+  "rust": {
+    "alts": ["docker.io/library/rust"]
+  },
+  "tomcat": {
+    "alts": ["docker.io/library/tomcat"]
+  },
+  "valkey": {
+    "alts": ["docker.io/valkey/valkey"]
+  },
+  "xcaddy": {
+    "alts": ["docker.io/caddy/xcaddy"]
+  }
+}

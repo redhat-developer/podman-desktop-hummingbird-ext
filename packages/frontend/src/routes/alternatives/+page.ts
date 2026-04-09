@@ -15,27 +15,21 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
+import type { PageLoad } from './$types';
+import type { LocalImageAlternative } from '@podman-desktop/extension-hummingbird-core-api';
+import { alternativesAPI } from '/@/api/client';
 
-// constants
-export * from './messages';
+interface Data {
+  alternatives: Promise<Array<LocalImageAlternative>>;
+}
 
-// apis
-export * from './apis/routing-api';
-export * from './apis/hummingbird-api';
-export * from './apis/dialog-api';
-export * from './apis/image-api';
-export * from './apis/provider-api';
-export * from './apis/alternatives-api';
+export const load: PageLoad = async (): Promise<Data> => {
+  const { promise, resolve } = Promise.withResolvers<void>();
+  setTimeout(resolve, 500);
 
-// proxy utils
-export * from './messages/message-proxy';
+  const alternatives = Promise.all([alternativesAPI.getAlternatives(), promise]).then(([alternatives]) => alternatives);
 
-// models
-export * from './models/input-box-options';
-export * from './models/provider-container-connection-identifier-info';
-export * from './models/provider-container-connection-detailed-info';
-export * from './models/simple-image-info';
-export * from './models/local-image-alternative';
-
-// hummingbird project types
-export * from './generated/hummingbird-project';
+  return {
+    alternatives,
+  };
+};

@@ -15,27 +15,20 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
+import { AlternativesApi, LocalImageAlternative } from '@podman-desktop/extension-hummingbird-core-api';
+import { inject, injectable } from 'inversify';
+import { AlternativeService } from '../services/alternative-service';
 
-// constants
-export * from './messages';
+@injectable()
+export class AlternativesApiImpl extends AlternativesApi {
+  constructor(
+    @inject(AlternativeService)
+    protected readonly alternativeService: AlternativeService,
+  ) {
+    super();
+  }
 
-// apis
-export * from './apis/routing-api';
-export * from './apis/hummingbird-api';
-export * from './apis/dialog-api';
-export * from './apis/image-api';
-export * from './apis/provider-api';
-export * from './apis/alternatives-api';
-
-// proxy utils
-export * from './messages/message-proxy';
-
-// models
-export * from './models/input-box-options';
-export * from './models/provider-container-connection-identifier-info';
-export * from './models/provider-container-connection-detailed-info';
-export * from './models/simple-image-info';
-export * from './models/local-image-alternative';
-
-// hummingbird project types
-export * from './generated/hummingbird-project';
+  override async getAlternatives(): Promise<LocalImageAlternative[]> {
+    return this.alternativeService.getAlternatives();
+  }
+}
