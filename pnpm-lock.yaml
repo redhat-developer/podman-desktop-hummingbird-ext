@@ -115,6 +115,9 @@ importers:
       '@podman-desktop/extension-hummingbird-core-api':
         specifier: workspace:^
         version: link:../shared
+      '@podman-desktop/grype-extension-api':
+        specifier: next
+        version: 0.2.0-next.202604090340-606c2e2
       '@podman-desktop/podman-extension-api':
         specifier: ^1.26.1
         version: 1.26.1
@@ -830,6 +833,9 @@ packages:
 
   '@podman-desktop/api@1.26.1':
     resolution: {integrity: sha512-mp6+UgOY/lzAy6ieeyWL9xPEdYiYEig5a5vLbmDFZu7/y/uihvxUQQ75VGZQeq37I2xpDztll95fY/NdypoZ1w==}
+
+  '@podman-desktop/grype-extension-api@0.2.0-next.202604090340-606c2e2':
+    resolution: {integrity: sha512-BNtEd8pH+wIETEirk1h1DLqaUB5gsQJvo7sXxaq/kjhUl+9N4QCbH3nJulfDUmOSOKEhz0WyJegQNy6j7kZXqA==}
 
   '@podman-desktop/podman-extension-api@1.26.1':
     resolution: {integrity: sha512-OUj+f3WVHdU602hn2OKXEbSTSM4VLR4rL1a4qBAWf2H8I/KrKJmPPDopKd0/pUeeSyUfElyfwAERrHHYDVjU7w==}
@@ -4610,6 +4616,10 @@ snapshots:
       typescript: 5.9.3
 
   '@podman-desktop/api@1.26.1': {}
+
+  '@podman-desktop/grype-extension-api@0.2.0-next.202604090340-606c2e2':
+    dependencies:
+      zod: 4.3.6
 
   '@podman-desktop/podman-extension-api@1.26.1':
     dependencies:
