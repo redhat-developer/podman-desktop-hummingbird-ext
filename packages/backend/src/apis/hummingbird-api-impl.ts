@@ -17,7 +17,7 @@
  ***********************************************************************/
 import { HummingbirdApi } from '@podman-desktop/extension-hummingbird-core-api';
 import type { ImageSummary } from '@podman-desktop/extension-hummingbird-core-api';
-import { HummingbirdService } from '../services/hummingbird-service';
+import { HummingbirdService } from '/@/services/hummingbird-service';
 import { inject, injectable } from 'inversify';
 
 @injectable()

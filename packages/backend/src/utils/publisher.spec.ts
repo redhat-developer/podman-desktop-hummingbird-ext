@@ -16,10 +16,10 @@
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
 import { beforeEach, expect, test, vi } from 'vitest';
-import { Publisher } from './publisher';
+import { Publisher } from '/@/utils/publisher';
 import type { Webview, WebviewPanel } from '@podman-desktop/api';
 import { Messages } from '@podman-desktop/extension-hummingbird-core-api';
-import type { WebviewService } from '../services/webview-service';
+import type { WebviewService } from '/@/services/webview-service';
 
 const WEBVIEW_SERVICE_MOCK: WebviewService = {
   getPanel: vi.fn(),

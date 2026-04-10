@@ -20,7 +20,7 @@ import { extensions as extensionsAPI } from '@podman-desktop/api';
 import type { GrypeExtensionApi } from '@podman-desktop/grype-extension-api';
 
 import { beforeEach, vi, test, expect } from 'vitest';
-import { GrypeService } from './grype-service';
+import { GrypeService } from '/@/services/scanners/grype-service';
 
 const GRYPE_EXTENSION_API_MOCK: GrypeExtensionApi = {} as GrypeExtensionApi;
 

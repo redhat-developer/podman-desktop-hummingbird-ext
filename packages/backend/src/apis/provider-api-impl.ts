@@ -18,7 +18,7 @@
 
 import { ProviderApi } from '@podman-desktop/extension-hummingbird-core-api';
 import type { ProviderContainerConnectionDetailedInfo } from '@podman-desktop/extension-hummingbird-core-api';
-import { ProviderService } from '../services/provider-service';
+import { ProviderService } from '/@/services/provider-service';
 import { inject, injectable } from 'inversify';
 
 @injectable()

@@ -18,7 +18,7 @@
 import type { ExtensionContext } from '@podman-desktop/api';
 
 import { expect, test, vi, beforeEach } from 'vitest';
-import { MainService } from './main-service';
+import { MainService } from '/@/services/main-service';
 import {
   RpcExtension,
   RoutingApi,
@@ -27,11 +27,11 @@ import {
   HummingbirdApi,
   ProviderApi,
 } from '@podman-desktop/extension-hummingbird-core-api';
-import { InversifyBinding } from '../inject/inversify-binding';
+import { InversifyBinding } from '/@/inject/inversify-binding';
 import type { Container } from 'inversify';
 
 // mock inversify binding
-vi.mock(import('../inject/inversify-binding'));
+vi.mock(import('/@/inject/inversify-binding'));
 
 const EXTENSION_CONTEXT_MOCK: ExtensionContext = {} as unknown as ExtensionContext;
 const INVERSIFY_CONTAINER_MOCK: Container = {

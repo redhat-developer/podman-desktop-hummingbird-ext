@@ -11,6 +11,7 @@
     "skipLibCheck": true,
     "types": ["node"],
     "paths": {
+      "/@/*": ["./src/*"],
       "/@generated/*": ["./generated/*"]
     },
     "noImplicitOverride": true,

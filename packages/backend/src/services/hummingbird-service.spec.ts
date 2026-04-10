@@ -17,7 +17,7 @@
  ***********************************************************************/
 
 import { expect, test, vi, beforeEach } from 'vitest';
-import { HummingbirdService } from './hummingbird-service';
+import { HummingbirdService } from '/@/services/hummingbird-service';
 import { Api } from '@podman-desktop/extension-hummingbird-core-api';
 import type {
   DirectoryResponse,

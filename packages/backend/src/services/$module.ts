@@ -17,16 +17,16 @@
  ***********************************************************************/
 
 import { ContainerModule } from 'inversify';
-import { DialogService } from './dialog-service';
-import { StartupSymbol } from '../inject/symbol';
-import { HummingbirdService } from './hummingbird-service';
-import { WebviewService } from './webview-service';
-import { ImageService } from './image-service';
-import { RoutingService } from './routing-service';
-import { ProviderService } from './provider-service';
-import { GrypeService } from './scanners/grype-service';
-import { PodmanService } from './podman-service';
-import { AlternativeService } from './alternative-service';
+import { DialogService } from '/@/services/dialog-service';
+import { StartupSymbol } from '/@/inject/symbol';
+import { HummingbirdService } from '/@/services/hummingbird-service';
+import { WebviewService } from '/@/services/webview-service';
+import { ImageService } from '/@/services/image-service';
+import { RoutingService } from '/@/services/routing-service';
+import { ProviderService } from '/@/services/provider-service';
+import { GrypeService } from '/@/services/scanners/grype-service';
+import { PodmanService } from '/@/services/podman-service';
+import { AlternativeService } from '/@/services/alternative-service';
 
 const module = new ContainerModule(options => {
   options.bind<GrypeService>(GrypeService).toSelf().inSingletonScope();

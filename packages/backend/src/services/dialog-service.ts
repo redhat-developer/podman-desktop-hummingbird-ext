@@ -17,9 +17,9 @@
  ***********************************************************************/
 import type { InputBoxOptions, TelemetryLogger } from '@podman-desktop/api';
 import { window as windowAPI, env as envAPI, Uri } from '@podman-desktop/api';
-import { TelemetryEvents } from '../utils/telemetry-events';
+import { TelemetryEvents } from '/@/utils/telemetry-events';
 import { injectable, inject } from 'inversify';
-import { TelemetryLoggerSymbol } from '../inject/symbol';
+import { TelemetryLoggerSymbol } from '/@/inject/symbol';
 
 @injectable()
 export class DialogService {

@@ -25,8 +25,8 @@ import { extensions as extensionsAPI, containerEngine as containerEngineAPI } fr
 import type { PodmanExtensionApi } from '@podman-desktop/podman-extension-api';
 
 import { beforeEach, vi, test, expect, describe } from 'vitest';
-import { PodmanService } from './podman-service';
-import type { ProviderService } from './provider-service';
+import { PodmanService } from '/@/services/podman-service';
+import type { ProviderService } from '/@/services/provider-service';
 
 const PROVIDER_SERVICE_MOCK: ProviderService = {
   getContainerConnections: vi.fn(),
