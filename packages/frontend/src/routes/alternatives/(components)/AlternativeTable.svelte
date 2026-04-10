@@ -4,8 +4,9 @@ import type {
   LocalImageAlternative,
   LocalImageAlternativeReport,
 } from '@podman-desktop/extension-hummingbird-core-api';
-import CVEReductionCell from '$lib/table/CVEReductionCell.svelte';
+import CVEReductionCell from './columns/CVEReductionColumn.svelte';
 import { alternativesAPI } from '/@/api/client';
+import FilesizeReductionColumn from './columns/FilesizeReductionColumn.svelte';
 
 interface AlternativeRow extends LocalImageAlternative {
   name: string;
@@ -46,10 +47,10 @@ const columns = [
     renderMapping: ({ report }): Promise<LocalImageAlternativeReport> => report,
     overflow: true,
   }),
-  new TableColumn<AlternativeRow, string>('Size Reduction', {
+  new TableColumn<AlternativeRow, Promise<LocalImageAlternativeReport>>('Size Reduction', {
     width: '1fr',
-    renderer: TableSimpleColumn,
-    renderMapping: (_: AlternativeRow): string => 'N/A',
+    renderer: FilesizeReductionColumn,
+    renderMapping: ({ report }): Promise<LocalImageAlternativeReport> => report,
     overflow: true,
   }),
 ];

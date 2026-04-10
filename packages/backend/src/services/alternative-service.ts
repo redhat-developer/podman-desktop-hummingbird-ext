@@ -115,9 +115,15 @@ export class AlternativeService implements Disposable {
     alternative,
     localImage,
   }: LocalImageAlternative): Promise<LocalImageAlternativeReport> {
+    // Get all tags
+    const tags = await this.hummingbirdService.getTags(alternative.name);
+    const tag = tags.find(tag => tag.name === alternative.latest_tag);
+
+    if (!tag) throw new Error(`Cannot find tag ${alternative.latest_tag} for ${alternative.name}`);
+
     const [altVulnerabilities, localVulnerabilities] = await this.#queue.enqueue(() =>
       Promise.all([
-        this.hummingbirdService.getVulnerabilitiesSummary(alternative.name, alternative.latest_tag),
+        this.hummingbirdService.getVulnerabilitiesSummary(alternative.name, tag.canonical),
         this.grypeService.api.vulnerability.analyse(
           {
             engineId: localImage.engineId,
@@ -136,9 +142,11 @@ export class AlternativeService implements Disposable {
     return {
       localImage: {
         vulnerabilities: this.grypeService.toVulnerabilitySummary(localVulnerabilities),
+        size: localImage.size,
       },
       alternative: {
         vulnerabilities: altVulnerabilities,
+        size: tag.sizes[localImage.architecture] ?? NaN,
       },
     };
   }
