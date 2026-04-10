@@ -16,6 +16,7 @@
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
 import type { LocalImageAlternative } from '../models/local-image-alternative';
+import type { LocalImageAlternativeReport } from '../models/local-image-alternative-report';
 
 export abstract class AlternativesApi {
   static readonly CHANNEL: string = 'alternatives-api';
@@ -24,4 +25,10 @@ export abstract class AlternativesApi {
    * Get all local images that have Hummingbird alternatives
    */
   abstract getAlternatives(): Promise<Array<LocalImageAlternative>>;
+
+  /**
+   * Given a pair Local Image <-> Hummingbird alternative, get the report
+   * @param alternative
+   */
+  abstract getAlternativeReport(alternative: LocalImageAlternative): Promise<LocalImageAlternativeReport>;
 }

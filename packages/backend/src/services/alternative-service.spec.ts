@@ -16,12 +16,18 @@
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
 
-import { expect, test, vi, beforeEach } from 'vitest';
+import { expect, test, vi, beforeEach, describe } from 'vitest';
 import type { TelemetryLogger, ImageInfo } from '@podman-desktop/api';
 import { containerEngine } from '@podman-desktop/api';
 import { AlternativeService } from './alternative-service';
 import type { HummingbirdService } from './hummingbird-service';
-import type { ImageSummary } from '@podman-desktop/extension-hummingbird-core-api';
+import type {
+  ImageSummary,
+  LocalImageAlternative,
+  VulnerabilitiesSummary,
+} from '@podman-desktop/extension-hummingbird-core-api';
+import type { GrypeService } from './scanners/grype-service';
+import type { grype } from '@podman-desktop/grype-extension-api';
 
 const TELEMETRY_LOGGER_MOCK: TelemetryLogger = {
   logUsage: vi.fn(),
@@ -34,6 +40,7 @@ const TELEMETRY_LOGGER_MOCK: TelemetryLogger = {
 
 const HUMMINGBIRD_SERVICE_MOCK = {
   getImages: vi.fn(),
+  getVulnerabilitiesSummary: vi.fn(),
 } as unknown as HummingbirdService;
 
 const HUMMINGBIRD_IMAGES_MOCK: Array<ImageSummary> = [
@@ -63,13 +70,22 @@ const HUMMINGBIRD_IMAGES_MOCK: Array<ImageSummary> = [
   },
 ];
 
+const GRYPE_SERVICE_MOCK: GrypeService = {
+  api: {
+    vulnerability: {
+      analyse: vi.fn(),
+    },
+  },
+  toVulnerabilitySummary: vi.fn(),
+} as unknown as GrypeService;
+
 beforeEach(() => {
   vi.resetAllMocks();
   vi.mocked(HUMMINGBIRD_SERVICE_MOCK.getImages).mockResolvedValue(HUMMINGBIRD_IMAGES_MOCK);
 });
 
 function getAlternativeService(): AlternativeService {
-  return new AlternativeService(TELEMETRY_LOGGER_MOCK, HUMMINGBIRD_SERVICE_MOCK);
+  return new AlternativeService(TELEMETRY_LOGGER_MOCK, HUMMINGBIRD_SERVICE_MOCK, GRYPE_SERVICE_MOCK);
 }
 
 test('should return alternatives for matching local images', async () => {
@@ -176,4 +192,87 @@ test('should handle multiple images with alternatives', async () => {
   expect(result).toHaveLength(2);
   expect(result[0].localImage.name).toBe('docker.io/library/nginx');
   expect(result[1].localImage.name).toBe('docker.io/library/python');
+});
+
+describe('AlternativeService#getAlternativeReport', () => {
+  test('should return vulnerability report for alternative and local image', async () => {
+    const mockAlternative: LocalImageAlternative = {
+      localImage: {
+        id: 'sha256:abc123',
+        engineId: 'podman',
+        name: 'docker.io/library/nginx',
+        tag: 'latest',
+        size: 1024000,
+        architecture: 'amd64',
+      },
+      alternative: {
+        name: 'nginx',
+        latest_tag: '1.21',
+      } as ImageSummary,
+    };
+
+    const mockAltVulnerabilities: VulnerabilitiesSummary = {
+      critical: 0,
+      high: 1,
+      medium: 2,
+      low: 3,
+      negligible: 0,
+      unknown: 0,
+      total: 6,
+    };
+
+    const mockLocalGrypeDocument: grype.Document = {
+      matches: [
+        {
+          vulnerability: {
+            severity: 'critical',
+          },
+        },
+        {
+          vulnerability: {
+            severity: 'high',
+          },
+        },
+      ],
+    } as grype.Document;
+
+    const mockLocalVulnerabilities: VulnerabilitiesSummary = {
+      critical: 1,
+      high: 1,
+      medium: 0,
+      low: 0,
+      negligible: 0,
+      unknown: 0,
+      total: 2,
+    };
+
+    vi.mocked(HUMMINGBIRD_SERVICE_MOCK.getVulnerabilitiesSummary).mockResolvedValue(mockAltVulnerabilities);
+    vi.mocked(GRYPE_SERVICE_MOCK.api.vulnerability.analyse).mockResolvedValue(mockLocalGrypeDocument);
+    vi.mocked(GRYPE_SERVICE_MOCK.toVulnerabilitySummary).mockReturnValue(mockLocalVulnerabilities);
+
+    const service = getAlternativeService();
+    const result = await service.getAlternativeReport(mockAlternative);
+
+    expect(result).toStrictEqual({
+      localImage: {
+        vulnerabilities: mockLocalVulnerabilities,
+      },
+      alternative: {
+        vulnerabilities: mockAltVulnerabilities,
+      },
+    });
+
+    expect(HUMMINGBIRD_SERVICE_MOCK.getVulnerabilitiesSummary).toHaveBeenCalledWith('nginx', '1.21');
+    expect(GRYPE_SERVICE_MOCK.api.vulnerability.analyse).toHaveBeenCalledWith(
+      {
+        engineId: 'podman',
+        Id: 'sha256:abc123',
+      },
+      expect.objectContaining({
+        task: {
+          title: 'Scanning docker.io/library/nginx:latest',
+        },
+      }),
+    );
+  });
 });

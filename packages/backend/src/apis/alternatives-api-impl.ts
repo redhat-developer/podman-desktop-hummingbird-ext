@@ -15,7 +15,11 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-import { AlternativesApi, LocalImageAlternative } from '@podman-desktop/extension-hummingbird-core-api';
+import {
+  AlternativesApi,
+  LocalImageAlternative,
+  LocalImageAlternativeReport,
+} from '@podman-desktop/extension-hummingbird-core-api';
 import { inject, injectable } from 'inversify';
 import { AlternativeService } from '../services/alternative-service';
 
@@ -30,5 +34,9 @@ export class AlternativesApiImpl extends AlternativesApi {
 
   override async getAlternatives(): Promise<LocalImageAlternative[]> {
     return this.alternativeService.getAlternatives();
+  }
+
+  override getAlternativeReport(alternative: LocalImageAlternative): Promise<LocalImageAlternativeReport> {
+    return this.alternativeService.getAlternativeReport(alternative);
   }
 }

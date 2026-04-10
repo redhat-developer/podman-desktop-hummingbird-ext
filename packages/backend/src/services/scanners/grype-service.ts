@@ -18,14 +18,15 @@
 import type { Disposable } from '@podman-desktop/api';
 import { extensions as extensionsAPI } from '@podman-desktop/api';
 import type { AsyncInit } from '/@/utils/async-init';
-import type { GrypeExtensionApi } from '@podman-desktop/grype-extension-api';
+import type { GrypeExtensionApi, grype } from '@podman-desktop/grype-extension-api';
 import { injectable } from 'inversify';
+import { VulnerabilitiesSummary } from '@podman-desktop/extension-hummingbird-core-api';
 
 @injectable()
 export class GrypeService implements AsyncInit, Disposable {
   #api: GrypeExtensionApi | undefined;
 
-  get api(): GrypeExtensionApi | undefined {
+  get api(): GrypeExtensionApi {
     if (this.#api) {
       return this.#api;
     }
@@ -35,6 +36,42 @@ export class GrypeService implements AsyncInit, Disposable {
 
   dispose(): void {
     this.#api = undefined;
+  }
+
+  public toVulnerabilitySummary(document: grype.Document): VulnerabilitiesSummary {
+    return document.matches.reduce(
+      (accumulator, match) => {
+        switch (match.vulnerability.severity) {
+          case 'high':
+            accumulator.high++;
+            break;
+          case 'critical':
+            accumulator.critical++;
+            break;
+          case 'medium':
+            accumulator.medium++;
+            break;
+          case 'low':
+            accumulator.low++;
+            break;
+          default:
+            accumulator.unknown++;
+            break;
+        }
+        accumulator.total++;
+
+        return accumulator;
+      },
+      {
+        critical: 0,
+        high: 0,
+        low: 0,
+        medium: 0,
+        negligible: 0,
+        total: 0,
+        unknown: 0,
+      } as VulnerabilitiesSummary,
+    );
   }
 
   protected getGrypeAPI(): GrypeExtensionApi {
