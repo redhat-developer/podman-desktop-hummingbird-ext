@@ -22,6 +22,7 @@ import { ImageApiImpl } from '/@/apis/image-api-impl';
 import { ProviderApiImpl } from '/@/apis/provider-api-impl';
 import { RoutingApiImpl } from '/@/apis/routing-api-impl';
 import { AlternativesApiImpl } from '/@/apis/alternatives-api-impl';
+import { ContainerApiImpl } from '/@/apis/container-api-impl';
 
 const module = new ContainerModule(options => {
   const impls: Array<new (...args: never[]) => unknown> = [
@@ -31,6 +32,7 @@ const module = new ContainerModule(options => {
     ImageApiImpl,
     ProviderApiImpl,
     RoutingApiImpl,
+    ContainerApiImpl,
   ];
 
   impls.forEach(implementation => {

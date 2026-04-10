@@ -1,4 +1,4 @@
-import type { ProviderContainerConnection, Disposable, ContainerInspectInfo } from '@podman-desktop/api';
+import type { ProviderContainerConnection, Disposable } from '@podman-desktop/api';
 import { extensions as extensionsAPI, containerEngine as containerEngineAPI } from '@podman-desktop/api';
 import type { PodmanExtensionApi } from '@podman-desktop/podman-extension-api';
 import { PODMAN_EXTENSION_ID } from '/@/utils/constants';
@@ -54,23 +54,24 @@ export class PodmanService implements Disposable {
   }
 
   public async clone(
-    container: ContainerInspectInfo,
+    engineId: string,
+    containerId: string,
     alternative: string,
+    options: {
+      name: string;
+    },
   ): Promise<{
     engineId: string;
     Id: string;
   }> {
-    const connection = await this.getRunningProviderContainerConnectionByEngineId(container.engineId);
+    const connection = await this.getRunningProviderContainerConnectionByEngineId(engineId);
 
     try {
-      const result = await this.podman.exec(
-        ['container', 'clone', container.Id, `${container.Name}-clone`, alternative, '--run'],
-        {
-          connection: connection,
-        },
-      );
+      const result = await this.podman.exec(['container', 'clone', containerId, options.name, alternative, '--run'], {
+        connection: connection,
+      });
       return {
-        engineId: container.engineId,
+        engineId: engineId,
         Id: result.stdout.trim(),
       };
     } catch (err: unknown) {
