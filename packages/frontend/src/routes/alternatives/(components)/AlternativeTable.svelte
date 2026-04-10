@@ -1,10 +1,16 @@
 <script lang="ts">
 import { TableColumn, Table, TableSimpleColumn, TableRow } from '@podman-desktop/ui-svelte';
-import type { LocalImageAlternative } from '@podman-desktop/extension-hummingbird-core-api';
+import type {
+  LocalImageAlternative,
+  LocalImageAlternativeReport,
+} from '@podman-desktop/extension-hummingbird-core-api';
+import CVEReductionCell from '$lib/table/CVEReductionCell.svelte';
+import { alternativesAPI } from '/@/api/client';
 
 interface AlternativeRow extends LocalImageAlternative {
   name: string;
   selected?: boolean;
+  report: Promise<LocalImageAlternativeReport>;
 }
 
 interface Props {
@@ -17,6 +23,7 @@ let data: AlternativeRow[] = $derived(
   alternatives.map(alt => ({
     ...alt,
     name: alt.localImage.name,
+    report: alternativesAPI.getAlternativeReport(alt),
   })),
 );
 
@@ -30,13 +37,13 @@ const columns = [
   new TableColumn<AlternativeRow, string>('Alternative', {
     width: '1.5fr',
     renderer: TableSimpleColumn,
-    renderMapping: (row: AlternativeRow): string => row.localImage.name,
+    renderMapping: (row: AlternativeRow): string => row.alternative.name,
     overflow: true,
   }),
-  new TableColumn<AlternativeRow, string>('CVEs', {
+  new TableColumn<AlternativeRow, Promise<LocalImageAlternativeReport>>('CVEs', {
     width: '1fr',
-    renderer: TableSimpleColumn,
-    renderMapping: (_: AlternativeRow): string => 'N/A',
+    renderer: CVEReductionCell,
+    renderMapping: ({ report }): Promise<LocalImageAlternativeReport> => report,
     overflow: true,
   }),
   new TableColumn<AlternativeRow, string>('Size Reduction', {

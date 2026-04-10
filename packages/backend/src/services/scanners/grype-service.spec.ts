@@ -17,9 +17,9 @@
  ***********************************************************************/
 import type { Extension } from '@podman-desktop/api';
 import { extensions as extensionsAPI } from '@podman-desktop/api';
-import type { GrypeExtensionApi } from '@podman-desktop/grype-extension-api';
+import type { GrypeExtensionApi, grype } from '@podman-desktop/grype-extension-api';
 
-import { beforeEach, vi, test, expect } from 'vitest';
+import { beforeEach, vi, test, expect, describe } from 'vitest';
 import { GrypeService } from '/@/services/scanners/grype-service';
 
 const GRYPE_EXTENSION_API_MOCK: GrypeExtensionApi = {} as GrypeExtensionApi;
@@ -52,4 +52,56 @@ test('should throw error when extension is undefined', () => {
   const service = getGrypeService();
 
   expect(() => service['getGrypeAPI']()).toThrowError('cannot find the grype extension');
+});
+
+describe('GrypeService#toVulnerabilitySummary', () => {
+  test('should count vulnerabilities by severity', () => {
+    const mockDocument: grype.Document = {
+      matches: [
+        {
+          vulnerability: {
+            severity: 'critical',
+          },
+        },
+        {
+          vulnerability: {
+            severity: 'high',
+          },
+        },
+        {
+          vulnerability: {
+            severity: 'high',
+          },
+        },
+        {
+          vulnerability: {
+            severity: 'medium',
+          },
+        },
+        {
+          vulnerability: {
+            severity: 'low',
+          },
+        },
+        {
+          vulnerability: {
+            severity: 'unknown',
+          },
+        },
+      ],
+    } as grype.Document;
+
+    const service = getGrypeService();
+    const result = service.toVulnerabilitySummary(mockDocument);
+
+    expect(result).toStrictEqual({
+      critical: 1,
+      high: 2,
+      medium: 1,
+      low: 1,
+      negligible: 0,
+      unknown: 1,
+      total: 6,
+    });
+  });
 });

@@ -10,11 +10,11 @@ module.exports = {
   darkMode: 'class',
   theme: {
     fontSize: {
-      'xs': '10px',
-      'sm': '11px',
-      'base': '12px',
-      'lg': '14px',
-      'xl': '16px',
+      xs: '10px',
+      sm: '11px',
+      base: '12px',
+      lg: '14px',
+      xl: '16px',
       '2xl': '18px',
       '3xl': '20px',
       '4xl': '24px',
@@ -22,29 +22,25 @@ module.exports = {
       '6xl': '36px',
     },
     colors: {
-      'charcoal': {
+      charcoal: {
         600: '#27272a',
         800: '#18181b',
       },
-      'gray': {
+      gray: {
         400: '#d1d1d1',
         700: '#aaabac',
         900: '#818181',
       },
-      'purple': {
+      purple: {
         400: '#ad8bfa',
         500: '#8b5cf6',
       },
-      'sky': {
+      sky: {
         400: '#51a2da',
       },
-      'green': {
-        600: '#2b7037',
-      },
-      'red': {
-        600: '#e5421d',
-      },
-      'amber': {
+      green: tailwindColors.green,
+      red: tailwindColors.red,
+      amber: {
         600: tailwindColors.amber[600],
       },
       transparent: 'transparent',
@@ -52,13 +48,11 @@ module.exports = {
       white: '#fff',
       // The remaining colors below are not part of our palette and are only here
       // to maintain existing code. No new use.
-      'violet': {
+      violet: {
         500: tailwindColors.violet[500],
         600: tailwindColors.violet[600],
       },
     },
   },
-  plugins: [
-    tailwindTypography
-  ],
+  plugins: [tailwindTypography],
 };

@@ -116,8 +116,8 @@ importers:
         specifier: workspace:^
         version: link:../shared
       '@podman-desktop/grype-extension-api':
-        specifier: ^0.1.0-next.202603121655-ba645db
-        version: 0.1.0-next.202603121655-ba645db
+        specifier: ^0.1.0-next.202604011405-f6be4bb
+        version: 0.1.0-next.202604011405-f6be4bb
       '@podman-desktop/podman-extension-api':
         specifier: ^1.26.1
         version: 1.26.1
@@ -207,7 +207,7 @@ importers:
         version: 5.55.2
       svelte-check:
         specifier: ^4.4.6
-        version: 4.4.6(picomatch@4.0.4)(svelte@5.55.2)(typescript@5.9.3)
+        version: 4.4.6(picomatch@4.0.3)(svelte@5.55.2)(typescript@5.9.3)
       svelte-fa:
         specifier: ^4.0.4
         version: 4.0.4(svelte@5.55.2)
@@ -825,8 +825,8 @@ packages:
   '@podman-desktop/api@1.26.1':
     resolution: {integrity: sha512-mp6+UgOY/lzAy6ieeyWL9xPEdYiYEig5a5vLbmDFZu7/y/uihvxUQQ75VGZQeq37I2xpDztll95fY/NdypoZ1w==}
 
-  '@podman-desktop/grype-extension-api@0.1.0-next.202603121655-ba645db':
-    resolution: {integrity: sha512-4JR4pOv9I1jHIHh5bXO8YSsDQ6IJAmbv8QBQ9lakyG9ZVwebPqyjuAgSKrPs3kjBlxUrsUCXBL7A0UsnjJuRBA==}
+  '@podman-desktop/grype-extension-api@0.1.0-next.202604011405-f6be4bb':
+    resolution: {integrity: sha512-xQsDP8zDUCwjg7TFA/ZYqmS4pwA3lHKNRq7b01lBWaFwYokXRZCdN5+bvIt/Mxt58/wHzFN8ja+drXRHOk3kAw==}
 
   '@podman-desktop/podman-extension-api@1.26.1':
     resolution: {integrity: sha512-OUj+f3WVHdU602hn2OKXEbSTSM4VLR4rL1a4qBAWf2H8I/KrKJmPPDopKd0/pUeeSyUfElyfwAERrHHYDVjU7w==}
@@ -4595,7 +4595,7 @@ snapshots:
 
   '@podman-desktop/api@1.26.1': {}
 
-  '@podman-desktop/grype-extension-api@0.1.0-next.202603121655-ba645db':
+  '@podman-desktop/grype-extension-api@0.1.0-next.202604011405-f6be4bb':
     dependencies:
       zod: 4.3.6
 
@@ -7435,11 +7435,11 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  svelte-check@4.4.6(picomatch@4.0.4)(svelte@5.55.2)(typescript@5.9.3):
+  svelte-check@4.4.6(picomatch@4.0.3)(svelte@5.55.2)(typescript@5.9.3):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
       chokidar: 4.0.3
-      fdir: 6.5.0(picomatch@4.0.4)
+      fdir: 6.5.0(picomatch@4.0.3)
       picocolors: 1.1.1
       sade: 1.8.1
       svelte: 5.55.2
