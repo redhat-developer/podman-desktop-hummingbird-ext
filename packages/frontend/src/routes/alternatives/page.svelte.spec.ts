@@ -89,7 +89,7 @@ describe('loading', () => {
 
 describe('data', () => {
   test('should display alternatives when promise resolves', async () => {
-    const { queryAllByText } = render(Page, {
+    const { getByLabelText } = render(Page, {
       data: {
         alternatives: Promise.resolve(ALTERNATIVES),
       },
@@ -97,7 +97,7 @@ describe('data', () => {
     });
 
     await vi.waitFor(() => {
-      expect(queryAllByText('nginx').length).toBeGreaterThan(0);
+      expect(getByLabelText('nginx')).toBeInTheDocument();
     });
   });
 
