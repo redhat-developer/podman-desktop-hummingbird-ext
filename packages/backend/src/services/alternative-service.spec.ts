@@ -24,6 +24,7 @@ import type { HummingbirdService } from './hummingbird-service';
 import type {
   ImageSummary,
   LocalImageAlternative,
+  Tag,
   VulnerabilitiesSummary,
 } from '@podman-desktop/extension-hummingbird-core-api';
 import type { GrypeService } from './scanners/grype-service';
@@ -40,6 +41,7 @@ const TELEMETRY_LOGGER_MOCK: TelemetryLogger = {
 
 const HUMMINGBIRD_SERVICE_MOCK = {
   getImages: vi.fn(),
+  getTags: vi.fn(),
   getVulnerabilitiesSummary: vi.fn(),
 } as unknown as HummingbirdService;
 
@@ -195,7 +197,7 @@ test('should handle multiple images with alternatives', async () => {
 });
 
 describe('AlternativeService#getAlternativeReport', () => {
-  test('should return vulnerability report for alternative and local image', async () => {
+  test('should return vulnerability and size report for alternative and local image', async () => {
     const mockAlternative: LocalImageAlternative = {
       localImage: {
         id: 'sha256:abc123',
@@ -210,6 +212,17 @@ describe('AlternativeService#getAlternativeReport', () => {
         latest_tag: '1.21',
       } as ImageSummary,
     };
+
+    const mockTags: Array<Tag> = [
+      {
+        name: '1.21',
+        canonical: 'sha256:tag123',
+        sizes: {
+          amd64: 512000,
+          arm64: 524000,
+        },
+      } as unknown as Tag,
+    ];
 
     const mockAltVulnerabilities: VulnerabilitiesSummary = {
       critical: 0,
@@ -246,6 +259,7 @@ describe('AlternativeService#getAlternativeReport', () => {
       total: 2,
     };
 
+    vi.mocked(HUMMINGBIRD_SERVICE_MOCK.getTags).mockResolvedValue(mockTags);
     vi.mocked(HUMMINGBIRD_SERVICE_MOCK.getVulnerabilitiesSummary).mockResolvedValue(mockAltVulnerabilities);
     vi.mocked(GRYPE_SERVICE_MOCK.api.vulnerability.analyse).mockResolvedValue(mockLocalGrypeDocument);
     vi.mocked(GRYPE_SERVICE_MOCK.toVulnerabilitySummary).mockReturnValue(mockLocalVulnerabilities);
@@ -256,13 +270,16 @@ describe('AlternativeService#getAlternativeReport', () => {
     expect(result).toStrictEqual({
       localImage: {
         vulnerabilities: mockLocalVulnerabilities,
+        size: 1024000,
       },
       alternative: {
         vulnerabilities: mockAltVulnerabilities,
+        size: 512000,
       },
     });
 
-    expect(HUMMINGBIRD_SERVICE_MOCK.getVulnerabilitiesSummary).toHaveBeenCalledWith('nginx', '1.21');
+    expect(HUMMINGBIRD_SERVICE_MOCK.getTags).toHaveBeenCalledWith('nginx');
+    expect(HUMMINGBIRD_SERVICE_MOCK.getVulnerabilitiesSummary).toHaveBeenCalledWith('nginx', 'sha256:tag123');
     expect(GRYPE_SERVICE_MOCK.api.vulnerability.analyse).toHaveBeenCalledWith(
       {
         engineId: 'podman',
@@ -274,5 +291,86 @@ describe('AlternativeService#getAlternativeReport', () => {
         },
       }),
     );
+  });
+
+  test('should return NaN for alternative size when architecture not found', async () => {
+    const mockAlternative: LocalImageAlternative = {
+      localImage: {
+        id: 'sha256:abc123',
+        engineId: 'podman',
+        name: 'docker.io/library/nginx',
+        tag: 'latest',
+        size: 1024000,
+        architecture: 's390x',
+      },
+      alternative: {
+        name: 'nginx',
+        latest_tag: '1.21',
+      } as ImageSummary,
+    };
+
+    const mockTags = [
+      {
+        name: '1.21',
+        canonical: 'sha256:tag123',
+        sizes: {
+          amd64: 512000,
+          arm64: 524000,
+        },
+      } as unknown as Tag,
+    ];
+
+    const mockAltVulnerabilities: VulnerabilitiesSummary = {
+      critical: 0,
+      high: 0,
+      medium: 0,
+      low: 0,
+      negligible: 0,
+      unknown: 0,
+      total: 0,
+    };
+
+    const mockLocalVulnerabilities: VulnerabilitiesSummary = {
+      critical: 0,
+      high: 0,
+      medium: 0,
+      low: 0,
+      negligible: 0,
+      unknown: 0,
+      total: 0,
+    };
+
+    vi.mocked(HUMMINGBIRD_SERVICE_MOCK.getTags).mockResolvedValue(mockTags);
+    vi.mocked(HUMMINGBIRD_SERVICE_MOCK.getVulnerabilitiesSummary).mockResolvedValue(mockAltVulnerabilities);
+    vi.mocked(GRYPE_SERVICE_MOCK.api.vulnerability.analyse).mockResolvedValue({ matches: [] } as grype.Document);
+    vi.mocked(GRYPE_SERVICE_MOCK.toVulnerabilitySummary).mockReturnValue(mockLocalVulnerabilities);
+
+    const service = getAlternativeService();
+    const result = await service.getAlternativeReport(mockAlternative);
+
+    expect(result.alternative.size).toBeNaN();
+  });
+
+  test('should throw error when tag not found', async () => {
+    const mockAlternative: LocalImageAlternative = {
+      localImage: {
+        id: 'sha256:abc123',
+        engineId: 'podman',
+        name: 'docker.io/library/nginx',
+        tag: 'latest',
+        size: 1024000,
+        architecture: 'amd64',
+      },
+      alternative: {
+        name: 'nginx',
+        latest_tag: '1.21',
+      } as ImageSummary,
+    };
+
+    vi.mocked(HUMMINGBIRD_SERVICE_MOCK.getTags).mockResolvedValue([]);
+
+    const service = getAlternativeService();
+
+    await expect(service.getAlternativeReport(mockAlternative)).rejects.toThrowError('Cannot find tag 1.21 for nginx');
   });
 });

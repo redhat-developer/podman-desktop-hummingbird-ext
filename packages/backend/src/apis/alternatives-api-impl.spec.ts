@@ -46,9 +46,11 @@ const LOCAL_IMAGE_ALT_MOCK: LocalImageAlternative = {
 
 const LOCAL_IMAGE_ALT_REPORT_MOCK: LocalImageAlternativeReport = {
   localImage: {
+    size: 0,
     vulnerabilities: {} as VulnerabilitiesSummary,
   },
   alternative: {
+    size: 0,
     vulnerabilities: {} as VulnerabilitiesSummary,
   },
 };

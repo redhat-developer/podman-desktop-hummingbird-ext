@@ -27,6 +27,7 @@ import type { LocalImageAlternativeReport } from '@podman-desktop/extension-humm
 test('should display local and alternative vulnerability counts', () => {
   const report: LocalImageAlternativeReport = {
     localImage: {
+      size: 0,
       vulnerabilities: {
         critical: 5,
         high: 10,
@@ -38,6 +39,7 @@ test('should display local and alternative vulnerability counts', () => {
       },
     },
     alternative: {
+      size: 0,
       vulnerabilities: {
         critical: 1,
         high: 2,
@@ -59,6 +61,7 @@ test('should display local and alternative vulnerability counts', () => {
 test('should display CVE reduction count and percentage', () => {
   const report: LocalImageAlternativeReport = {
     localImage: {
+      size: 0,
       vulnerabilities: {
         critical: 0,
         high: 0,
@@ -70,6 +73,7 @@ test('should display CVE reduction count and percentage', () => {
       },
     },
     alternative: {
+      size: 0,
       vulnerabilities: {
         critical: 0,
         high: 0,
@@ -91,6 +95,7 @@ test('should display CVE reduction count and percentage', () => {
 test('should display "No change" when reduction is zero', () => {
   const report: LocalImageAlternativeReport = {
     localImage: {
+      size: 0,
       vulnerabilities: {
         critical: 0,
         high: 0,
@@ -102,6 +107,7 @@ test('should display "No change" when reduction is zero', () => {
       },
     },
     alternative: {
+      size: 0,
       vulnerabilities: {
         critical: 0,
         high: 0,
@@ -122,6 +128,7 @@ test('should display "No change" when reduction is zero', () => {
 test('should round reduction percentage', () => {
   const report: LocalImageAlternativeReport = {
     localImage: {
+      size: 0,
       vulnerabilities: {
         critical: 0,
         high: 0,
@@ -133,6 +140,7 @@ test('should round reduction percentage', () => {
       },
     },
     alternative: {
+      size: 0,
       vulnerabilities: {
         critical: 0,
         high: 0,

@@ -21,13 +21,13 @@ import '@testing-library/jest-dom/vitest';
 import { render, screen } from '@testing-library/svelte';
 import { expect, test, vi } from 'vitest';
 
-import CVEReductionCell from './CVEReductionCell.svelte';
+import FilesizeReductionColumn from './FilesizeReductionColumn.svelte';
 import type { LocalImageAlternativeReport } from '@podman-desktop/extension-hummingbird-core-api';
 
 test('should display skeleton when promise is pending', () => {
   const { promise } = Promise.withResolvers<LocalImageAlternativeReport>();
 
-  render(CVEReductionCell, { object: promise });
+  render(FilesizeReductionColumn, { object: promise });
 
   const skeleton = screen.getByLabelText('CVEs');
   expect(skeleton).toBeInTheDocument();
@@ -37,42 +37,44 @@ test('should display skeleton when promise is pending', () => {
 test('should display report when promise resolves', async () => {
   const report: LocalImageAlternativeReport = {
     localImage: {
+      size: 100_000_000, // 100 MB
       vulnerabilities: {
-        critical: 5,
-        high: 10,
-        medium: 20,
-        low: 15,
+        critical: 0,
+        high: 0,
+        medium: 0,
+        low: 0,
         negligible: 0,
         unknown: 0,
-        total: 50,
+        total: 0,
       },
     },
     alternative: {
+      size: 50_000_000, // 50 MB
       vulnerabilities: {
-        critical: 1,
-        high: 2,
-        medium: 5,
-        low: 5,
+        critical: 0,
+        high: 0,
+        medium: 0,
+        low: 0,
         negligible: 0,
         unknown: 0,
-        total: 13,
+        total: 0,
       },
     },
   };
 
-  render(CVEReductionCell, { object: Promise.resolve(report) });
+  render(FilesizeReductionColumn, { object: Promise.resolve(report) });
 
   await vi.waitFor(() => {
-    expect(screen.getByText('50')).toBeInTheDocument();
-    expect(screen.getByText('13')).toBeInTheDocument();
-    expect(screen.getByText('37 CVEs eliminated')).toBeInTheDocument();
+    expect(screen.getByText('100 MB')).toBeInTheDocument();
+    expect(screen.getByText('50 MB')).toBeInTheDocument();
+    expect(screen.getByText('-50% smaller')).toBeInTheDocument();
   });
 });
 
 test('should display error message when promise rejects', async () => {
   const error = new Error('Failed to scan image');
 
-  render(CVEReductionCell, { object: Promise.reject(error) });
+  render(FilesizeReductionColumn, { object: Promise.reject(error) });
 
   await vi.waitFor(() => {
     expect(screen.getByText(/Error scanning/)).toBeInTheDocument();
