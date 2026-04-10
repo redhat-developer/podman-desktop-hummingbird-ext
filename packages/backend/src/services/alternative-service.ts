@@ -54,7 +54,7 @@ export class AlternativeService {
 
         // https://github.com/podman-desktop/podman-desktop/issues/16967
         if (!('Arch' in image) || typeof image.Arch !== 'string') {
-          console.warn('missing arch on image');
+          console.warn('missing arch on image', image);
           continue;
         }
 
