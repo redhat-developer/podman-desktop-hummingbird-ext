@@ -3,6 +3,7 @@ import { faHouse } from '@fortawesome/free-solid-svg-icons';
 import { SettingsNavItem } from '@podman-desktop/ui-svelte';
 import { resolve } from '$app/paths';
 import { page } from '$app/state';
+import ImageIcon from '$lib/icons/ImageIcon.svelte';
 </script>
 
 <nav
@@ -22,5 +23,11 @@ import { page } from '$app/state';
     <div class="pl-[1px]">
       <SettingsNavItem title="Catalog" icon={faHouse} selected={page.url.pathname === '/'} href={resolve('/')} />
     </div>
+
+    <SettingsNavItem
+      title="Alternatives"
+      icon={ImageIcon}
+      selected={page.url.pathname === '/alternatives'}
+      href={resolve('/alternatives')} />
   </div>
 </nav>

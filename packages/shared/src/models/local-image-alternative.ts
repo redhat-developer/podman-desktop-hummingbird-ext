@@ -16,26 +16,18 @@
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
 
-// constants
-export * from './messages';
+import type { ImageSummary } from '../generated/hummingbird-project';
 
-// apis
-export * from './apis/routing-api';
-export * from './apis/hummingbird-api';
-export * from './apis/dialog-api';
-export * from './apis/image-api';
-export * from './apis/provider-api';
-export * from './apis/alternatives-api';
+export interface LocalImage {
+  id: string;
+  engineId: string;
+  name: string;
+  tag: string;
+  size: number;
+  architecture: string;
+}
 
-// proxy utils
-export * from './messages/message-proxy';
-
-// models
-export * from './models/input-box-options';
-export * from './models/provider-container-connection-identifier-info';
-export * from './models/provider-container-connection-detailed-info';
-export * from './models/simple-image-info';
-export * from './models/local-image-alternative';
-
-// hummingbird project types
-export * from './generated/hummingbird-project';
+export interface LocalImageAlternative {
+  localImage: LocalImage;
+  alternative: ImageSummary;
+}

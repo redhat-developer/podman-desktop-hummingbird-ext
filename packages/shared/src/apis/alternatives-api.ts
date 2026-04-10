@@ -15,27 +15,13 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
+import type { LocalImageAlternative } from '../models/local-image-alternative';
 
-// constants
-export * from './messages';
+export abstract class AlternativesApi {
+  static readonly CHANNEL: string = 'alternatives-api';
 
-// apis
-export * from './apis/routing-api';
-export * from './apis/hummingbird-api';
-export * from './apis/dialog-api';
-export * from './apis/image-api';
-export * from './apis/provider-api';
-export * from './apis/alternatives-api';
-
-// proxy utils
-export * from './messages/message-proxy';
-
-// models
-export * from './models/input-box-options';
-export * from './models/provider-container-connection-identifier-info';
-export * from './models/provider-container-connection-detailed-info';
-export * from './models/simple-image-info';
-export * from './models/local-image-alternative';
-
-// hummingbird project types
-export * from './generated/hummingbird-project';
+  /**
+   * Get all local images that have Hummingbird alternatives
+   */
+  abstract getAlternatives(): Promise<Array<LocalImageAlternative>>;
+}
