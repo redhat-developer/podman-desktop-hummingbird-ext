@@ -37,7 +37,7 @@ const columns = [
   new TableColumn<AlternativeRow, string>('Alternative', {
     width: '1.5fr',
     renderer: TableSimpleColumn,
-    renderMapping: (row: AlternativeRow): string => row.localImage.name,
+    renderMapping: (row: AlternativeRow): string => row.alternative.name,
     overflow: true,
   }),
   new TableColumn<AlternativeRow, Promise<LocalImageAlternativeReport>>('CVEs', {
