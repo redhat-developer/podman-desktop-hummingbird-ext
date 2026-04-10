@@ -62,7 +62,7 @@ test('should display clone icon button for container row', () => {
     name: 'my-container',
     id: 'container123',
     engineId: 'podman',
-    imageId: 'sha256:abc123',
+    imageID: 'localhost/foo:bar',
   };
 
   const { getByTitle } = render(ActionColumn, { object: containerRow });
@@ -103,7 +103,7 @@ test('should navigate to clone container when clone button is clicked', async ()
     name: 'my-container',
     id: 'container123',
     engineId: 'podman',
-    imageId: 'sha256:abc123',
+    imageID: 'localhost/foo:bar',
   };
 
   const { getByTitle } = render(ActionColumn, { object: containerRow });

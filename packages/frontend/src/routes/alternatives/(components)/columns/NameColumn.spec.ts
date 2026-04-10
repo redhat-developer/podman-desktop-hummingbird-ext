@@ -55,7 +55,7 @@ test('should display container name and ID', () => {
     name: 'my-container',
     id: 'container123456789',
     engineId: 'podman',
-    imageId: 'sha256:abc123',
+    imageID: 'sha256:abc123',
   };
 
   const { getByText } = render(NameColumn, { object: containerRow });
@@ -69,7 +69,7 @@ test('should remove leading slash from container name', () => {
     name: '/my-container',
     id: 'container123456789',
     engineId: 'podman',
-    imageId: 'sha256:abc123',
+    imageID: 'sha256:abc123',
   };
 
   const { getByText } = render(NameColumn, { object: containerRow });
@@ -83,7 +83,7 @@ test('should truncate container ID to 8 characters', () => {
     name: 'test',
     id: 'abcdefghijklmnop',
     engineId: 'podman',
-    imageId: 'sha256:abc123',
+    imageID: 'sha256:abc123',
   };
 
   const { getByText } = render(NameColumn, { object: containerRow });

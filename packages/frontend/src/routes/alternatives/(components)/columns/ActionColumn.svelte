@@ -14,9 +14,9 @@ let { object }: Props = $props();
 
 function onOpenImageReport(engineId: string, imageId: string): Promise<void> {
   return goto(
-    resolve('/images/[engineId]/[id]/report', {
+    resolve('/images/[engineId]/[imageId]/report', {
       engineId: engineId,
-      id: imageId,
+      imageId: imageId,
     }),
   );
 }

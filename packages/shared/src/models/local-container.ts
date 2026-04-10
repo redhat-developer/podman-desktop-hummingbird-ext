@@ -20,4 +20,5 @@ export interface LocalContainer {
   id: string;
   engineId: string;
   name: string;
+  imageID: string;
 }

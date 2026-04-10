@@ -17,6 +17,7 @@
  ***********************************************************************/
 import {
   AlternativesApi,
+  ImageSummary,
   LocalImageAlternative,
   LocalImageAlternativeReport,
 } from '@podman-desktop/extension-hummingbird-core-api';
@@ -34,6 +35,10 @@ export class AlternativesApiImpl extends AlternativesApi {
 
   override async getAlternatives(): Promise<LocalImageAlternative[]> {
     return this.alternativeService.getAlternatives();
+  }
+
+  override getAlternative(engineId: string, imageId: string): Promise<ImageSummary> {
+    return this.alternativeService.getAlternative(engineId, imageId);
   }
 
   override getAlternativeReport(alternative: LocalImageAlternative): Promise<LocalImageAlternativeReport> {

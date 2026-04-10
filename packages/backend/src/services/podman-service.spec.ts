@@ -133,7 +133,14 @@ describe('clone', () => {
     });
 
     const service = getPodmanService();
-    const result = await service.clone(CONTAINER_INSPECT_MOCK, 'registry.io/alternative:latest');
+    const result = await service.clone(
+      CONTAINER_INSPECT_MOCK.engineId,
+      CONTAINER_INSPECT_MOCK.Id,
+      'registry.io/alternative:latest',
+      {
+        name: 'foo-cloned',
+      },
+    );
 
     expect(result).toStrictEqual({
       engineId: 'test-engine-id',

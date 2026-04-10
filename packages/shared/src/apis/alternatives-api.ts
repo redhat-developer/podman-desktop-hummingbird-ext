@@ -15,6 +15,7 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
+import type { ImageSummary } from '../generated/hummingbird-project';
 import type { LocalImageAlternative } from '../models/local-image-alternative';
 import type { LocalImageAlternativeReport } from '../models/local-image-alternative-report';
 
@@ -25,6 +26,8 @@ export abstract class AlternativesApi {
    * Get all local images that have Hummingbird alternatives
    */
   abstract getAlternatives(): Promise<Array<LocalImageAlternative>>;
+
+  abstract getAlternative(engineId: string, imageId: string): Promise<ImageSummary>;
 
   /**
    * Given a pair Local Image <-> Hummingbird alternative, get the report

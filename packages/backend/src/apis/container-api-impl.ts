@@ -15,11 +15,7 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-import {
-  ContainerApi,
-  type CloneOptions,
-  type CloneResult,
-} from '@podman-desktop/extension-hummingbird-core-api';
+import { ContainerApi, type CloneOptions, type CloneResult } from '@podman-desktop/extension-hummingbird-core-api';
 import { PodmanService } from '../services/podman-service';
 import type { LocalContainer } from '@podman-desktop/extension-hummingbird-core-api/src/models/local-container';
 import { inject, injectable } from 'inversify';
@@ -41,6 +37,7 @@ export class ContainerApiImpl extends ContainerApi {
       engineId: container.engineId,
       id: container.Id,
       name: container.Name,
+      imageID: container.Image,
     };
   }
 
@@ -56,8 +53,10 @@ export class ContainerApiImpl extends ContainerApi {
       throw new Error('Container cloning with alternative images is only supported for Podman connections');
     }
 
+    const container = await containerEngineAPI.inspectContainer(engineId, containerId);
+
     // Stop the container if requested
-    if (options.stopBeforeClone) {
+    if (options.stopBeforeClone && container.State.Running) {
       await containerEngineAPI.stopContainer(engineId, containerId);
     }
 

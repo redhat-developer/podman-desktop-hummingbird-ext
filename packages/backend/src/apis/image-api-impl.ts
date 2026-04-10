@@ -23,6 +23,8 @@ import { ImageApi } from '@podman-desktop/extension-hummingbird-core-api';
 import { ImageService } from '/@/services/image-service';
 import { ProviderService } from '/@/services/provider-service';
 import { inject, injectable } from 'inversify';
+import { LocalImage } from '@podman-desktop/extension-hummingbird-core-api/src';
+import { containerEngine as containerEngineAPI } from '@podman-desktop/api';
 
 @injectable()
 export class ImageApiImpl extends ImageApi {
@@ -57,6 +59,20 @@ export class ImageApiImpl extends ImageApi {
       organisation: options.organisation,
       connection,
     });
+  }
+
+  override async getImage(engineId: string, imageId: string): Promise<Omit<LocalImage, 'containers'>> {
+    const image = await containerEngineAPI.getImageInspect(engineId, imageId);
+    const [repo, tag] = image.RepoTags[0].split(':');
+
+    return {
+      engineId: image.engineId,
+      id: image.Id,
+      name: repo,
+      tag: tag,
+      size: image.Size,
+      architecture: image.Architecture,
+    };
   }
 
   override navigateToImageDetails(image: SimpleImageInfo): Promise<void> {
