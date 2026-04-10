@@ -15,13 +15,13 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-import { DialogApiImpl } from './dialog-api-impl';
+import { DialogApiImpl } from '/@/apis/dialog-api-impl';
 import { ContainerModule } from 'inversify';
-import { HummingbirdApiImpl } from './hummingbird-api-impl';
-import { ImageApiImpl } from './image-api-impl';
-import { ProviderApiImpl } from './provider-api-impl';
-import { RoutingApiImpl } from './routing-api-impl';
-import { AlternativesApiImpl } from './alternatives-api-impl';
+import { HummingbirdApiImpl } from '/@/apis/hummingbird-api-impl';
+import { ImageApiImpl } from '/@/apis/image-api-impl';
+import { ProviderApiImpl } from '/@/apis/provider-api-impl';
+import { RoutingApiImpl } from '/@/apis/routing-api-impl';
+import { AlternativesApiImpl } from '/@/apis/alternatives-api-impl';
 
 const module = new ContainerModule(options => {
   const impls: Array<new (...args: never[]) => unknown> = [

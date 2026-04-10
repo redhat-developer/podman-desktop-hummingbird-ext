@@ -20,8 +20,8 @@ import type {
   SimpleImageInfo,
 } from '@podman-desktop/extension-hummingbird-core-api';
 import { ImageApi } from '@podman-desktop/extension-hummingbird-core-api';
-import { ImageService } from '../services/image-service';
-import { ProviderService } from '../services/provider-service';
+import { ImageService } from '/@/services/image-service';
+import { ProviderService } from '/@/services/provider-service';
 import { inject, injectable } from 'inversify';
 
 @injectable()

@@ -18,7 +18,7 @@
 import type { Event, Disposable } from '@podman-desktop/api';
 import { EventEmitter } from '@podman-desktop/api';
 import type { Messages } from '@podman-desktop/extension-hummingbird-core-api';
-import type { WebviewService } from '../services/webview-service';
+import type { WebviewService } from '/@/services/webview-service';
 
 export class Publisher<T> implements Disposable {
   private readonly _onEvent = new EventEmitter<T>();

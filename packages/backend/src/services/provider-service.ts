@@ -18,15 +18,15 @@
 
 import type { Disposable, ProviderContainerConnection } from '@podman-desktop/api';
 import { provider as providerAPI } from '@podman-desktop/api';
-import type { AsyncInit } from '../utils/async-init';
-import { Publisher } from '../utils/publisher';
+import type { AsyncInit } from '/@/utils/async-init';
+import { Publisher } from '/@/utils/publisher';
 import type {
   ProviderContainerConnectionDetailedInfo,
   ProviderContainerConnectionIdentifierInfo,
 } from '@podman-desktop/extension-hummingbird-core-api';
 import { Messages } from '@podman-desktop/extension-hummingbird-core-api';
 import { inject, injectable, postConstruct, preDestroy } from 'inversify';
-import { WebviewService } from './webview-service';
+import { WebviewService } from '/@/services/webview-service';
 
 @injectable()
 export class ProviderService

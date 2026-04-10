@@ -1,8 +1,8 @@
 import type { ProviderContainerConnection, Disposable, ContainerInspectInfo } from '@podman-desktop/api';
 import { extensions as extensionsAPI, containerEngine as containerEngineAPI } from '@podman-desktop/api';
 import type { PodmanExtensionApi } from '@podman-desktop/podman-extension-api';
-import { PODMAN_EXTENSION_ID } from '../utils/constants';
-import { ProviderService } from './provider-service';
+import { PODMAN_EXTENSION_ID } from '/@/utils/constants';
+import { ProviderService } from '/@/services/provider-service';
 import { inject, injectable } from 'inversify';
 
 @injectable()

@@ -17,7 +17,7 @@
  ***********************************************************************/
 import type { Disposable } from '@podman-desktop/api';
 import { extensions as extensionsAPI } from '@podman-desktop/api';
-import type { AsyncInit } from '../../utils/async-init';
+import type { AsyncInit } from '/@/utils/async-init';
 import type { GrypeExtensionApi } from '@podman-desktop/grype-extension-api';
 import { injectable } from 'inversify';
 

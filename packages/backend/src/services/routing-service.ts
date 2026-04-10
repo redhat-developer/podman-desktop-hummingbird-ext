@@ -15,12 +15,12 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-import type { AsyncInit } from '../utils/async-init';
+import type { AsyncInit } from '/@/utils/async-init';
 import type { Disposable } from '@podman-desktop/api';
-import { Publisher } from '../utils/publisher';
+import { Publisher } from '/@/utils/publisher';
 import { Messages } from '@podman-desktop/extension-hummingbird-core-api';
 import { inject, injectable, postConstruct } from 'inversify';
-import { WebviewService } from './webview-service';
+import { WebviewService } from '/@/services/webview-service';
 
 @injectable()
 export class RoutingService extends Publisher<string | undefined> implements Disposable, AsyncInit {

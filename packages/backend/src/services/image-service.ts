@@ -27,14 +27,14 @@ import type {
   SimpleImageInfo,
 } from '@podman-desktop/extension-hummingbird-core-api';
 import { Messages } from '@podman-desktop/extension-hummingbird-core-api';
-import { Publisher } from '../utils/publisher';
-import type { AsyncInit } from '../utils/async-init';
+import { Publisher } from '/@/utils/publisher';
+import type { AsyncInit } from '/@/utils/async-init';
 import { z } from 'zod';
-import { TelemetryEvents } from '../utils/telemetry-events';
+import { TelemetryEvents } from '/@/utils/telemetry-events';
 import { inject, injectable, postConstruct, preDestroy } from 'inversify';
-import { TelemetryLoggerSymbol } from '../inject/symbol';
-import { WebviewService } from './webview-service';
-import { ProviderService } from './provider-service';
+import { TelemetryLoggerSymbol } from '/@/inject/symbol';
+import { WebviewService } from '/@/services/webview-service';
+import { ProviderService } from '/@/services/provider-service';
 
 const HummingBirdImageEvent = z.object({
   Type: z.literal('image'),

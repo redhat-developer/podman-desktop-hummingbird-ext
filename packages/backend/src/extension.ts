@@ -16,7 +16,7 @@
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
 import type { ExtensionContext } from '@podman-desktop/api';
-import { MainService } from './services/main-service';
+import { MainService } from '/@/services/main-service';
 
 let main: MainService | undefined;
 

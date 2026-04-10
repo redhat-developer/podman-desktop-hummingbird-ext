@@ -19,8 +19,8 @@ import type { ProviderContainerConnection, Webview, WebviewPanel } from '@podman
 import { provider as providerAPI } from '@podman-desktop/api';
 
 import { expect, test, vi, beforeEach, describe } from 'vitest';
-import { ProviderService } from './provider-service';
-import type { WebviewService } from './webview-service';
+import { ProviderService } from '/@/services/provider-service';
+import type { WebviewService } from '/@/services/webview-service';
 
 const WEBVIEW_SERVICE_MOCK: WebviewService = {
   getPanel: vi.fn(),

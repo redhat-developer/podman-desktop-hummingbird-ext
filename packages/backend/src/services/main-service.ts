@@ -26,16 +26,16 @@ import {
   AlternativesApi,
 } from '@podman-desktop/extension-hummingbird-core-api';
 
-import type { AsyncInit } from '../utils/async-init';
+import type { AsyncInit } from '/@/utils/async-init';
 
-import { RoutingApiImpl } from '../apis/routing-api-impl';
-import { HummingbirdApiImpl } from '../apis/hummingbird-api-impl';
-import { DialogApiImpl } from '../apis/dialog-api-impl';
-import { ImageApiImpl } from '../apis/image-api-impl';
-import { ProviderApiImpl } from '../apis/provider-api-impl';
-import { InversifyBinding } from '../inject/inversify-binding';
-import type { IAsyncDisposable } from '../utils/async-disposable';
-import { AlternativesApiImpl } from '../apis/alternatives-api-impl';
+import { RoutingApiImpl } from '/@/apis/routing-api-impl';
+import { HummingbirdApiImpl } from '/@/apis/hummingbird-api-impl';
+import { DialogApiImpl } from '/@/apis/dialog-api-impl';
+import { ImageApiImpl } from '/@/apis/image-api-impl';
+import { ProviderApiImpl } from '/@/apis/provider-api-impl';
+import { InversifyBinding } from '/@/inject/inversify-binding';
+import type { IAsyncDisposable } from '/@/utils/async-disposable';
+import { AlternativesApiImpl } from '/@/apis/alternatives-api-impl';
 
 export class MainService implements IAsyncDisposable, AsyncInit<ExtensionContext> {
   #inversify: InversifyBinding | undefined;

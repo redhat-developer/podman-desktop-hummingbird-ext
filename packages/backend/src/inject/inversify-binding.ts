@@ -20,12 +20,12 @@ import type { ExtensionContext } from '@podman-desktop/api';
 import { env as envAPI } from '@podman-desktop/api';
 import { Container } from 'inversify';
 
-import { ExtensionContextSymbol, StartupSymbol, TelemetryLoggerSymbol } from './symbol';
-import type { AsyncInit } from '../utils/async-init';
-import { module as serviceModule } from '../services/$module';
-import { module as apiModule } from '../apis/$module';
-import type { IAsyncDisposable } from '../utils/async-disposable';
-import { WebviewService } from '../services/webview-service';
+import { ExtensionContextSymbol, StartupSymbol, TelemetryLoggerSymbol } from '/@/inject/symbol';
+import type { AsyncInit } from '/@/utils/async-init';
+import { module as serviceModule } from '/@/services/$module';
+import { module as apiModule } from '/@/apis/$module';
+import type { IAsyncDisposable } from '/@/utils/async-disposable';
+import { WebviewService } from '/@/services/webview-service';
 import { RpcExtension } from '@podman-desktop/extension-hummingbird-core-api';
 
 export class InversifyBinding implements AsyncInit<never, Container>, IAsyncDisposable {

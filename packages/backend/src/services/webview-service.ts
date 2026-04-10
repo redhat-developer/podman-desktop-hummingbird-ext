@@ -18,9 +18,9 @@
 import type { Disposable, WebviewOptions, WebviewPanel, ExtensionContext } from '@podman-desktop/api';
 import { window as windowAPI, Uri } from '@podman-desktop/api';
 import { readFile } from 'node:fs/promises';
-import type { AsyncInit } from '../utils/async-init';
+import type { AsyncInit } from '/@/utils/async-init';
 import { inject, injectable, postConstruct, preDestroy } from 'inversify';
-import { ExtensionContextSymbol } from '../inject/symbol';
+import { ExtensionContextSymbol } from '/@/inject/symbol';
 
 @injectable()
 export class WebviewService implements Disposable, AsyncInit {
