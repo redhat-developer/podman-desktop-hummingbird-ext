@@ -37,6 +37,7 @@ export * from './models/provider-container-connection-detailed-info';
 export * from './models/simple-image-info';
 export * from './models/local-image-alternative';
 export * from './models/local-image-alternative-report';
+export * from './models/local-container';
 
 // hummingbird project types
 export * from './generated/hummingbird-project';

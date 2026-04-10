@@ -15,21 +15,22 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
+import type {
+  LocalContainer,
+  LocalImageAlternative,
+  LocalImageAlternativeReport,
+} from '@podman-desktop/extension-hummingbird-core-api/src';
 
-import type { ImageSummary } from '../generated/hummingbird-project';
-import type { LocalContainer } from './local-container';
-
-export interface LocalImage {
-  id: string;
-  engineId: string;
+interface BaseRow {
   name: string;
-  tag: string;
-  size: number;
-  architecture: string;
-  containers: Array<LocalContainer>;
+  selected?: boolean;
 }
 
-export interface LocalImageAlternative {
-  localImage: LocalImage;
-  alternative: ImageSummary;
-}
+export type ContainerRow = BaseRow & LocalContainer;
+
+export type AlternativeRow = BaseRow &
+  LocalImageAlternative & {
+    report: Promise<LocalImageAlternativeReport>;
+  };
+
+export type Row = ContainerRow | AlternativeRow;

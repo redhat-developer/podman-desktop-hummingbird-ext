@@ -33,6 +33,7 @@ const ALTERNATIVES: Array<LocalImageAlternative> = [
       tag: 'latest',
       size: 1024000,
       architecture: 'amd64',
+      containers: [],
     },
     alternative: {
       name: 'nginx-hardened',

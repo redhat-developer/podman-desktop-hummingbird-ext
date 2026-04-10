@@ -27,6 +27,7 @@ import { HummingbirdService } from './hummingbird-service';
 import type {
   LocalImageAlternative,
   LocalImageAlternativeReport,
+  LocalContainer,
 } from '@podman-desktop/extension-hummingbird-core-api';
 import alt from '../assets/alt.json' with { type: 'json' };
 import { GrypeService } from './scanners/grype-service';
@@ -63,8 +64,24 @@ export class AlternativeService implements Disposable {
   public async getAlternatives(): Promise<Array<LocalImageAlternative>> {
     const results: LocalImageAlternative[] = [];
 
-    // Get all images from all engines
-    const images = await containerEngineAPI.listImages();
+    // Get all images & containers from all engines
+    const [images, containers] = await Promise.all([
+      containerEngineAPI.listImages(),
+      containerEngineAPI.listContainers(),
+    ]);
+
+    // ImageId -> Container
+    const containerMap: Map<string, Array<LocalContainer>> = containers.reduce((accumulator, container) => {
+      const array = accumulator.get(container.ImageID) ?? [];
+      array.push({
+        engineId: container.engineId,
+        id: container.Id,
+        name: container.Names[0],
+      });
+      accumulator.set(container.ImageID, array);
+
+      return accumulator;
+    }, new Map<string, Array<LocalContainer>>());
 
     // Get all Hummingbird images from API
     const hummingbirdImages = await this.hummingbirdService.getImages();
@@ -95,9 +112,10 @@ export class AlternativeService implements Disposable {
               id: image.Id,
               engineId: image.engineId,
               name: repo,
-              tag: tag || 'latest',
+              tag: tag ?? 'latest',
               size: image.Size,
               architecture: image.Arch,
+              containers: containerMap.get(image.Id) ?? [],
             },
             alternative: hummingbirdImage,
           });

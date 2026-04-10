@@ -38,6 +38,7 @@ const LOCAL_IMAGE_ALT_MOCK: LocalImageAlternative = {
     tag: 'tag1',
     size: 55,
     architecture: 'amd64',
+    containers: [],
   },
   alternative: {
     name: 'foo',
