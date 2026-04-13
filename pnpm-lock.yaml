@@ -116,8 +116,8 @@ importers:
         specifier: workspace:^
         version: link:../shared
       '@podman-desktop/grype-extension-api':
-        specifier: ^0.1.0-next.202604011405-f6be4bb
-        version: 0.1.0-next.202604011405-f6be4bb
+        specifier: ^0.2.0-next.202604100329-21b1c7e
+        version: 0.2.0-next.202604100329-21b1c7e
       '@podman-desktop/podman-extension-api':
         specifier: ^1.26.1
         version: 1.26.1
@@ -828,8 +828,8 @@ packages:
   '@podman-desktop/api@1.26.1':
     resolution: {integrity: sha512-mp6+UgOY/lzAy6ieeyWL9xPEdYiYEig5a5vLbmDFZu7/y/uihvxUQQ75VGZQeq37I2xpDztll95fY/NdypoZ1w==}
 
-  '@podman-desktop/grype-extension-api@0.1.0-next.202604011405-f6be4bb':
-    resolution: {integrity: sha512-xQsDP8zDUCwjg7TFA/ZYqmS4pwA3lHKNRq7b01lBWaFwYokXRZCdN5+bvIt/Mxt58/wHzFN8ja+drXRHOk3kAw==}
+  '@podman-desktop/grype-extension-api@0.2.0-next.202604100329-21b1c7e':
+    resolution: {integrity: sha512-rBJkVqOvnMBCUWbUpF31QCDIuaHq79TC7e6Vx5nnj8HC2WVkKtVmeOYgQDIn/6OGLUAaD5fgp2HC2I1UQwoLQw==}
 
   '@podman-desktop/podman-extension-api@1.26.1':
     resolution: {integrity: sha512-OUj+f3WVHdU602hn2OKXEbSTSM4VLR4rL1a4qBAWf2H8I/KrKJmPPDopKd0/pUeeSyUfElyfwAERrHHYDVjU7w==}
@@ -4066,8 +4066,8 @@ packages:
   zimmerframe@1.1.4:
     resolution: {integrity: sha512-B58NGBEoc8Y9MWWCQGl/gq9xBCe4IiKM0a2x7GZdQKOW5Exr8S1W24J6OgM1njK8xCRGvAJIL/MxXHf6SkmQKQ==}
 
-  zod@3.25.75:
-    resolution: {integrity: sha512-OhpzAmVzabPOL6C3A3gpAifqr9MqihV/Msx3gor2b2kviCgcb+HM9SEOpMWwwNp9MRunWnhtAKUoo0AHhjyPPg==}
+  zod@3.25.76:
+    resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
 
   zod@4.3.6:
     resolution: {integrity: sha512-rftlrkhHZOcjDwkGlnUtZZkvaPHCsDATp4pGpuOOMDaTdDDXF91wuVDJoWoPsKX/3YPQ5fHuF3STjcYyKr+Qhg==}
@@ -4179,7 +4179,7 @@ snapshots:
       chalk: 4.1.2
       semver: 7.7.3
       unplugin: 1.16.1
-      zod: 3.25.75
+      zod: 3.25.76
 
   '@codecov/vite-plugin@1.9.1(vite@8.0.8(@types/node@25.2.0)(esbuild@0.27.2)(jiti@2.6.1)(yaml@2.8.3))':
     dependencies:
@@ -4604,7 +4604,7 @@ snapshots:
 
   '@podman-desktop/api@1.26.1': {}
 
-  '@podman-desktop/grype-extension-api@0.1.0-next.202604011405-f6be4bb':
+  '@podman-desktop/grype-extension-api@0.2.0-next.202604100329-21b1c7e':
     dependencies:
       zod: 4.3.6
 
@@ -8102,6 +8102,6 @@ snapshots:
 
   zimmerframe@1.1.4: {}
 
-  zod@3.25.75: {}
+  zod@3.25.76: {}
 
   zod@4.3.6: {}
