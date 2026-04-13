@@ -28,6 +28,8 @@ export class PodmanService implements Disposable {
   protected getPodmanExtension(): PodmanExtensionApi {
     const podman = extensionsAPI.getExtension(PODMAN_EXTENSION_ID);
     if (!podman) throw new Error('podman extension not found');
+    if (!podman.exports)
+      throw new Error(`podman extension is not exporting any API. Got version ${podman.packageJSON['version']}`);
 
     if (!('exec' in podman.exports) || typeof podman.exports.exec !== 'function') {
       throw new Error('invalid podman extension exports');
@@ -64,19 +66,27 @@ export class PodmanService implements Disposable {
     engineId: string;
     Id: string;
   }> {
-    const connection = await this.getRunningProviderContainerConnectionByEngineId(engineId);
+    const result = await containerEngineAPI.replicatePodmanContainer(
+      {
+        engineId,
+        id: containerId,
+      },
+      {
+        engineId,
+      },
+      {
+        image: alternative,
+        name: options.name,
+      },
+    );
 
-    try {
-      const result = await this.podman.exec(['container', 'clone', containerId, options.name, alternative, '--run'], {
-        connection: connection,
-      });
-      return {
-        engineId: engineId,
-        Id: result.stdout.trim(),
-      };
-    } catch (err: unknown) {
-      console.error('Cannot clone container', err);
-      throw err;
+    if (result.Warnings) {
+      console.warn('warnings', result.Warnings.join('\n'));
     }
+
+    return {
+      engineId,
+      Id: result.Id,
+    };
   }
 }

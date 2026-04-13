@@ -15,12 +15,7 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-import type {
-  ProviderContainerConnection,
-  ContainerInspectInfo,
-  Extension,
-  ContainerEngineInfo,
-} from '@podman-desktop/api';
+import type { ProviderContainerConnection, Extension, ContainerEngineInfo } from '@podman-desktop/api';
 import { extensions as extensionsAPI, containerEngine as containerEngineAPI } from '@podman-desktop/api';
 import type { PodmanExtensionApi } from '@podman-desktop/podman-extension-api';
 
@@ -45,12 +40,6 @@ const STARTED_PROVIDER_CONNECTION_MOCK: ProviderContainerConnection = {
     status: () => 'started',
   },
 } as unknown as ProviderContainerConnection;
-
-const CONTAINER_INSPECT_MOCK: ContainerInspectInfo = {
-  engineId: 'test-engine-id',
-  Id: 'container-123',
-  Name: 'my-container',
-} as ContainerInspectInfo;
 
 const ENGINE_INFO_MOCK: ContainerEngineInfo = {
   engineId: 'test-engine-id',
@@ -120,38 +109,6 @@ describe('getRunningProviderContainerConnectionByEngineId', () => {
 
     await expect(service.getRunningProviderContainerConnectionByEngineId('test-engine-id')).rejects.toThrowError(
       'connection not found for engineId test-engine-id',
-    );
-  });
-});
-
-describe('clone', () => {
-  test('should clone container with alternative image', async () => {
-    vi.mocked(PODMAN_EXTENSION_API_MOCK.exec).mockResolvedValue({
-      stdout: 'new-container-456\n',
-      stderr: '',
-      command: 'podman',
-    });
-
-    const service = getPodmanService();
-    const result = await service.clone(
-      CONTAINER_INSPECT_MOCK.engineId,
-      CONTAINER_INSPECT_MOCK.Id,
-      'registry.io/alternative:latest',
-      {
-        name: 'foo-cloned',
-      },
-    );
-
-    expect(result).toStrictEqual({
-      engineId: 'test-engine-id',
-      Id: 'new-container-456',
-    });
-
-    expect(PODMAN_EXTENSION_API_MOCK.exec).toHaveBeenCalledWith(
-      ['container', 'clone', 'container-123', 'foo-cloned', 'registry.io/alternative:latest', '--run'],
-      {
-        connection: STARTED_PROVIDER_CONNECTION_MOCK,
-      },
     );
   });
 });
