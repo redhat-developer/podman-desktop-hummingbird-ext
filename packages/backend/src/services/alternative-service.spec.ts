@@ -84,6 +84,7 @@ const GRYPE_SERVICE_MOCK: GrypeService = {
 beforeEach(() => {
   vi.resetAllMocks();
   vi.mocked(HUMMINGBIRD_SERVICE_MOCK.getImages).mockResolvedValue(HUMMINGBIRD_IMAGES_MOCK);
+  vi.mocked(containerEngine.listContainers).mockResolvedValue([]);
 });
 
 function getAlternativeService(): AlternativeService {
@@ -206,6 +207,7 @@ describe('AlternativeService#getAlternativeReport', () => {
         tag: 'latest',
         size: 1024000,
         architecture: 'amd64',
+        containers: [],
       },
       alternative: {
         name: 'nginx',
@@ -302,6 +304,7 @@ describe('AlternativeService#getAlternativeReport', () => {
         tag: 'latest',
         size: 1024000,
         architecture: 's390x',
+        containers: [],
       },
       alternative: {
         name: 'nginx',
@@ -360,6 +363,7 @@ describe('AlternativeService#getAlternativeReport', () => {
         tag: 'latest',
         size: 1024000,
         architecture: 'amd64',
+        containers: [],
       },
       alternative: {
         name: 'nginx',

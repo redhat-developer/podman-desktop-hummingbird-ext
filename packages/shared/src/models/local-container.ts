@@ -16,20 +16,8 @@
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
 
-import type { ImageSummary } from '../generated/hummingbird-project';
-import type { LocalContainer } from './local-container';
-
-export interface LocalImage {
+export interface LocalContainer {
   id: string;
   engineId: string;
   name: string;
-  tag: string;
-  size: number;
-  architecture: string;
-  containers: Array<LocalContainer>;
-}
-
-export interface LocalImageAlternative {
-  localImage: LocalImage;
-  alternative: ImageSummary;
 }
