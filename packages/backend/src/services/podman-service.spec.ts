@@ -148,7 +148,7 @@ describe('clone', () => {
     });
 
     expect(PODMAN_EXTENSION_API_MOCK.exec).toHaveBeenCalledWith(
-      ['container', 'clone', 'container-123', 'my-container-clone', 'registry.io/alternative:latest', '--run'],
+      ['container', 'clone', 'container-123', 'foo-cloned', 'registry.io/alternative:latest', '--run'],
       {
         connection: STARTED_PROVIDER_CONNECTION_MOCK,
       },
