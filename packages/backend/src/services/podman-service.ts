@@ -66,6 +66,13 @@ export class PodmanService implements Disposable {
     engineId: string;
     Id: string;
   }> {
+
+    const connection = await this.getRunningProviderContainerConnectionByEngineId(engineId);
+
+    // Pull the image
+    await containerEngineAPI.pullImage(connection.connection, alternative, console.debug);
+
+    // Replicate the podman container
     const result = await containerEngineAPI.replicatePodmanContainer(
       {
         engineId,
