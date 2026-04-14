@@ -18,6 +18,7 @@
 import type { ImageSummary } from '../generated/hummingbird-project';
 import type { LocalImageAlternative } from '../models/local-image-alternative';
 import type { LocalImageAlternativeReport } from '../models/local-image-alternative-report';
+import type { OptimisationReport } from '../models/optimization-report';
 
 export abstract class AlternativesApi {
   static readonly CHANNEL: string = 'alternatives-api';
@@ -34,4 +35,6 @@ export abstract class AlternativesApi {
    * @param alternative
    */
   abstract getAlternativeReport(alternative: LocalImageAlternative): Promise<LocalImageAlternativeReport>;
+
+  abstract getOptimisationReport(engineId: string, imageId: string): Promise<OptimisationReport>;
 }

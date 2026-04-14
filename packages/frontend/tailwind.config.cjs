@@ -40,9 +40,9 @@ module.exports = {
       },
       green: tailwindColors.green,
       red: tailwindColors.red,
-      amber: {
-        600: tailwindColors.amber[600],
-      },
+      amber: tailwindColors.amber,
+      orange: tailwindColors.orange,
+      yellow: tailwindColors.yellow,
       transparent: 'transparent',
       black: '#000',
       white: '#fff',

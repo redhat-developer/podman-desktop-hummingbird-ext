@@ -5,6 +5,7 @@ import { faClone } from '@fortawesome/free-solid-svg-icons/faClone';
 import ListItemButtonIcon from '$lib/buttons/ListItemButtonIcon.svelte';
 import { resolve } from '$app/paths';
 import { goto } from '$app/navigation';
+import { IMAGE_QUERY_KEY } from '/@/routes/images/[engineId]/[imageId]/report/constants';
 
 interface Props {
   object: Row;
@@ -12,9 +13,13 @@ interface Props {
 
 let { object }: Props = $props();
 
-function onOpenImageReport(engineId: string, imageId: string): Promise<void> {
+async function onOpenImageReport(engineId: string, imageId: string): Promise<void> {
+  if (!('report' in object)) {
+    return;
+  }
+
   return goto(
-    resolve('/images/[engineId]/[imageId]/report', {
+    resolve(`/images/[engineId]/[imageId]/report?${IMAGE_QUERY_KEY}=${encodeURIComponent(object.localImage.name)}`, {
       engineId: engineId,
       imageId: imageId,
     }),
@@ -23,7 +28,7 @@ function onOpenImageReport(engineId: string, imageId: string): Promise<void> {
 
 function onCloneContainer(engineId: string, containerId: string): Promise<void> {
   return goto(
-    resolve('/containers/[engineId]/[id]/clone', {
+    resolve(`/containers/[engineId]/[id]/clone`, {
       engineId: engineId,
       id: containerId,
     }),

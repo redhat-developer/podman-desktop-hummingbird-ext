@@ -20,6 +20,7 @@ import {
   ImageSummary,
   LocalImageAlternative,
   LocalImageAlternativeReport,
+  OptimisationReport,
 } from '@podman-desktop/extension-hummingbird-core-api';
 import { inject, injectable } from 'inversify';
 import { AlternativeService } from '../services/alternative-service';
@@ -43,5 +44,9 @@ export class AlternativesApiImpl extends AlternativesApi {
 
   override getAlternativeReport(alternative: LocalImageAlternative): Promise<LocalImageAlternativeReport> {
     return this.alternativeService.getAlternativeReport(alternative);
+  }
+
+  override async getOptimisationReport(engineId: string, imageId: string): Promise<OptimisationReport> {
+    return this.alternativeService.getOptimisationReport(engineId, imageId);
   }
 }

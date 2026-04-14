@@ -25,6 +25,7 @@ import ActionColumn from './ActionColumn.svelte';
 import type { LocalImageAlternativeReport } from '@podman-desktop/extension-hummingbird-core-api';
 import type { AlternativeRow } from '/@/routes/alternatives/(components)/row';
 import { goto } from '$app/navigation';
+import { IMAGE_QUERY_KEY } from '/@/routes/images/[engineId]/[imageId]/report/constants';
 
 vi.mock(import('$app/navigation'));
 
@@ -95,7 +96,9 @@ test('should navigate to image report when info button is clicked', async () => 
   const button = getByTitle('Open Image Report Details');
   await fireEvent.click(button);
 
-  expect(goto).toHaveBeenCalledWith('/images/podman/sha256:abc123/report');
+  expect(goto).toHaveBeenCalledWith(
+    `/images/podman/sha256:abc123/report?${IMAGE_QUERY_KEY}=${alternativeRow.localImage.name}`,
+  );
 });
 
 test('should navigate to clone container when clone button is clicked', async () => {

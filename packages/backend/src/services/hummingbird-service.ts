@@ -15,8 +15,14 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-import type { Disposable } from '@podman-desktop/api';
-import type { ImageSummary, Tag, VulnerabilitiesSummary } from '@podman-desktop/extension-hummingbird-core-api';
+import { Disposable } from '@podman-desktop/api';
+import type {
+  ImageSummary,
+  Tag,
+  VulnerabilitiesSummary,
+  VulnerabilitiesResponse,
+  ArchSbom,
+} from '@podman-desktop/extension-hummingbird-core-api';
 import { Api } from '@podman-desktop/extension-hummingbird-core-api';
 import { injectable, preDestroy } from 'inversify';
 
@@ -49,6 +55,22 @@ export class HummingbirdService implements Disposable {
     const res = await this.#client.v1.getTags(image);
     return res.data.tags;
   }
+
+  public async getImage(image: string): Promise<ImageSummary> {
+    const { data: imageSummary } = await this.#client.v1.getImage(image);
+    return imageSummary;
+  }
+
+  public async getVulnerabilities(name: string, tag: string): Promise<VulnerabilitiesResponse> {
+    const { data: vulnerabilities } = await this.#client.v1.getVulnerabilities(name, tag);
+    return vulnerabilities;
+  }
+
+  public async getSbom(name: string, tag: string): Promise<Partial<Record<string, ArchSbom>>> {
+    const { data: sbom } = await this.#client.v1.getSbom(name, tag);
+    return sbom;
+  }
+
   @preDestroy()
   dispose(): void {}
 }
