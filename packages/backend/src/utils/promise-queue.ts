@@ -15,7 +15,6 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-
 /**
  * A queue that limits the number of concurrent promise executions.
  * When the limit is reached, new promises are queued and executed as previous ones complete.
@@ -46,7 +45,19 @@ export class PromiseQueue {
     return new Promise<T>((resolve, reject) => {
       const task = (): void => {
         this.running++;
-        fn()
+
+        let promise: Promise<T>;
+        // eslint-disable-next-line sonarjs/no-try-promise
+        try {
+          promise = fn();
+        } catch (err: unknown) {
+          reject(err);
+          this.running--;
+          this.processNext();
+          return;
+        }
+
+        promise
           .then(resolve)
           .catch(reject)
           .finally(() => {

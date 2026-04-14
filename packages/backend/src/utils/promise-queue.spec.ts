@@ -209,3 +209,17 @@ describe('PromiseQueue', () => {
     expect(queue.queuedCount).toBe(0);
   });
 });
+
+test('error on promise creation should be correctly handled', async () => {
+  const queue = new PromiseQueue(2);
+
+  function mThrow(): Promise<void> {
+    throw new Error('test');
+  }
+
+  await expect(async () => {
+    return queue.enqueue(() => mThrow());
+  }).rejects.toThrowError('test');
+
+  expect(queue.runningCount).toBe(0);
+});
