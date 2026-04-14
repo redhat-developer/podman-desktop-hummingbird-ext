@@ -331,6 +331,7 @@ export class AlternativeService extends Publisher<void> implements AsyncInit, Di
 
   @preDestroy()
   override dispose(): void {
+    super.dispose();
     this.#cancellationToken.cancel();
     this.#disposables.forEach(disposable => disposable.dispose());
   }
