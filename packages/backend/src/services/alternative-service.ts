@@ -227,32 +227,23 @@ export class AlternativeService extends Publisher<void> implements AsyncInit, Di
 
     if (!tag) throw new Error(`Cannot find tag ${alternative.latest_tag} for ${alternative.name}`);
 
-    console.log(
-      `enqueuing getVulnerabilitiesSummary & this.grypeService.api.vulnerability for ${localImage.engineId}:${localImage.id}`,
+    const [altVulnerabilities, localVulnerabilities] = await this.#queue.enqueue(() =>
+      Promise.all([
+        this.hummingbirdService.getVulnerabilitiesSummary(alternative.name, tag.canonical),
+        this.grypeService.api.vulnerability.analyse(
+          {
+            engineId: localImage.engineId,
+            Id: localImage.id,
+          },
+          {
+            task: {
+              title: `Scanning ${localImage.name}:${localImage.tag}`,
+            },
+            token: this.#cancellationToken.token,
+          },
+        ),
+      ]),
     );
-    const [altVulnerabilities, localVulnerabilities] = await this.#queue
-      .enqueue(() =>
-        Promise.all([
-          this.hummingbirdService.getVulnerabilitiesSummary(alternative.name, tag.canonical),
-          this.grypeService.api.vulnerability.analyse(
-            {
-              engineId: localImage.engineId,
-              Id: localImage.id,
-            },
-            {
-              task: {
-                title: `Scanning ${localImage.name}:${localImage.tag}`,
-              },
-              token: this.#cancellationToken.token,
-            },
-          ),
-        ]),
-      )
-      .catch((err: unknown) => {
-        console.error(`Error enqueuing vulnerability scan for ${localImage.engineId}:${localImage.id}`, err);
-        throw err;
-      });
-    console.log(`enqueuing resolved for ${localImage.engineId}:${localImage.id}`);
 
     return {
       localImage: {
