@@ -21,6 +21,7 @@ import {
   CancellationTokenSource,
   containerEngine as containerEngineAPI,
   Disposable,
+  ImageInspectInfo,
   TelemetryLogger,
 } from '@podman-desktop/api';
 import { HummingbirdService } from './hummingbird-service';
@@ -29,6 +30,10 @@ import type {
   LocalImageAlternativeReport,
   LocalContainer,
   ImageSummary,
+  OptimisationReport,
+  VulnerabilitiesSummary,
+  AlternativeReport,
+  SBOMReport,
 } from '@podman-desktop/extension-hummingbird-core-api';
 import alt from '../assets/alt.json' with { type: 'json' };
 import { GrypeService } from './scanners/grype-service';
@@ -189,6 +194,78 @@ export class AlternativeService implements Disposable {
         vulnerabilities: altVulnerabilities,
         size: tag.sizes[localImage.architecture] ?? NaN,
       },
+    };
+  }
+
+  protected async getSBOMReport(image: ImageInspectInfo): Promise<SBOMReport | undefined> {
+    if (!this.grypeService.api) return undefined;
+
+    const doc = await this.grypeService.api.sbom.analyse(
+      {
+        engineId: image.engineId,
+        Id: image.Id,
+      },
+      {
+        task: {
+          title: `Analysing image ${image.RepoTags[0] ?? image.Id}`,
+        },
+      },
+    );
+
+    return {
+      count: doc.artifacts.length,
+      packages: doc.artifacts.map(artifact => artifact.name),
+    };
+  }
+
+  protected async findAlternative(imageInspect: ImageInspectInfo): Promise<AlternativeReport> {
+    const alternative = await this.getAlternative(imageInspect.engineId, imageInspect.Id);
+
+    const imageSummary = await this.hummingbirdService.getImage(alternative.name);
+    const tags = await this.hummingbirdService.getTags(alternative.name);
+    const vulnerabilities = await this.hummingbirdService.getVulnerabilities(alternative.name, imageSummary.latest_tag);
+    const sbom = await this.hummingbirdService.getSbom(alternative.name, imageSummary.latest_tag);
+
+    return {
+      image: imageSummary,
+      sbom: sbom[imageInspect.Architecture],
+      tags: tags,
+      vulnerabilities,
+    };
+  }
+
+  protected async findVulnerabilities(image: ImageInspectInfo): Promise<VulnerabilitiesSummary | undefined> {
+    if (!this.grypeService.isInstalled()) return undefined;
+
+    const doc = await this.grypeService.api.vulnerability.analyse(
+      {
+        engineId: image.engineId,
+        Id: image.Id,
+      },
+      {
+        task: {
+          title: `Scanning image ${image.RepoTags[0] ?? image.Id} for vulnerabilities`,
+        },
+      },
+    );
+
+    return this.grypeService.toVulnerabilitySummary(doc);
+  }
+
+  public async getOptimisationReport(engineId: string, imageId: string): Promise<OptimisationReport> {
+    const imageInspectInfo = await containerEngineAPI.getImageInspect(engineId, imageId);
+
+    const alternative = await this.findAlternative(imageInspectInfo);
+    const sbom = await this.getSBOMReport(imageInspectInfo);
+    const vulnerabilities = await this.findVulnerabilities(imageInspectInfo);
+
+    return {
+      image: {
+        inspect: imageInspectInfo,
+        sbom,
+        vulnerabilities,
+      },
+      alternative: alternative,
     };
   }
 

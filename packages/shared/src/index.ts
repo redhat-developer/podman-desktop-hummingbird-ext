@@ -39,6 +39,7 @@ export * from './models/simple-image-info';
 export * from './models/local-image-alternative';
 export * from './models/local-image-alternative-report';
 export * from './models/local-container';
+export * from './models/optimization-report';
 
 // hummingbird project types
 export * from './generated/hummingbird-project';

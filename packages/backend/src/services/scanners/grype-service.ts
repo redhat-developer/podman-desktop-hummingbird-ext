@@ -34,6 +34,18 @@ export class GrypeService implements AsyncInit, Disposable {
     return this.#api;
   }
 
+  public isInstalled(): boolean {
+    try {
+      if (this.api) {
+        return true;
+      }
+      // eslint-disable-next-line sonarjs/no-ignored-exceptions
+    } catch (_: unknown) {
+      return false;
+    }
+    return false;
+  }
+
   dispose(): void {
     this.#api = undefined;
   }
