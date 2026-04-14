@@ -20,7 +20,7 @@ import { generateApi } from 'swagger-typescript-api';
 import { writeFile, mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
 
-export const HUMMINGBIRD_SERVER_OPEN_API_URL = 'https://api-rawhide.hummingbird-project.io/v1/openapi.json';
+export const HUMMINGBIRD_SERVER_OPEN_API_URL = 'https://api-hummingbird.hummingbird-project.io/v1/openapi.json';
 
 export function openapi(): Plugin {
   return {

@@ -33,7 +33,7 @@ export class HummingbirdService implements Disposable {
 
   constructor() {
     this.#client = new Api({
-      baseUrl: 'https://api-rawhide.hummingbird-project.io',
+      baseUrl: 'https://api-hummingbird.hummingbird-project.io',
     });
   }
 
