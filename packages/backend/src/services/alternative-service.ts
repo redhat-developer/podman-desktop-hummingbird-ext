@@ -43,6 +43,8 @@ import { WebviewService } from '/@/services/webview-service';
 import { Messages } from '@podman-desktop/extension-hummingbird-core-api';
 import type { AsyncInit } from '/@/utils/async-init';
 import { z } from 'zod';
+import { performance } from 'node:perf_hooks';
+import { TelemetryEvents } from '/@/utils/telemetry-events';
 
 const ContainerEvent = z.object({
   Type: z.literal('container'),
@@ -221,40 +223,57 @@ export class AlternativeService extends Publisher<void> implements AsyncInit, Di
     alternative,
     localImage,
   }: LocalImageAlternative): Promise<LocalImageAlternativeReport> {
-    // Get all tags
-    const tags = await this.hummingbirdService.getTags(alternative.name);
-    const tag = tags.find(tag => tag.name === alternative.latest_tag);
-
-    if (!tag) throw new Error(`Cannot find tag ${alternative.latest_tag} for ${alternative.name}`);
-
-    const [altVulnerabilities, localVulnerabilities] = await this.#queue.enqueue(() =>
-      Promise.all([
-        this.hummingbirdService.getVulnerabilitiesSummary(alternative.name, tag.canonical),
-        this.grypeService.api.vulnerability.analyse(
-          {
-            engineId: localImage.engineId,
-            Id: localImage.id,
-          },
-          {
-            task: {
-              title: `Scanning ${localImage.name}:${localImage.tag}`,
-            },
-            token: this.#cancellationToken.token,
-          },
-        ),
-      ]),
-    );
-
-    return {
-      localImage: {
-        vulnerabilities: this.grypeService.toVulnerabilitySummary(localVulnerabilities),
-        size: localImage.size,
-      },
-      alternative: {
-        vulnerabilities: altVulnerabilities,
-        size: tag.sizes[localImage.architecture] ?? NaN,
-      },
+    const telemetry: Record<string, unknown> = {
+      alternative: alternative,
     };
+    // measure time for start operation
+    const start = performance.now();
+
+    try {
+      // Get all tags
+      const tags = await this.hummingbirdService.getTags(alternative.name);
+      const tag = tags.find(tag => tag.name === alternative.latest_tag);
+
+      if (!tag) throw new Error(`Cannot find tag ${alternative.latest_tag} for ${alternative.name}`);
+
+      const [altVulnerabilities, localVulnerabilities] = await this.#queue.enqueue(() =>
+        Promise.all([
+          this.hummingbirdService.getVulnerabilitiesSummary(alternative.name, tag.canonical),
+          this.grypeService.api.vulnerability.analyse(
+            {
+              engineId: localImage.engineId,
+              Id: localImage.id,
+            },
+            {
+              task: {
+                title: `Scanning ${localImage.name}:${localImage.tag}`,
+              },
+              token: this.#cancellationToken.token,
+            },
+          ),
+        ]),
+      );
+
+      const summary = this.grypeService.toVulnerabilitySummary(localVulnerabilities);
+      telemetry['local-image-vulnerabilities'] = summary.total;
+
+      return {
+        localImage: {
+          vulnerabilities: summary,
+          size: localImage.size,
+        },
+        alternative: {
+          vulnerabilities: altVulnerabilities,
+          size: tag.sizes[localImage.architecture] ?? NaN,
+        },
+      };
+    } catch (err: unknown) {
+      telemetry['error'] = err;
+      throw err;
+    } finally {
+      telemetry['duration'] = performance.now() - start;
+      this.telemetryLogger.logUsage(TelemetryEvents.IMAGE_REPORT, telemetry);
+    }
   }
 
   protected async getSBOMReport(image: ImageInspectInfo): Promise<SBOMReport | undefined> {

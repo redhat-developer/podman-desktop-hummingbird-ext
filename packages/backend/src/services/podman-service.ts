@@ -1,15 +1,20 @@
-import type { ProviderContainerConnection, Disposable } from '@podman-desktop/api';
+import type { ProviderContainerConnection, Disposable, TelemetryLogger } from '@podman-desktop/api';
 import { extensions as extensionsAPI, containerEngine as containerEngineAPI } from '@podman-desktop/api';
 import type { PodmanExtensionApi } from '@podman-desktop/podman-extension-api';
 import { PODMAN_EXTENSION_ID } from '/@/utils/constants';
 import { ProviderService } from '/@/services/provider-service';
 import { inject, injectable } from 'inversify';
+import { TelemetryLoggerSymbol } from '/@/inject/symbol';
+import { TelemetryEvents } from '/@/utils/telemetry-events';
+import { performance } from 'node:perf_hooks';
 
 @injectable()
 export class PodmanService implements Disposable {
   constructor(
     @inject(ProviderService)
     protected providerService: ProviderService,
+    @inject(TelemetryLoggerSymbol)
+    protected readonly telemetryLogger: TelemetryLogger,
   ) {}
 
   // smart podman extension api getter with some cache
@@ -66,33 +71,50 @@ export class PodmanService implements Disposable {
     engineId: string;
     Id: string;
   }> {
-    const connection = await this.getRunningProviderContainerConnectionByEngineId(engineId);
-
-    // Pull the image
-    await containerEngineAPI.pullImage(connection.connection, alternative, console.debug);
-
-    // Replicate the podman container
-    const result = await containerEngineAPI.replicatePodmanContainer(
-      {
-        engineId,
-        id: containerId,
-      },
-      {
-        engineId,
-      },
-      {
-        image: alternative,
-        name: options.name,
-      },
-    );
-
-    if (result.Warnings) {
-      console.warn('warnings', result.Warnings.join('\n'));
-    }
-
-    return {
-      engineId,
-      Id: result.Id,
+    const telemetry: Record<string, unknown> = {
+      alternative: alternative,
     };
+
+    // measure time for start operation
+    const start = performance.now();
+
+    try {
+      const connection = await this.getRunningProviderContainerConnectionByEngineId(engineId);
+
+      // Pull the image
+      await containerEngineAPI.pullImage(connection.connection, alternative, console.debug);
+
+      // Replicate the podman container
+      const result = await containerEngineAPI.replicatePodmanContainer(
+        {
+          engineId,
+          id: containerId,
+        },
+        {
+          engineId,
+        },
+        {
+          image: alternative,
+          name: options.name,
+        },
+      );
+
+      if (result.Warnings) {
+        console.warn('warnings', result.Warnings.join('\n'));
+      }
+
+      telemetry['warnings'] = result.Warnings.length;
+
+      return {
+        engineId,
+        Id: result.Id,
+      };
+    } catch (err: unknown) {
+      telemetry['error'] = err;
+      throw err;
+    } finally {
+      telemetry['duration'] = performance.now() - start;
+      this.telemetryLogger.logUsage(TelemetryEvents.CLONE_CONTAINER, telemetry);
+    }
   }
 }
