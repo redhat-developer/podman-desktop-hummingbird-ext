@@ -38,4 +38,8 @@ export class RoutingApiImpl extends RoutingApi {
       searchTerm,
     });
   }
+
+  override navigateToContainerDetails(_: string, containerId: string): Promise<void> {
+    return navigation.navigateToContainer(containerId);
+  }
 }
