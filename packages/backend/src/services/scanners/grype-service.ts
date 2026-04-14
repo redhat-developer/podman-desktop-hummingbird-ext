@@ -24,14 +24,8 @@ import { VulnerabilitiesSummary } from '@podman-desktop/extension-hummingbird-co
 
 @injectable()
 export class GrypeService implements AsyncInit, Disposable {
-  #api: GrypeExtensionApi | undefined;
-
   get api(): GrypeExtensionApi {
-    if (this.#api) {
-      return this.#api;
-    }
-    this.#api = this.getGrypeAPI();
-    return this.#api;
+    return this.getGrypeAPI();
   }
 
   public isInstalled(): boolean {
@@ -46,9 +40,7 @@ export class GrypeService implements AsyncInit, Disposable {
     return false;
   }
 
-  dispose(): void {
-    this.#api = undefined;
-  }
+  dispose(): void {}
 
   public toVulnerabilitySummary(document: grype.Document): VulnerabilitiesSummary {
     return document.matches.reduce(
@@ -88,7 +80,7 @@ export class GrypeService implements AsyncInit, Disposable {
 
   protected getGrypeAPI(): GrypeExtensionApi {
     const grype = extensionsAPI.getExtension<GrypeExtensionApi>('podman-desktop.grype');
-    if (grype) {
+    if (grype?.exports) {
       return grype.exports;
     } else {
       throw new Error('cannot find the grype extension');

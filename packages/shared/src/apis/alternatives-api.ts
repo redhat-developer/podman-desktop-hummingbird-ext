@@ -23,6 +23,8 @@ import type { OptimisationReport } from '../models/optimization-report';
 export abstract class AlternativesApi {
   static readonly CHANNEL: string = 'alternatives-api';
 
+  abstract isGrypeInstalled(): Promise<boolean>;
+
   /**
    * Get all local images that have Hummingbird alternatives
    */

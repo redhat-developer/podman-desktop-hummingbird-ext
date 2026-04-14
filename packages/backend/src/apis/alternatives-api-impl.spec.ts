@@ -24,6 +24,7 @@ import type {
   LocalImageAlternativeReport,
   VulnerabilitiesSummary,
 } from '@podman-desktop/extension-hummingbird-core-api';
+import type { GrypeService } from '/@/services/scanners/grype-service';
 
 const ALTERNATIVE_SERVICE_MOCK: AlternativeService = {
   getAlternatives: vi.fn(),
@@ -45,6 +46,10 @@ const LOCAL_IMAGE_ALT_MOCK: LocalImageAlternative = {
   } as ImageSummary,
 };
 
+const GRYPE_SERVICE_MOCK: GrypeService = {
+  isInstalled: vi.fn(),
+} as unknown as GrypeService;
+
 const LOCAL_IMAGE_ALT_REPORT_MOCK: LocalImageAlternativeReport = {
   localImage: {
     size: 0,
@@ -63,14 +68,14 @@ beforeEach(() => {
 describe('AlternativesApiImpl#getAlternatives', () => {
   test('expect getAlternatives result to be properly propagated from AlternativeService', async () => {
     vi.mocked(ALTERNATIVE_SERVICE_MOCK.getAlternatives).mockResolvedValue([LOCAL_IMAGE_ALT_MOCK]);
-    const api = new AlternativesApiImpl(ALTERNATIVE_SERVICE_MOCK);
+    const api = new AlternativesApiImpl(ALTERNATIVE_SERVICE_MOCK, GRYPE_SERVICE_MOCK);
     const result = await api.getAlternatives();
     expect(result).toStrictEqual([LOCAL_IMAGE_ALT_MOCK]);
   });
 
   test('expect getAlternatives error to be propagated', async () => {
     vi.mocked(ALTERNATIVE_SERVICE_MOCK.getAlternatives).mockRejectedValue(new Error('Failed to get alternatives'));
-    const api = new AlternativesApiImpl(ALTERNATIVE_SERVICE_MOCK);
+    const api = new AlternativesApiImpl(ALTERNATIVE_SERVICE_MOCK, GRYPE_SERVICE_MOCK);
 
     await expect(() => {
       return api.getAlternatives();
@@ -81,14 +86,14 @@ describe('AlternativesApiImpl#getAlternatives', () => {
 describe('AlternativesApiImpl#getAlternativeReport', () => {
   test('expect getAlternativeReport result to be properly propagated from AlternativeService', async () => {
     vi.mocked(ALTERNATIVE_SERVICE_MOCK.getAlternativeReport).mockResolvedValue(LOCAL_IMAGE_ALT_REPORT_MOCK);
-    const api = new AlternativesApiImpl(ALTERNATIVE_SERVICE_MOCK);
+    const api = new AlternativesApiImpl(ALTERNATIVE_SERVICE_MOCK, GRYPE_SERVICE_MOCK);
     const result = await api.getAlternativeReport(LOCAL_IMAGE_ALT_MOCK);
     expect(result).toStrictEqual(LOCAL_IMAGE_ALT_REPORT_MOCK);
   });
 
   test('expect getAlternativeReport error to be propagated', async () => {
     vi.mocked(ALTERNATIVE_SERVICE_MOCK.getAlternativeReport).mockRejectedValue(new Error('Failed to get report'));
-    const api = new AlternativesApiImpl(ALTERNATIVE_SERVICE_MOCK);
+    const api = new AlternativesApiImpl(ALTERNATIVE_SERVICE_MOCK, GRYPE_SERVICE_MOCK);
 
     await expect(() => {
       return api.getAlternativeReport(LOCAL_IMAGE_ALT_MOCK);

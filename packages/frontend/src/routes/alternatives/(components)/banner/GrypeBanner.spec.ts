@@ -15,27 +15,27 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-import type { PageLoad } from './$types';
-import type { LocalImageAlternative } from '@podman-desktop/extension-hummingbird-core-api';
-import { alternativesAPI } from '/@/api/client';
 
-interface Data {
-  alternatives: Promise<Array<LocalImageAlternative>>;
-  isGrypeInstalled: boolean;
-}
+import '@testing-library/jest-dom/vitest';
+import { render, screen, fireEvent } from '@testing-library/svelte';
+import { expect, test, vi } from 'vitest';
+import GrypeBanner from './GrypeBanner.svelte';
+import { routingAPI } from '/@/api/client';
 
-export const load: PageLoad = async ({ depends }): Promise<Data> => {
-  depends('alternatives:update');
+vi.mock(import('/@/api/client'), () => ({
+  routingAPI: {
+    navigateToCatalog: vi.fn(),
+    readRoute: vi.fn(),
+  },
+}));
 
-  const isGrypeInstalled = await alternativesAPI.isGrypeInstalled();
+test('Expect that GrypeBanner button calls navigateToCatalog', async () => {
+  render(GrypeBanner);
 
-  const { promise, resolve } = Promise.withResolvers<void>();
-  setTimeout(resolve, 500);
+  const button = screen.getByRole('button', { name: 'Check catalog' });
+  expect(button).toBeInTheDocument();
 
-  const alternatives = Promise.all([alternativesAPI.getAlternatives(), promise]).then(([alternatives]) => alternatives);
+  await fireEvent.click(button);
 
-  return {
-    alternatives,
-    isGrypeInstalled,
-  };
-};
+  expect(routingAPI.navigateToCatalog).toHaveBeenCalledWith('grype');
+});
