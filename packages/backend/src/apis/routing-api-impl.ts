@@ -18,6 +18,7 @@
 import { RoutingApi } from '@podman-desktop/extension-hummingbird-core-api';
 import { RoutingService } from '/@/services/routing-service';
 import { inject, injectable } from 'inversify';
+import { navigation } from '@podman-desktop/api';
 
 @injectable()
 export class RoutingApiImpl extends RoutingApi {
@@ -30,5 +31,11 @@ export class RoutingApiImpl extends RoutingApi {
 
   override async readRoute(): Promise<string | undefined> {
     return this.routing.read();
+  }
+
+  override navigateToCatalog(searchTerm?: string): Promise<void> {
+    return navigation.navigateToExtensionsCatalog({
+      searchTerm,
+    });
   }
 }

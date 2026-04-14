@@ -24,14 +24,21 @@ import {
 } from '@podman-desktop/extension-hummingbird-core-api';
 import { inject, injectable } from 'inversify';
 import { AlternativeService } from '../services/alternative-service';
+import { GrypeService } from '/@/services/scanners/grype-service';
 
 @injectable()
 export class AlternativesApiImpl extends AlternativesApi {
   constructor(
     @inject(AlternativeService)
     protected readonly alternativeService: AlternativeService,
+    @inject(GrypeService)
+    protected readonly grypeService: GrypeService,
   ) {
     super();
+  }
+
+  override async isGrypeInstalled(): Promise<boolean> {
+    return this.grypeService.isInstalled();
   }
 
   override async getAlternatives(): Promise<LocalImageAlternative[]> {

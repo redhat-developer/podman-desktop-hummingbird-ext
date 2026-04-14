@@ -23,4 +23,6 @@ export abstract class RoutingApi {
    * route it should use. This method has a side effect of removing the pending route after calling.
    */
   abstract readRoute(): Promise<string | undefined>;
+
+  abstract navigateToCatalog(searchTerm?: string): Promise<void>;
 }

@@ -8,6 +8,7 @@ import { onMount } from 'svelte';
 import { rpcBrowser } from '/@/api/client';
 import { invalidate } from '$app/navigation';
 import { Messages } from '@podman-desktop/extension-hummingbird-core-api';
+import GrypeBanner from '/@/routes/alternatives/(components)/banner/GrypeBanner.svelte';
 
 let { data }: PageProps = $props();
 
@@ -17,31 +18,31 @@ onMount(() => {
   });
   return subscriber.unsubscribe;
 });
+
+let columns = $derived([
+  {
+    name: 'Original Image',
+    width: '1.5fr',
+  },
+  ...(data.isGrypeInstalled
+    ? [
+        {
+          name: 'CVEs',
+          width: '1fr',
+        },
+        {
+          name: 'Size Reduction',
+          width: '1fr',
+        },
+      ]
+    : []),
+]);
 </script>
 
 <NavPage title="Hardened Image Alternatives" searchEnabled={false}>
   {#snippet content()}
     {#await data.alternatives}
-      <TableSkeleton
-        count={20}
-        columns={[
-          {
-            name: 'Original Image',
-            width: '1.5fr',
-          },
-          {
-            name: 'Alternative',
-            width: '1.5fr',
-          },
-          {
-            name: 'CVEs',
-            width: '1fr',
-          },
-          {
-            name: 'Size Reduction',
-            width: '1fr',
-          },
-        ]} />
+      <TableSkeleton count={20} columns={columns} />
     {:then alternatives}
       {#if alternatives.length === 0}
         <EmptyScreen
@@ -51,7 +52,15 @@ onMount(() => {
           message="No local images with Hummingbird alternatives were found. Pull some common images like nginx, postgres, or python to see alternatives.">
         </EmptyScreen>
       {:else}
-        <AlternativeTable alternatives={alternatives} />
+        <div class="flex flex-col w-full h-full">
+          {#if !data.isGrypeInstalled}
+            <GrypeBanner class="mx-5" />
+          {/if}
+
+          <div class="w-full flex">
+            <AlternativeTable alternatives={alternatives} isGrypeInstalled={data.isGrypeInstalled} />
+          </div>
+        </div>
       {/if}
     {:catch error}
       <EmptyScreen

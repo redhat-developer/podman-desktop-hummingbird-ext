@@ -14,19 +14,20 @@ import ActionColumn from '/@/routes/alternatives/(components)/columns/ActionColu
 
 interface Props {
   alternatives: LocalImageAlternative[];
+  isGrypeInstalled: boolean;
 }
 
-let { alternatives }: Props = $props();
+let { alternatives, isGrypeInstalled }: Props = $props();
 
 let data: Row[] = $derived(
   alternatives.map((alt, index) => ({
     ...alt,
     name: alt.localImage.name,
-    report: alternativesAPI.getAlternativeReport(alt),
+    report: isGrypeInstalled ? alternativesAPI.getAlternativeReport(alt) : Promise.reject(new Error('grype not installed')),
   })),
 );
 
-const columns = [
+let columns = $derived([
   new TableColumn<Row, 'container' | 'image'>('Status', {
     align: 'center',
     width: '70px',
@@ -39,29 +40,33 @@ const columns = [
     renderer: NameColumn,
     overflow: true,
   }),
-  new TableColumn<Row, Promise<LocalImageAlternativeReport> | undefined>('CVEs', {
-    width: '1fr',
-    renderer: CVEReductionCell,
-    align: 'center',
-    renderMapping: (row: Row): Promise<LocalImageAlternativeReport> | undefined =>
-      'report' in row ? row.report : undefined,
-    overflow: true,
-  }),
-  new TableColumn<Row, Promise<LocalImageAlternativeReport> | undefined>('Size Reduction', {
-    width: '1fr',
-    renderer: FilesizeReductionColumn,
-    align: 'center',
-    renderMapping: (row: Row): Promise<LocalImageAlternativeReport> | undefined =>
-      'report' in row ? row.report : undefined,
-    overflow: true,
-  }),
+  ...(isGrypeInstalled
+    ? [
+        new TableColumn<Row, Promise<LocalImageAlternativeReport> | undefined>('CVEs', {
+          width: '1fr',
+          renderer: CVEReductionCell,
+          align: 'center',
+          renderMapping: (row: Row): Promise<LocalImageAlternativeReport> | undefined =>
+            'report' in row ? row.report : undefined,
+          overflow: true,
+        }),
+        new TableColumn<Row, Promise<LocalImageAlternativeReport> | undefined>('Size Reduction', {
+          width: '1fr',
+          renderer: FilesizeReductionColumn,
+          align: 'center',
+          renderMapping: (row: Row): Promise<LocalImageAlternativeReport> | undefined =>
+            'report' in row ? row.report : undefined,
+          overflow: true,
+        }),
+      ]
+    : []),
   new TableColumn<Row>('Actions', {
     align: 'right',
     width: '50px',
     renderer: ActionColumn,
     overflow: true,
   }),
-];
+]);
 
 const row: TableRow<Row> = new TableRow<Row>({
   children: (row): Array<Row> => {
