@@ -101,6 +101,33 @@ test('should navigate to image report when info button is clicked', async () => 
   );
 });
 
+test('info button should have appropriate tooltip', async () => {
+  const alternativeRow = {
+    name: 'nginx:latest',
+    localImage: {
+      id: 'sha256:abc123',
+      engineId: 'podman',
+      name: 'nginx',
+      tag: 'latest',
+      size: 1024000,
+      architecture: 'amd64',
+      containers: [],
+    },
+    alternative: {
+      name: 'nginx',
+      latest_tag: '1.21',
+    },
+    report: undefined,
+  } as unknown as AlternativeRow;
+
+  const { getByRole } = render(ActionColumn, { object: alternativeRow });
+
+  const button = getByRole('button', {
+    name: 'You need to install Grype extension to access full report.',
+  });
+  expect(button).toBeInTheDocument();
+});
+
 test('should navigate to clone container when clone button is clicked', async () => {
   const containerRow = {
     name: 'my-container',
