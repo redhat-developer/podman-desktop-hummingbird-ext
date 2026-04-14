@@ -41,7 +41,9 @@ function onCloneContainer(engineId: string, containerId: string): Promise<void> 
     icon={faInfoCircle}
     enabled={object.report !== undefined}
     onClick={onOpenImageReport.bind(undefined, object.localImage.engineId, object.localImage.id)}
-    title={(object.report) ? 'Open Image Report Details' : 'You need to install Grype extension to access full report.'} />
+    title={object.report
+      ? 'Open Image Report Details'
+      : 'You need to install Grype extension to access full report.'} />
 {:else}
   <ListItemButtonIcon
     icon={faClone}
