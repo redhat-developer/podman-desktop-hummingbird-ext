@@ -35,6 +35,11 @@ export class PromiseQueue {
     this.maxConcurrent = maxConcurrent;
   }
 
+  protected onCompleted(): void {
+    this.running--;
+    this.processNext();
+  }
+
   /**
    * Enqueues a function that returns a promise.
    * Returns a promise that resolves/rejects when the enqueued function's promise resolves/rejects.
@@ -52,18 +57,11 @@ export class PromiseQueue {
           promise = fn();
         } catch (err: unknown) {
           reject(err);
-          this.running--;
-          this.processNext();
+          this.onCompleted();
           return;
         }
 
-        promise
-          .then(resolve)
-          .catch(reject)
-          .finally(() => {
-            this.running--;
-            this.processNext();
-          });
+        promise.then(resolve).catch(reject).finally(this.onCompleted.bind(this));
       };
 
       this.queue.push(task);
