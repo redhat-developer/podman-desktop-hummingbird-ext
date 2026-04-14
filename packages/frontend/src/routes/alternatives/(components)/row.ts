@@ -30,7 +30,7 @@ export type ContainerRow = BaseRow & LocalContainer;
 
 export type AlternativeRow = BaseRow &
   LocalImageAlternative & {
-    report: Promise<LocalImageAlternativeReport>;
+    report: Promise<LocalImageAlternativeReport> | undefined;
   };
 
 export type Row = ContainerRow | AlternativeRow;

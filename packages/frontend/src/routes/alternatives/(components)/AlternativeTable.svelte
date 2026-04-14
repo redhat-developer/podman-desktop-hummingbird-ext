@@ -23,7 +23,7 @@ let data: Row[] = $derived(
   alternatives.map((alt, index) => ({
     ...alt,
     name: alt.localImage.name,
-    report: isGrypeInstalled ? alternativesAPI.getAlternativeReport(alt) : Promise.reject(new Error('grype not installed')),
+    report: isGrypeInstalled ? alternativesAPI.getAlternativeReport(alt) : undefined,
   })),
 );
 

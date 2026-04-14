@@ -61,6 +61,7 @@ describe('error', () => {
     const { getByLabelText } = render(Page, {
       data: {
         alternatives: Promise.reject<Array<LocalImageAlternative>>(ERROR_MOCK),
+        isGrypeInstalled: false,
       },
       params: {},
     });
@@ -78,6 +79,7 @@ describe('loading', () => {
     const { getByRole } = render(Page, {
       data: {
         alternatives: new Promise<Array<LocalImageAlternative>>(vi.fn()),
+        isGrypeInstalled: false,
       },
       params: {},
     });
@@ -92,6 +94,7 @@ describe('data', () => {
     const { getByLabelText } = render(Page, {
       data: {
         alternatives: Promise.resolve(ALTERNATIVES),
+        isGrypeInstalled: false,
       },
       params: {},
     });
@@ -105,6 +108,7 @@ describe('data', () => {
     const { getByLabelText } = render(Page, {
       data: {
         alternatives: Promise.resolve([]),
+        isGrypeInstalled: false,
       },
       params: {},
     });
