@@ -16,9 +16,9 @@
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
 
-import { expect, test, vi, beforeEach, describe } from 'vitest';
-import type { TelemetryLogger, ImageInfo } from '@podman-desktop/api';
-import { containerEngine } from '@podman-desktop/api';
+import { expect, test, vi, beforeEach, describe, assert } from 'vitest';
+import type { TelemetryLogger, ImageInfo, Webview, WebviewPanel, ContainerJSONEvent } from '@podman-desktop/api';
+import { containerEngine as containerEngineAPI, containerEngine } from '@podman-desktop/api';
 import { AlternativeService } from './alternative-service';
 import type { HummingbirdService } from './hummingbird-service';
 import type {
@@ -29,6 +29,7 @@ import type {
 } from '@podman-desktop/extension-hummingbird-core-api';
 import type { GrypeService } from './scanners/grype-service';
 import type { grype } from '@podman-desktop/grype-extension-api';
+import type { WebviewService } from '/@/services/webview-service';
 
 const TELEMETRY_LOGGER_MOCK: TelemetryLogger = {
   logUsage: vi.fn(),
@@ -81,14 +82,32 @@ const GRYPE_SERVICE_MOCK: GrypeService = {
   toVulnerabilitySummary: vi.fn(),
 } as unknown as GrypeService;
 
+const WEBVIEW_SERVICE_MOCK: WebviewService = {
+  getPanel: vi.fn(),
+} as unknown as WebviewService;
+
+const WEBVIEW_MOCK: Webview = {
+  postMessage: vi.fn(),
+} as unknown as Webview;
+
 beforeEach(() => {
   vi.resetAllMocks();
   vi.mocked(HUMMINGBIRD_SERVICE_MOCK.getImages).mockResolvedValue(HUMMINGBIRD_IMAGES_MOCK);
   vi.mocked(containerEngine.listContainers).mockResolvedValue([]);
+
+  vi.mocked(WEBVIEW_SERVICE_MOCK.getPanel).mockReturnValue({
+    webview: WEBVIEW_MOCK,
+  } as unknown as WebviewPanel);
+  vi.mocked(WEBVIEW_MOCK.postMessage).mockResolvedValue(true);
 });
 
 function getAlternativeService(): AlternativeService {
-  return new AlternativeService(TELEMETRY_LOGGER_MOCK, HUMMINGBIRD_SERVICE_MOCK, GRYPE_SERVICE_MOCK);
+  return new AlternativeService(
+    TELEMETRY_LOGGER_MOCK,
+    HUMMINGBIRD_SERVICE_MOCK,
+    GRYPE_SERVICE_MOCK,
+    WEBVIEW_SERVICE_MOCK,
+  );
 }
 
 test('should return alternatives for matching local images', async () => {
@@ -376,5 +395,150 @@ describe('AlternativeService#getAlternativeReport', () => {
     const service = getAlternativeService();
 
     await expect(service.getAlternativeReport(mockAlternative)).rejects.toThrowError('Cannot find tag 1.21 for nginx');
+  });
+});
+
+describe('init', () => {
+  test('should register event listeners', async () => {
+    const service = getAlternativeService();
+    await service.init();
+
+    expect(containerEngineAPI.onEvent).toHaveBeenCalledExactlyOnceWith(expect.any(Function));
+  });
+
+  async function getListener(): Promise<(event: ContainerJSONEvent) => void> {
+    const service = getAlternativeService();
+    await service.init();
+
+    const event = vi.mocked(containerEngineAPI.onEvent).mock.calls[0][0];
+    assert(event);
+    return event;
+  }
+
+  interface TestCase {
+    name: string;
+    event: unknown;
+    notified: boolean;
+  }
+
+  test.each<TestCase>([
+    {
+      name: 'pull event for image with alternative should notify',
+      event: {
+        Action: 'pull',
+        Actor: {
+          Attributes: {
+            name: 'docker.io/library/postgres:18.3',
+          },
+        },
+        Type: 'image',
+        id: 'foo',
+      },
+      notified: true,
+    },
+    {
+      name: 'pull event for image without alternative should not notify',
+      event: {
+        Action: 'pull',
+        Actor: {
+          Attributes: {
+            name: 'docker.io/foo/bar:latest',
+          },
+        },
+        Type: 'image',
+        id: 'foo',
+      },
+      notified: false,
+    },
+    {
+      name: 'delete event for image with alternative should notify',
+      event: {
+        Action: 'delete',
+        Actor: {
+          Attributes: {
+            name: 'docker.io/library/postgres:18.3',
+          },
+        },
+        Type: 'image',
+        id: 'foo',
+      },
+      notified: true,
+    },
+    {
+      name: 'delete event for image without alternative should notify',
+      event: {
+        Action: 'delete',
+        Actor: {
+          Attributes: {
+            name: 'docker.io/foo/bar:latest',
+          },
+        },
+        Type: 'image',
+        id: 'foo',
+      },
+      notified: false,
+    },
+    {
+      name: 'remove event for container with alternative should notify',
+      event: {
+        Action: 'remove',
+        Actor: {
+          Attributes: {
+            image: 'docker.io/library/postgres:18.3',
+          },
+        },
+        Type: 'container',
+        id: 'foo',
+      },
+      notified: true,
+    },
+    {
+      name: 'remove event for container without alternative should notify',
+      event: {
+        Action: 'remove',
+        Actor: {
+          Attributes: {
+            image: 'docker.io/foo/bar:latest',
+          },
+        },
+        Type: 'container',
+        id: 'foo',
+      },
+      notified: false,
+    },
+    {
+      name: 'init event for container with alternative should notify',
+      event: {
+        Action: 'init',
+        Actor: {
+          Attributes: {
+            image: 'docker.io/library/postgres:18.3',
+          },
+        },
+        Type: 'container',
+        id: 'foo',
+      },
+      notified: true,
+    },
+    {
+      name: 'init event for container without alternative should notify',
+      event: {
+        Action: 'init',
+        Actor: {
+          Attributes: {
+            image: 'docker.io/foo/bar:latest',
+          },
+        },
+        Type: 'container',
+        id: 'foo',
+      },
+      notified: false,
+    },
+  ])('$name', async ({ event, notified }) => {
+    const listener = await getListener();
+
+    listener(event as unknown as ContainerJSONEvent);
+
+    expect(vi.mocked(WEBVIEW_MOCK.postMessage).mock.calls.length === 1).toBe(notified);
   });
 });

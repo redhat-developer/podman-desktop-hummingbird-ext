@@ -23,7 +23,9 @@ interface Data {
   alternatives: Promise<Array<LocalImageAlternative>>;
 }
 
-export const load: PageLoad = async (): Promise<Data> => {
+export const load: PageLoad = async ({ depends }): Promise<Data> => {
+  depends('alternatives:update');
+
   const { promise, resolve } = Promise.withResolvers<void>();
   setTimeout(resolve, 500);
 

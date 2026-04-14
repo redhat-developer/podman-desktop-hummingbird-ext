@@ -15,7 +15,7 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-import { inject, injectable, preDestroy } from 'inversify';
+import { inject, injectable, postConstruct, preDestroy } from 'inversify';
 import { TelemetryLoggerSymbol } from '../inject/symbol';
 import {
   CancellationTokenSource,
@@ -38,12 +38,38 @@ import type {
 import alt from '../assets/alt.json' with { type: 'json' };
 import { GrypeService } from './scanners/grype-service';
 import { PromiseQueue } from '../utils/promise-queue';
+import { Publisher } from '/@/utils/publisher';
+import { WebviewService } from '/@/services/webview-service';
+import { Messages } from '@podman-desktop/extension-hummingbird-core-api';
+import type { AsyncInit } from '/@/utils/async-init';
+import { z } from 'zod';
+
+const ContainerEvent = z.object({
+  Type: z.literal('container'),
+  Action: z.literal(['init', 'remove']),
+  Actor: z.object({
+    Attributes: z.object({
+      image: z.string().min(1),
+    }),
+  }),
+});
+
+const ImageEvent = z.object({
+  Type: z.literal('image'),
+  Action: z.literal(['pull', 'delete']),
+  Actor: z.object({
+    Attributes: z.object({
+      name: z.string(),
+    }),
+  }),
+});
 
 @injectable()
-export class AlternativeService implements Disposable {
+export class AlternativeService extends Publisher<void> implements AsyncInit, Disposable {
   #altMap: Map<string, string>;
   #queue: PromiseQueue = new PromiseQueue(2);
   #cancellationToken = new CancellationTokenSource();
+  #disposables: Disposable[] = [];
 
   constructor(
     @inject(TelemetryLoggerSymbol)
@@ -52,7 +78,11 @@ export class AlternativeService implements Disposable {
     protected readonly hummingbirdService: HummingbirdService,
     @inject(GrypeService)
     protected readonly grypeService: GrypeService,
+    @inject(WebviewService)
+    webviewService: WebviewService,
   ) {
+    super(webviewService, Messages.UPDATE_ALTERNATIVES, () => {});
+
     // Create reverse mapping: from alternative repo to hummingbird image name
     this.#altMap = new Map(
       Object.entries(alt).reduce(
@@ -64,6 +94,36 @@ export class AlternativeService implements Disposable {
         },
         [] as [string, string][],
       ),
+    );
+  }
+
+  protected hasAlternative(image: string): boolean {
+    const [repo] = image.split(':');
+    return this.#altMap.has(repo);
+  }
+
+  @postConstruct()
+  async init(): Promise<void> {
+    this.#disposables.push(
+      containerEngineAPI.onEvent(event => {
+        const containerEventParseResult = ContainerEvent.safeParse(event);
+        if (containerEventParseResult.success) {
+          if (this.hasAlternative(containerEventParseResult.data.Actor.Attributes.image)) {
+            return this.notify();
+          } else {
+            return;
+          }
+        }
+
+        const imageEventParseResult = ImageEvent.safeParse(event);
+        if (imageEventParseResult.success) {
+          if (this.hasAlternative(imageEventParseResult.data.Actor.Attributes.name)) {
+            return this.notify();
+          } else {
+            return;
+          }
+        }
+      }),
     );
   }
 
@@ -270,7 +330,9 @@ export class AlternativeService implements Disposable {
   }
 
   @preDestroy()
-  dispose(): void {
+  override dispose(): void {
+    super.dispose();
     this.#cancellationToken.cancel();
+    this.#disposables.forEach(disposable => disposable.dispose());
   }
 }
