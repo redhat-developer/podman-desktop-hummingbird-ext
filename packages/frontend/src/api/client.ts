@@ -22,6 +22,7 @@ import {
   ImageApi,
   ProviderApi,
   AlternativesApi,
+  ContainerApi,
   RpcBrowser,
 } from '@podman-desktop/extension-hummingbird-core-api';
 
@@ -45,6 +46,7 @@ let providerAPI: ProviderApi;
 let imageAPI: ImageApi;
 let dialogAPI: DialogApi;
 let alternativesAPI: AlternativesApi;
+let containerAPI: ContainerApi;
 
 if (browser) {
   api = acquirePodmanDesktopApi();
@@ -57,6 +59,7 @@ if (browser) {
   imageAPI = rpcBrowser.getProxy(ImageApi);
   dialogAPI = rpcBrowser.getProxy(DialogApi);
   alternativesAPI = rpcBrowser.getProxy(AlternativesApi);
+  containerAPI = rpcBrowser.getProxy(ContainerApi);
 
   /**
    * Making clients available as global properties
@@ -84,9 +87,13 @@ if (browser) {
   Object.defineProperty(window, 'alternativesAPI', {
     value: alternativesAPI,
   });
+
+  Object.defineProperty(window, 'containerAPI', {
+    value: containerAPI,
+  });
 }
 
-export { rpcBrowser, routingAPI, hummingbirdAPI, providerAPI, imageAPI, dialogAPI, alternativesAPI };
+export { rpcBrowser, routingAPI, hummingbirdAPI, providerAPI, imageAPI, dialogAPI, alternativesAPI, containerAPI };
 
 // The below code is used to save the state of the router in the podmanDesktopApi, so
 // that we can determine the correct route to display when the extension is reloaded.

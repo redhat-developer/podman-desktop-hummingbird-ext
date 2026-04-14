@@ -17,6 +17,7 @@
  ***********************************************************************/
 import type { ProviderContainerConnectionIdentifierInfo } from '../models/provider-container-connection-identifier-info';
 import type { SimpleImageInfo } from '../models/simple-image-info';
+import type { LocalImage } from '../models/local-image-alternative';
 
 export abstract class ImageApi {
   static readonly CHANNEL: string = 'image-api';
@@ -31,6 +32,8 @@ export abstract class ImageApi {
     connection?: ProviderContainerConnectionIdentifierInfo;
     organisation: string;
   }): Promise<Array<SimpleImageInfo>>;
+
+  abstract getImage(engineId: string, imageId: string): Promise<Omit<LocalImage, 'containers'>>;
   /**
    * Open the image details page for the given image.
    */

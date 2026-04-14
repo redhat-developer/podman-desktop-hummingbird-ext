@@ -15,13 +15,33 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-import { getChannel } from './utils';
-import { ImageApi } from '../apis/image-api';
-import { AlternativesApi } from '../apis/alternatives-api';
-import { ContainerApi } from '../apis/container-api';
+import type { LocalContainer } from '../models/local-container';
 
-export const noTimeoutChannels: string[] = [
-  getChannel(ImageApi, 'pull'),
-  getChannel(AlternativesApi, 'getAlternativeReport'),
-  getChannel(ContainerApi, 'clone'),
-];
+export interface CloneOptions {
+  stopBeforeClone: boolean;
+  name: string;
+}
+
+export interface CloneResult {
+  engineId: string;
+  Id: string;
+}
+
+export abstract class ContainerApi {
+  static readonly CHANNEL: string = 'container-api';
+
+  /**
+   * Get a single container's information
+   */
+  abstract getContainer(engineId: string, containerId: string): Promise<LocalContainer>;
+
+  /**
+   * Clone a container with a Hummingbird alternative base image
+   */
+  abstract clone(
+    engineId: string,
+    containerId: string,
+    alternativeImage: string,
+    options: CloneOptions,
+  ): Promise<CloneResult>;
+}

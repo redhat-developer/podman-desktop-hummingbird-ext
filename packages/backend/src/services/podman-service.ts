@@ -1,4 +1,4 @@
-import type { ProviderContainerConnection, Disposable, ContainerInspectInfo } from '@podman-desktop/api';
+import type { ProviderContainerConnection, Disposable } from '@podman-desktop/api';
 import { extensions as extensionsAPI, containerEngine as containerEngineAPI } from '@podman-desktop/api';
 import type { PodmanExtensionApi } from '@podman-desktop/podman-extension-api';
 import { PODMAN_EXTENSION_ID } from '/@/utils/constants';
@@ -28,6 +28,8 @@ export class PodmanService implements Disposable {
   protected getPodmanExtension(): PodmanExtensionApi {
     const podman = extensionsAPI.getExtension(PODMAN_EXTENSION_ID);
     if (!podman) throw new Error('podman extension not found');
+    if (!podman.exports)
+      throw new Error(`podman extension is not exporting any API. Got version ${podman.packageJSON['version']}`);
 
     if (!('exec' in podman.exports) || typeof podman.exports.exec !== 'function') {
       throw new Error('invalid podman extension exports');
@@ -54,28 +56,43 @@ export class PodmanService implements Disposable {
   }
 
   public async clone(
-    container: ContainerInspectInfo,
+    engineId: string,
+    containerId: string,
     alternative: string,
+    options: {
+      name: string;
+    },
   ): Promise<{
     engineId: string;
     Id: string;
   }> {
-    const connection = await this.getRunningProviderContainerConnectionByEngineId(container.engineId);
+    const connection = await this.getRunningProviderContainerConnectionByEngineId(engineId);
 
-    try {
-      const result = await this.podman.exec(
-        ['container', 'clone', container.Id, `${container.Name}-clone`, alternative, '--run'],
-        {
-          connection: connection,
-        },
-      );
-      return {
-        engineId: container.engineId,
-        Id: result.stdout.trim(),
-      };
-    } catch (err: unknown) {
-      console.error('Cannot clone container', err);
-      throw err;
+    // Pull the image
+    await containerEngineAPI.pullImage(connection.connection, alternative, console.debug);
+
+    // Replicate the podman container
+    const result = await containerEngineAPI.replicatePodmanContainer(
+      {
+        engineId,
+        id: containerId,
+      },
+      {
+        engineId,
+      },
+      {
+        image: alternative,
+        name: options.name,
+      },
+    );
+
+    if (result.Warnings) {
+      console.warn('warnings', result.Warnings.join('\n'));
     }
+
+    return {
+      engineId,
+      Id: result.Id,
+    };
   }
 }

@@ -26,6 +26,7 @@ export * from './apis/dialog-api';
 export * from './apis/image-api';
 export * from './apis/provider-api';
 export * from './apis/alternatives-api';
+export * from './apis/container-api';
 
 // proxy utils
 export * from './messages/message-proxy';

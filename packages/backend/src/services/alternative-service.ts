@@ -28,6 +28,7 @@ import type {
   LocalImageAlternative,
   LocalImageAlternativeReport,
   LocalContainer,
+  ImageSummary,
 } from '@podman-desktop/extension-hummingbird-core-api';
 import alt from '../assets/alt.json' with { type: 'json' };
 import { GrypeService } from './scanners/grype-service';
@@ -61,6 +62,31 @@ export class AlternativeService implements Disposable {
     );
   }
 
+  // Map of Hummingbird image name -> Hummingbird image
+  #cache: Map<string, ImageSummary> | undefined = undefined;
+  protected async getHummingbirdImageSummary(name: string): Promise<ImageSummary> {
+    if (!this.#cache) {
+      const hummingbirdImages = await this.hummingbirdService.getImages();
+      this.#cache = new Map(hummingbirdImages.map(img => [img.name, img]));
+    }
+    const image = this.#cache.get(name);
+    if (!image) {
+      throw new Error(`Cannot find Hummingbird image ${name}`);
+    }
+    return image;
+  }
+
+  public async getAlternative(engineId: string, imageId: string): Promise<ImageSummary> {
+    const image = await containerEngineAPI.getImageInspect(engineId, imageId);
+    const [repo] = image.RepoTags[0].split(':');
+
+    // Check if this image has a Hummingbird alternative
+    const hummingbirdImageName = this.#altMap.get(repo);
+    if (!hummingbirdImageName) throw new Error(`Cannot find Hummingbird alternative for ${repo}`);
+
+    return this.getHummingbirdImageSummary(hummingbirdImageName);
+  }
+
   public async getAlternatives(): Promise<Array<LocalImageAlternative>> {
     const results: LocalImageAlternative[] = [];
 
@@ -77,15 +103,12 @@ export class AlternativeService implements Disposable {
         engineId: container.engineId,
         id: container.Id,
         name: container.Names[0],
+        imageID: container.ImageID,
       });
       accumulator.set(container.ImageID, array);
 
       return accumulator;
     }, new Map<string, Array<LocalContainer>>());
-
-    // Get all Hummingbird images from API
-    const hummingbirdImages = await this.hummingbirdService.getImages();
-    const hummingbirdMap = new Map(hummingbirdImages.map(img => [img.name, img]));
 
     for (const image of images) {
       if (!image.RepoTags || image.RepoTags.length === 0) continue;
@@ -97,7 +120,7 @@ export class AlternativeService implements Disposable {
         const hummingbirdImageName = this.#altMap.get(repo);
         if (!hummingbirdImageName) continue;
 
-        const hummingbirdImage = hummingbirdMap.get(hummingbirdImageName);
+        const hummingbirdImage = await this.getHummingbirdImageSummary(hummingbirdImageName);
 
         // https://github.com/podman-desktop/podman-desktop/issues/16967
         if (!('Arch' in image) || typeof image.Arch !== 'string') {
