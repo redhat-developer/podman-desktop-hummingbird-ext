@@ -10,6 +10,7 @@ overrides:
   minimatch@^3: ^3.1.5
   minimatch@^9: ^9.0.9
   minimatch@^10: ^10.2.4
+  lodash: ^4.18.1
 
 importers:
 
@@ -2789,8 +2790,8 @@ packages:
   lodash.merge@4.6.2:
     resolution: {integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==}
 
-  lodash@4.17.23:
-    resolution: {integrity: sha512-LgVTMpQtIopCi79SJeDiP0TfWi5CNEc/L/aRdTh3yIvmZXTnheWpKjSZhnvMl8iXbC1tFg9gdHHDMLoV7CnG+w==}
+  lodash@4.18.1:
+    resolution: {integrity: sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q==}
 
   lru-cache@11.3.2:
     resolution: {integrity: sha512-wgWa6FWQ3QRRJbIjbsldRJZxdxYngT/dO0I5Ynmlnin8qy7tC6xYzbcJjtN4wHLXtkbVwHzk0C+OejVw1XM+DQ==}
@@ -4300,7 +4301,7 @@ snapshots:
       '@rushstack/terminal': 0.21.0(@types/node@25.2.0)
       '@rushstack/ts-command-line': 5.1.7(@types/node@25.2.0)
       diff: 8.0.4
-      lodash: 4.17.23
+      lodash: 4.18.1
       minimatch: 10.2.5
       resolve: 1.22.12
       semver: 7.5.4
@@ -6465,7 +6466,7 @@ snapshots:
 
   lodash.merge@4.6.2: {}
 
-  lodash@4.17.23:
+  lodash@4.18.1:
     optional: true
 
   lru-cache@11.3.2: {}
