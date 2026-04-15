@@ -32,6 +32,7 @@ test('Expect that OptimisationReport displays RawReport when alternative is pres
         Created: '2024-01-01T00:00:00Z',
       },
       vulnerabilities: { total: 20, critical: 2, high: 4, medium: 8, low: 6 },
+      containers: [],
     },
     alternative: {
       image: {
@@ -60,6 +61,7 @@ test('Expect that OptimisationReport displays empty screen when no alternative i
         Created: '2024-01-01T00:00:00Z',
       },
       vulnerabilities: { total: 20 },
+      containers: [],
     },
     alternative: undefined,
   };
