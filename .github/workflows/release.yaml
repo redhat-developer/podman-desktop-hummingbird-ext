@@ -87,36 +87,36 @@ jobs:
           draft: true
           prerelease: false
 
-      - name: Create the PR to bump the version in the main branch (only if we're tagging from main branch)
-        if: ${{ github.event.inputs.branch == 'main' }}
-        run: |
-          git config --local user.name ${{ github.actor }}
-          CURRENT_VERSION=$(echo "${{ steps.TAG_UTIL.outputs.extVersion }}")
-          tmp=${CURRENT_VERSION%.*}
-          minor=${tmp#*.}
-          bumpedVersion=${CURRENT_VERSION%%.*}.$((minor + 1)).0
-          bumpedBranchName="bump-to-${bumpedVersion}"
-          git checkout -b "${bumpedBranchName}"
-          sed -i  "s#version\":\ \"\(.*\)\",#version\":\ \"${bumpedVersion}-next\",#g" package.json
-          sed -i  "s#version\":\ \"\(.*\)\",#version\":\ \"${bumpedVersion}-next\",#g" packages/backend/package.json
-          sed -i  "s#version\":\ \"\(.*\)\",#version\":\ \"${bumpedVersion}-next\",#g" packages/frontend/package.json
-          sed -i  "s#version\":\ \"\(.*\)\",#version\":\ \"${bumpedVersion}-next\",#g" packages/shared/package.json
-          git add package.json
-          git add packages/backend/package.json
-          git add packages/frontend/package.json
-          git add packages/shared/package.json
-          git commit -s --amend -m "chore: bump version to ${bumpedVersion}"
-          git push origin "${bumpedBranchName}"
-          echo -e "📢 Bump version to ${bumpedVersion}\n\n${{ steps.TAG_UTIL.outputs.extVersion }} has been released.\n\n Time to switch to the new ${bumpedVersion} version 🥳" > /tmp/pr-title
-          pullRequestUrl=$(gh pr create --title "chore: 📢 Bump version to ${bumpedVersion}" --body-file /tmp/pr-title --head "${bumpedBranchName}" --base "main")
-          echo "📢 Pull request created: ${pullRequestUrl}"
-          echo "➡️ Flag the PR as being ready for review"
-          gh pr ready "${pullRequestUrl}"
-          echo "🔅 Mark the PR as being ok to be merged automatically"
-          gh pr merge "${pullRequestUrl}" --auto --rebase
-          git checkout ${{ steps.TAG_UTIL.outputs.githubTag }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.PODMAN_DESKTOP_BOT_TOKEN }}
+      # - name: Create the PR to bump the version in the main branch (only if we're tagging from main branch)
+      #   if: ${{ github.event.inputs.branch == 'main' }}
+      #   run: |
+      #     git config --local user.name ${{ github.actor }}
+      #     CURRENT_VERSION=$(echo "${{ steps.TAG_UTIL.outputs.extVersion }}")
+      #     tmp=${CURRENT_VERSION%.*}
+      #     minor=${tmp#*.}
+      #     bumpedVersion=${CURRENT_VERSION%%.*}.$((minor + 1)).0
+      #     bumpedBranchName="bump-to-${bumpedVersion}"
+      #     git checkout -b "${bumpedBranchName}"
+      #     sed -i  "s#version\":\ \"\(.*\)\",#version\":\ \"${bumpedVersion}-next\",#g" package.json
+      #     sed -i  "s#version\":\ \"\(.*\)\",#version\":\ \"${bumpedVersion}-next\",#g" packages/backend/package.json
+      #     sed -i  "s#version\":\ \"\(.*\)\",#version\":\ \"${bumpedVersion}-next\",#g" packages/frontend/package.json
+      #     sed -i  "s#version\":\ \"\(.*\)\",#version\":\ \"${bumpedVersion}-next\",#g" packages/shared/package.json
+      #     git add package.json
+      #     git add packages/backend/package.json
+      #     git add packages/frontend/package.json
+      #     git add packages/shared/package.json
+      #     git commit -s --amend -m "chore: bump version to ${bumpedVersion}"
+      #     git push origin "${bumpedBranchName}"
+      #     echo -e "📢 Bump version to ${bumpedVersion}\n\n${{ steps.TAG_UTIL.outputs.extVersion }} has been released.\n\n Time to switch to the new ${bumpedVersion} version 🥳" > /tmp/pr-title
+      #     pullRequestUrl=$(gh pr create --title "chore: 📢 Bump version to ${bumpedVersion}" --body-file /tmp/pr-title --head "${bumpedBranchName}" --base "main")
+      #     echo "📢 Pull request created: ${pullRequestUrl}"
+      #     echo "➡️ Flag the PR as being ready for review"
+      #     gh pr ready "${pullRequestUrl}"
+      #     echo "🔅 Mark the PR as being ok to be merged automatically"
+      #     gh pr merge "${pullRequestUrl}" --auto --rebase
+      #     git checkout ${{ steps.TAG_UTIL.outputs.githubTag }}
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.PODMAN_DESKTOP_BOT_TOKEN }}
 
   build-oci:
     needs: [tag]
