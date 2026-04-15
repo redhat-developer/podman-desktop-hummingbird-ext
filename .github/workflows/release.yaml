@@ -140,6 +140,7 @@ jobs:
       contents: read
       packages: write
       id-token: write
+      attestations: write
     steps:
       - uses: podman-desktop/gh-extensions-actions/.github/actions/oci-publish@19efb8f2422c54ad8904ad068ad363bcabaacc96 # v0.1.0
         name: publish-oci
