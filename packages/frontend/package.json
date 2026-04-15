@@ -3,7 +3,7 @@
   "private": true,
   "displayName": "frontend UI",
   "description": "Frontend UI for the Hello World extension",
-  "version": "0.1.0-next",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "preview": "vite preview",

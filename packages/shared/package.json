@@ -1,7 +1,7 @@
 {
   "name": "@podman-desktop/extension-hummingbird-core-api",
   "private": true,
-  "version": "0.1.0-next",
+  "version": "0.1.0",
   "type": "module",
   "license": "Apache-2.0",
   "main": "./dist/index.cjs",
