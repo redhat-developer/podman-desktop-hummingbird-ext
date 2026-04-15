@@ -150,6 +150,7 @@ jobs:
           tag: ${{ needs.tag.outputs.extVersion }} latest
           artifact-id: ${{ needs.build-oci.outputs.artifact-id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.run_id }}
 
   release:
     needs: [tag, publish-oci]
