@@ -58,6 +58,7 @@ beforeEach(() => {
     getSbom: vi.fn(),
     getTags: vi.fn(),
     getVulnerabilities: vi.fn(),
+    getCatalogVulnerabilities: vi.fn(),
   };
 
   vi.mocked(Api.prototype.v1.getImages).mockResolvedValue({
