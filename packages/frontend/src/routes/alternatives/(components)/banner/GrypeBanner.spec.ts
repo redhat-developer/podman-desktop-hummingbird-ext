@@ -24,6 +24,7 @@ import { routingAPI } from '/@/api/client';
 
 vi.mock(import('/@/api/client'), () => ({
   routingAPI: {
+    navigateToContainerDetails: vi.fn(),
     navigateToCatalog: vi.fn(),
     readRoute: vi.fn(),
   },

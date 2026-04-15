@@ -7,7 +7,8 @@ import type {
 } from '@podman-desktop/extension-hummingbird-core-api';
 import { Input, Checkbox, Button, ErrorMessage } from '@podman-desktop/ui-svelte';
 import WarningBanner from '/@/routes/containers/[engineId]/[id]/clone/(components)/WarningBanner.svelte';
-import { containerAPI } from '/@/api/client';
+import { containerAPI, routingAPI } from '/@/api/client';
+import { faInfoCircle } from '@fortawesome/free-solid-svg-icons/faInfoCircle';
 
 interface Props {
   container: LocalContainer;
@@ -44,6 +45,11 @@ async function clone(): Promise<void> {
     loading = false;
   }
 }
+
+async function navigateToContainer(): Promise<void> {
+  if (!result) return;
+  return routingAPI.navigateToContainerDetails(result.engineId, result.Id);
+}
 </script>
 
 <div class="m-5">
@@ -51,7 +57,7 @@ async function clone(): Promise<void> {
 
   <!-- form -->
   <div class="bg-[var(--pd-content-card-bg)] space-y-6 px-8 sm:pb-6 xl:pb-8 rounded-lg h-fit">
-    <div class="w-full">
+    <div class="w-full flex flex-col">
       <label for="new-base-image" class="pt-4 block mb-2 font-bold text-[var(--pd-content-card-header-text)]"
         >New base image</label>
       <div class="flex items-center gap-2">
@@ -66,21 +72,26 @@ async function clone(): Promise<void> {
 
       <label for="new-container-name" class="pt-4 block mb-2 font-bold text-[var(--pd-content-card-header-text)]"
         >New container name</label>
-      <Input name="new-container-name" bind:value={name} readonly={loading} />
+      <Input name="new-container-name" bind:value={name} readonly={loading || !!result} />
 
       <label class="flex items-center gap-2 cursor-pointer mt-4">
-        <Checkbox bind:checked={stopExisting} disabled={loading} />
+        <Checkbox bind:checked={stopExisting} disabled={loading || !!result} />
         <span class="text-[var(--pd-content-text)]"> Stop existing container before proceeding (recommended) </span>
       </label>
 
+      {#if result}
+        <span class="mt-2">Container {result.Id.substring(0, 8)} created</span>
+      {/if}
+
       <div class="w-full flex flex-row gap-x-2 justify-end pt-4">
         <Button type="secondary" onclick={close} title="Close">Close</Button>
-        <Button onclick={clone} inProgress={loading} disabled={loading || !!result} title="Clone">Clone</Button>
-      </div>
 
-      {#if result}
-        <span>Container {result.Id.substring(0, 8)} created</span>
-      {/if}
+        {#if result}
+          <Button onclick={navigateToContainer} title="Clone" icon={faInfoCircle}>Open container details</Button>
+        {:else}
+          <Button onclick={clone} inProgress={loading} disabled={loading || !!result} title="Clone">Clone</Button>
+        {/if}
+      </div>
 
       {#if error}
         <ErrorMessage error={error} />
