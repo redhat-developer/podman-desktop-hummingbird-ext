@@ -42,3 +42,14 @@ test('Expect that ReportBanner does not display CVE info when not provided', asy
   expect(screen.queryByText('CVEs')).not.toBeInTheDocument();
   expect(screen.getByText('-40%')).toBeInTheDocument();
 });
+
+test('Expect that Optimization metrics region to be hidden if both cve and size are not positive', async () => {
+  render(ReportBanner, {
+    cveReductionCount: -10,
+    cveReductionPercent: -50,
+    sizeReductionPercent: -10,
+  });
+
+  const region = screen.getByRole('region', { name: 'Optimization metrics' });
+  expect(region).toHaveClass('hidden');
+});

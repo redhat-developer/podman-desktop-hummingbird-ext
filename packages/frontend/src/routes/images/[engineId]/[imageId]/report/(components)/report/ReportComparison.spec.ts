@@ -36,3 +36,17 @@ test('Expect that ReportComparison displays comparison info', async () => {
   expect(screen.getByText('Only 5 CVE vs 20')).toBeInTheDocument();
   expect(screen.getByText('Try the Alternate Base Image')).toBeInTheDocument();
 });
+
+test('Expect that ReportComparison hides benefits and bars when reduction is not positive', async () => {
+  render(ReportComparison, {
+    cveReductionPercent: 0,
+    sizeReductionPercent: 0,
+    altCveCount: 20,
+    imageCveCount: 20,
+    altSize: 100 * 1024 * 1024,
+    imageSize: 100 * 1024 * 1024,
+  });
+
+  expect(screen.queryByText('Image Size')).not.toBeInTheDocument();
+  expect(screen.queryByText('CVE Count')).not.toBeInTheDocument();
+});
