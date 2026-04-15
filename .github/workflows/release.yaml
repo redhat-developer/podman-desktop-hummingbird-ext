@@ -118,44 +118,30 @@ jobs:
       #   env:
       #     GITHUB_TOKEN: ${{ secrets.PODMAN_DESKTOP_BOT_TOKEN }}
 
-  build-oci:
+  build:
     needs: [tag]
     runs-on: ubuntu-24.04
     permissions:
       contents: read
-    outputs:
-      artifact-id: ${{ steps.build-oci.outputs.artifact-id }}
+      packages: write
     steps:
-      - uses: podman-desktop/gh-extensions-actions/.github/actions/oci-build@af8cfa4713ec24dccca2b5f42eb2ca3b91c10264 # v0.1.1
-        name: build-oci
-        id: build-oci
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
-          image-name: '${{ github.repository }}'
           ref: ${{ needs.tag.outputs.githubTag }}
 
-  publish-oci:
-    needs: [tag, build-oci]
-    runs-on: ubuntu-24.04
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
-      attestations: write
-    steps:
-      - uses: podman-desktop/gh-extensions-actions/.github/actions/oci-publish@af8cfa4713ec24dccca2b5f42eb2ca3b91c10264 # v0.1.1
-        name: publish-oci
-        with:
-          image-name: '${{ github.repository }}'
-          registry: 'ghcr.io'
-          registry-username: ${{ github.repository_owner }}
-          registry-password: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ needs.tag.outputs.extVersion }}
-          artifact-id: ${{ needs.build-oci.outputs.artifact-id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          run-id: ${{ github.run_id }}
+      - name: Login to ghcr.io
+        run: podman login --username ${{ github.repository_owner }} --password ${{ secrets.GITHUB_TOKEN }} ghcr.io
+
+      - name: Build Image
+        id: build-image
+        run: |
+          podman build --squash-all -t ghcr.io/${{ github.repository }}:${{ needs.tag.outputs.extVersion }} .
+          podman push ghcr.io/${{ github.repository }}:${{ needs.tag.outputs.extVersion }}
+          podman tag ghcr.io/${{ github.repository }}:${{ needs.tag.outputs.extVersion }} ghcr.io/${{ github.repository }}:latest
+          podman push ghcr.io/${{ github.repository }}:latest
 
   release:
-    needs: [tag, publish-oci]
+    needs: [tag, build]
     name: Release
     runs-on: ubuntu-24.04
     permissions:
