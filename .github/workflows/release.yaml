@@ -147,7 +147,7 @@ jobs:
           registry: 'ghcr.io'
           registry-username: ${{ github.repository_owner }}
           registry-password: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ needs.tag.outputs.extVersion }} latest
+          tag: ${{ needs.tag.outputs.extVersion }}
           artifact-id: ${{ needs.build-oci.outputs.artifact-id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ github.run_id }}
