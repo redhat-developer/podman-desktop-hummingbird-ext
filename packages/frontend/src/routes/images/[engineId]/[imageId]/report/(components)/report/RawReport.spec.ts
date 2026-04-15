@@ -42,6 +42,7 @@ test('Expect that RawReport displays both image cards', async () => {
       Created: '2024-01-01T00:00:00Z',
     },
     vulnerabilities: { total: 20, critical: 2, high: 4, medium: 8, low: 6 },
+    containers: [],
   };
 
   render(RawReport, {

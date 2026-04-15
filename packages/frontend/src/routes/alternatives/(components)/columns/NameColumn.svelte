@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { Row } from '/@/routes/alternatives/(components)/row';
+import LocalContainerNameColumn from '$lib/columns/LocalContainerNameColumn.svelte';
 
 interface Props {
   object: Row;
@@ -19,12 +20,5 @@ let { object }: Props = $props();
     </span>
   </div>
 {:else}
-  <div class="text-[var(--pd-table-body-text-highlight)] max-w-full overflow-hidden text-ellipsis">
-    {object.name.startsWith('/') ? object.name.substring(1) : object.name}
-  </div>
-  <div class="flex flex-row text-sm gap-1">
-    <div class="text-[var(--pd-table-body-text)]">
-      {object.id.substring(0, 8)}
-    </div>
-  </div>
+  <LocalContainerNameColumn object={object} />
 {/if}

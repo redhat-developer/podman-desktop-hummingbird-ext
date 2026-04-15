@@ -24,6 +24,7 @@ import type {
   VulnerabilitiesSummary,
 } from '../generated/hummingbird-project';
 import type { ImageInspectInfo } from '@podman-desktop/api';
+import type { LocalContainer } from './local-container';
 
 export interface AlternativeReport {
   image: ImageSummary;
@@ -41,6 +42,7 @@ export interface ImageReport {
   inspect: ImageInspectInfo;
   sbom?: SBOMReport;
   vulnerabilities?: VulnerabilitiesSummary;
+  containers: Array<LocalContainer>;
 }
 
 export interface OptimisationReport {

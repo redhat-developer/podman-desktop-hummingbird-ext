@@ -6,6 +6,7 @@ import type { AlternativeReport, ImageReport, Tag } from '@podman-desktop/extens
 import ReportBanner from './ReportBanner.svelte';
 import ReportImageCard from './ReportImageCard.svelte';
 import ReportComparison from './ReportComparison.svelte';
+import ClonableContainerTable from '/@/routes/images/[engineId]/[imageId]/report/(components)/table/ClonableContainerTable.svelte';
 
 interface Props {
   alternative: AlternativeReport;
@@ -43,7 +44,7 @@ const imageRepoTag = $derived(image.inspect?.RepoTags?.[0] ?? 'Unknown');
 const imageVersion = $derived(imageRepoTag.split(':')[1] ?? '-');
 </script>
 
-<div class="flex flex-col gap-5 overflow-auto">
+<div class="flex flex-col gap-5 overflow-auto px-5">
   <!-- Alternate Image Found Banner -->
   <ReportBanner
     cveReductionCount={cveReduction?.count}
@@ -91,4 +92,13 @@ const imageVersion = $derived(imageRepoTag.split(':')[1] ?? '-');
     imageCveCount={image.vulnerabilities?.total}
     altSize={altSize}
     imageSize={image.inspect.Size} />
+</div>
+
+<div class="px-5 pt-4">
+  <span class="text-base font-bold text-[var(--pd-content-header)]"
+    >Container{image.containers.length > 1 ? 's' : ''} using {image.inspect.RepoTags[0]} image</span>
+</div>
+
+<div class="flex w-full">
+  <ClonableContainerTable containers={image.containers} />
 </div>

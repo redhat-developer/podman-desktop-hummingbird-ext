@@ -332,7 +332,10 @@ export class AlternativeService extends Publisher<void> implements AsyncInit, Di
   }
 
   public async getOptimisationReport(engineId: string, imageId: string): Promise<OptimisationReport> {
-    const imageInspectInfo = await containerEngineAPI.getImageInspect(engineId, imageId);
+    const [imageInspectInfo, containers] = await Promise.all([
+      containerEngineAPI.getImageInspect(engineId, imageId),
+      containerEngineAPI.listContainers(),
+    ]);
 
     const alternative = await this.findAlternative(imageInspectInfo);
     const sbom = await this.getSBOMReport(imageInspectInfo);
@@ -343,6 +346,14 @@ export class AlternativeService extends Publisher<void> implements AsyncInit, Di
         inspect: imageInspectInfo,
         sbom,
         vulnerabilities,
+        containers: containers
+          .filter(({ ImageID }) => ImageID === imageId)
+          .map(container => ({
+            engineId: container.engineId,
+            id: container.Id,
+            name: container.Names[0],
+            imageID: container.ImageID,
+          })),
       },
       alternative: alternative,
     };
