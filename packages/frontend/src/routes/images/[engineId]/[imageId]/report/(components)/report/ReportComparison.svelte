@@ -13,17 +13,25 @@ interface Props {
 
 let { cveReductionPercent, sizeReductionPercent, altCveCount, imageCveCount, altSize, imageSize }: Props = $props();
 
-const benefits = [
-  {
-    title: `${cveReductionPercent?.toFixed(0) ?? 0}% Fewer Vulnerabilities`,
-    description: `Only ${altCveCount ?? 0} CVE vs ${imageCveCount ?? 0}`,
-    show: cveReductionPercent !== undefined,
-  },
-  {
-    title: `${sizeReductionPercent?.toFixed(0) ?? 0}% Smaller Image Size`,
-    description: `${filesize(altSize ?? 0)} vs ${filesize(imageSize ?? 0)}`,
-    show: sizeReductionPercent !== undefined,
-  },
+const benefits = $derived([
+  ...(!!cveReductionPercent && cveReductionPercent > 0
+    ? [
+        {
+          title: `${cveReductionPercent?.toFixed(0) ?? 0}% Fewer Vulnerabilities`,
+          description: `Only ${altCveCount ?? 0} CVE vs ${imageCveCount ?? 0}`,
+          show: cveReductionPercent !== undefined,
+        },
+      ]
+    : []),
+  ...(!!sizeReductionPercent && sizeReductionPercent > 0
+    ? [
+        {
+          title: `${sizeReductionPercent?.toFixed(0) ?? 0}% Smaller Image Size`,
+          description: `${filesize(altSize ?? 0)} vs ${filesize(imageSize ?? 0)}`,
+          show: sizeReductionPercent !== undefined,
+        },
+      ]
+    : []),
   {
     title: 'Enterprise-Grade Security',
     description: 'FIPS-compliant with continuous scanning',
@@ -34,7 +42,7 @@ const benefits = [
     description: 'Distroless with essential components only',
     show: true,
   },
-];
+]);
 </script>
 
 <div class="bg-[var(--pd-content-card-bg)] rounded-lg border border-[var(--pd-content-card-border)] p-5">
@@ -76,7 +84,7 @@ const benefits = [
     <!-- Right: Evaluation Criteria -->
     <div class="space-y-3">
       <!-- Image Size Comparison -->
-      {#if sizeReductionPercent !== undefined && altSize !== undefined && imageSize !== undefined}
+      {#if sizeReductionPercent !== undefined && sizeReductionPercent > 0 && altSize !== undefined && imageSize !== undefined}
         <div>
           <div class="flex justify-between items-center mb-1">
             <span class="text-xs text-[var(--pd-content-text)]">Image Size</span>
@@ -96,7 +104,7 @@ const benefits = [
       {/if}
 
       <!-- CVE Count Comparison -->
-      {#if cveReductionPercent !== undefined && altCveCount !== undefined && imageCveCount !== undefined}
+      {#if cveReductionPercent !== undefined && cveReductionPercent > 0 && altCveCount !== undefined && imageCveCount !== undefined}
         <div>
           <div class="flex justify-between items-center mb-1">
             <span class="text-xs text-[var(--pd-content-text)]">CVE Count</span>
