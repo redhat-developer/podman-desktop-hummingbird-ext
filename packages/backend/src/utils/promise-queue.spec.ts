@@ -107,7 +107,7 @@ describe('PromiseQueue', () => {
       queue.enqueue(async () => {
         throw error;
       }),
-    ).rejects.toThrowError('Task failed');
+    ).rejects.toThrow('Task failed');
 
     // Queue should still work after rejection
     const result = await queue.enqueue(async () => 'works');
@@ -165,8 +165,8 @@ describe('PromiseQueue', () => {
   });
 
   test('should throw error if maxConcurrent is less than 1', () => {
-    expect(() => new PromiseQueue(0)).toThrowError('maxConcurrent must be at least 1');
-    expect(() => new PromiseQueue(-1)).toThrowError('maxConcurrent must be at least 1');
+    expect(() => new PromiseQueue(0)).toThrow('maxConcurrent must be at least 1');
+    expect(() => new PromiseQueue(-1)).toThrow('maxConcurrent must be at least 1');
   });
 
   test('should update counts correctly throughout execution', async () => {
@@ -219,7 +219,7 @@ test('error on promise creation should be correctly handled', async () => {
 
   await expect(async () => {
     return queue.enqueue(() => mThrow());
-  }).rejects.toThrowError('test');
+  }).rejects.toThrow('test');
 
   expect(queue.runningCount).toBe(0);
 });

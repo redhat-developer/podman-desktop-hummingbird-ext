@@ -40,5 +40,5 @@ test('expect error to be propagated', async () => {
 
   await expect(() => {
     return dialog.showWarningMessage('Are you sure?', 'Yes', 'No');
-  }).rejects.toThrowError('Something went wrong');
+  }).rejects.toThrow('Something went wrong');
 });

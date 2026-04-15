@@ -394,7 +394,7 @@ describe('AlternativeService#getAlternativeReport', () => {
 
     const service = getAlternativeService();
 
-    await expect(service.getAlternativeReport(mockAlternative)).rejects.toThrowError('Cannot find tag 1.21 for nginx');
+    await expect(service.getAlternativeReport(mockAlternative)).rejects.toThrow('Cannot find tag 1.21 for nginx');
   });
 });
 

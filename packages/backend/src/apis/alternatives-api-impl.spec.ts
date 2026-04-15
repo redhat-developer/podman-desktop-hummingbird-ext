@@ -79,7 +79,7 @@ describe('AlternativesApiImpl#getAlternatives', () => {
 
     await expect(() => {
       return api.getAlternatives();
-    }).rejects.toThrowError('Failed to get alternatives');
+    }).rejects.toThrow('Failed to get alternatives');
   });
 });
 
@@ -97,6 +97,6 @@ describe('AlternativesApiImpl#getAlternativeReport', () => {
 
     await expect(() => {
       return api.getAlternativeReport(LOCAL_IMAGE_ALT_MOCK);
-    }).rejects.toThrowError('Failed to get report');
+    }).rejects.toThrow('Failed to get report');
   });
 });
