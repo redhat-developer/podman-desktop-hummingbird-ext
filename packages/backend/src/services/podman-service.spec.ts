@@ -155,6 +155,7 @@ describe('clone', () => {
       task: {
         title: 'Cloning container',
       },
+      pod: 'pod-id',
     });
 
     expect(windowAPI.withProgress).toHaveBeenCalledExactlyOnceWith(
@@ -189,6 +190,7 @@ describe('clone', () => {
       {
         image: 'alt-image',
         name: 'new-name',
+        pod: 'pod-id',
       },
     );
 

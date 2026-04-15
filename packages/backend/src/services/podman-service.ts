@@ -76,6 +76,7 @@ export class PodmanService implements Disposable {
       task: {
         title: string;
       };
+      pod?: string;
     },
   ): Promise<{
     engineId: string;
@@ -112,6 +113,7 @@ export class PodmanService implements Disposable {
             {
               image: alternative,
               name: options.name,
+              pod: options.pod,
             },
           );
 
