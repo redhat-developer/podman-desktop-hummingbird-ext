@@ -128,12 +128,13 @@ jobs:
     steps:
       - uses: podman-desktop/gh-extensions-actions/.github/actions/oci-build@19efb8f2422c54ad8904ad068ad363bcabaacc96 # v0.1.0
         name: build-oci
+        id: build-oci
         with:
           image-name: '${{ github.repository }}'
           ref: ${{ needs.tag.outputs.githubTag }}
 
   publish-oci:
-    needs: [build-oci]
+    needs: [tag, build-oci]
     runs-on: ubuntu-24.04
     permissions:
       contents: read
