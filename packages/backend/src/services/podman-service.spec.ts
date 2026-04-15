@@ -215,7 +215,7 @@ describe('clone', () => {
           title: 'Cloning container',
         },
       }),
-    ).rejects.toThrowError(error);
+    ).rejects.toThrow(error);
 
     expect(TELEMETRY_LOGGER_MOCK.logUsage).toHaveBeenCalledWith(
       TelemetryEvents.CLONE_CONTAINER,
