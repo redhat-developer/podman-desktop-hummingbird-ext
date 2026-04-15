@@ -60,12 +60,18 @@ export class ContainerApiImpl extends ContainerApi {
       await containerEngineAPI.stopContainer(engineId, containerId);
     }
 
+    const pods = await containerEngineAPI.listPods();
+    const pod = pods.find(
+      pod => pod.engineId === container.engineId && pod.Containers.some(container => container.Id === containerId),
+    );
+
     // Clone the container with the alternative image
     return await this.podmanService.clone(engineId, containerId, alternativeImage, {
       ...options,
       task: {
         title: `Cloning container ${container.Name} (${container.Id.substring(0, 8)})`,
       },
+      pod: pod?.Id,
     });
   }
 }
