@@ -74,6 +74,14 @@ const row: TableRow<Row> = new TableRow<Row>({
     return [];
   },
 });
+
+function key(row: Row): string {
+  if ('report' in row) {
+    return `${row.localImage.engineId}:${row.localImage.id}`;
+  } else {
+    return `${row.engineId}:${row.id}`;
+  }
+}
 </script>
 
-<Table kind="alternatives" data={data} columns={columns} row={row} />
+<Table key={key} kind="alternatives" data={data} columns={columns} row={row} />
