@@ -100,7 +100,7 @@ describe('getPodmanExtension', () => {
 
     const service = getPodmanService();
 
-    expect(() => service['getPodmanExtension']()).toThrowError('podman extension not found');
+    expect(() => service['getPodmanExtension']()).toThrow('podman extension not found');
   });
 });
 
@@ -136,7 +136,7 @@ describe('getRunningProviderContainerConnectionByEngineId', () => {
 
     const service = getPodmanService();
 
-    await expect(service.getRunningProviderContainerConnectionByEngineId('test-engine-id')).rejects.toThrowError(
+    await expect(service.getRunningProviderContainerConnectionByEngineId('test-engine-id')).rejects.toThrow(
       'connection not found for engineId test-engine-id',
     );
   });

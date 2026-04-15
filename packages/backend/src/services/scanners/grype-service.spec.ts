@@ -51,7 +51,7 @@ test('should throw error when extension is undefined', () => {
 
   const service = getGrypeService();
 
-  expect(() => service['getGrypeAPI']()).toThrowError('cannot find the grype extension');
+  expect(() => service['getGrypeAPI']()).toThrow('cannot find the grype extension');
 });
 
 describe('GrypeService#toVulnerabilitySummary', () => {
