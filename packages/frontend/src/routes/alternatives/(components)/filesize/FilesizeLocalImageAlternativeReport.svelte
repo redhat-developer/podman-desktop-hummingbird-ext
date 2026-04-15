@@ -22,7 +22,9 @@ let reductionPercent = $derived.by(() => {
 
 let saved = $derived.by(() => {
   if (!reduction || reduction <= 0) return undefined;
-  return filesize(reduction);
+  return filesize(reduction, {
+    round: 0,
+  });
 });
 
 let result: 'smaller' | 'larger' | 'equal' | undefined = $derived.by(() => {
@@ -37,13 +39,18 @@ let result: 'smaller' | 'larger' | 'equal' | undefined = $derived.by(() => {
 {#if valid}
   <div class="flex flex-col items-center">
     <div class="flex items-center gap-2">
-      <span class="text-base font-medium">{filesize(object.localImage.size)}</span>
+      <span class="text-base font-medium"
+        >{filesize(object.localImage.size, {
+          round: 0,
+        })}</span>
       <span class="text-[var(--pd-content-text)] opacity-30">→</span>
       <span class:text-green-400={result === 'smaller'} class="text-base font-medium"
-        >{filesize(object.alternative.size)}</span>
+        >{filesize(object.alternative.size, {
+          round: 0,
+        })}</span>
     </div>
     {#if result === 'smaller'}
-      <div class="flex items-center gap-1">
+      <div class="flex items-center gap-1 max-lg:hidden">
         <span class="text-sm text-green-400">-{reductionPercent}% smaller</span>
         <span class="text-xs text-[var(--pd-content-text)] opacity-50">({saved} saved)</span>
       </div>

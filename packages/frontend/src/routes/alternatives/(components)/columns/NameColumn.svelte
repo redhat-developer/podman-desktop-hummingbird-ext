@@ -9,12 +9,12 @@ let { object }: Props = $props();
 </script>
 
 {#if 'report' in object}
-  <div class="flex items-center gap-2">
+  <div class="flex items-center gap-2 w-full overflow-hidden">
     <span class="text-base">
       {object.localImage.name}:{object.localImage.tag}
     </span>
     <span class="text-[var(--pd-content-text)] opacity-30">→</span>
-    <span class="text-base text-purple-400">
+    <span class="text-base text-purple-400 overflow-hidden text-ellipsis">
       quay.io/hummingbird/{object.alternative.name}
     </span>
   </div>
