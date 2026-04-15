@@ -47,7 +47,7 @@ let result: 'smaller' | 'larger' | 'equal' | undefined = $derived.by(() => {
       <span class:text-green-400={result === 'smaller'} class="text-base font-medium"
         >{filesize(object.alternative.size, {
           round: 0,
-      })}</span>
+        })}</span>
     </div>
     {#if result === 'smaller'}
       <div class="flex items-center gap-1 max-lg:hidden">
