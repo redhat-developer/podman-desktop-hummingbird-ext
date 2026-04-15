@@ -1,5 +1,12 @@
-import type { ProviderContainerConnection, Disposable, TelemetryLogger } from '@podman-desktop/api';
-import { extensions as extensionsAPI, containerEngine as containerEngineAPI } from '@podman-desktop/api';
+import {
+  containerEngine as containerEngineAPI,
+  Disposable,
+  extensions as extensionsAPI,
+  ProgressLocation,
+  ProviderContainerConnection,
+  TelemetryLogger,
+  window as windowAPI,
+} from '@podman-desktop/api';
 import type { PodmanExtensionApi } from '@podman-desktop/podman-extension-api';
 import { PODMAN_EXTENSION_ID } from '/@/utils/constants';
 import { ProviderService } from '/@/services/provider-service';
@@ -66,6 +73,9 @@ export class PodmanService implements Disposable {
     alternative: string,
     options: {
       name: string;
+      task: {
+        title: string;
+      };
     },
   ): Promise<{
     engineId: string;
@@ -79,36 +89,44 @@ export class PodmanService implements Disposable {
     const start = performance.now();
 
     try {
-      const connection = await this.getRunningProviderContainerConnectionByEngineId(engineId);
-
-      // Pull the image
-      await containerEngineAPI.pullImage(connection.connection, alternative, console.debug);
-
-      // Replicate the podman container
-      const result = await containerEngineAPI.replicatePodmanContainer(
+      return await windowAPI.withProgress(
         {
-          engineId,
-          id: containerId,
+          location: ProgressLocation.TASK_WIDGET,
+          title: options.task.title,
         },
-        {
-          engineId,
-        },
-        {
-          image: alternative,
-          name: options.name,
+        async (_, token) => {
+          const connection = await this.getRunningProviderContainerConnectionByEngineId(engineId);
+
+          // Pull the image
+          await containerEngineAPI.pullImage(connection.connection, alternative, console.debug, undefined, token);
+
+          // Replicate the podman container
+          const result = await containerEngineAPI.replicatePodmanContainer(
+            {
+              engineId,
+              id: containerId,
+            },
+            {
+              engineId,
+            },
+            {
+              image: alternative,
+              name: options.name,
+            },
+          );
+
+          if (result.Warnings) {
+            console.warn('warnings', result.Warnings.join('\n'));
+          }
+
+          telemetry['warnings'] = result.Warnings.length;
+
+          return {
+            engineId,
+            Id: result.Id,
+          };
         },
       );
-
-      if (result.Warnings) {
-        console.warn('warnings', result.Warnings.join('\n'));
-      }
-
-      telemetry['warnings'] = result.Warnings.length;
-
-      return {
-        engineId,
-        Id: result.Id,
-      };
     } catch (err: unknown) {
       telemetry['error'] = err;
       throw err;

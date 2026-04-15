@@ -61,6 +61,11 @@ export class ContainerApiImpl extends ContainerApi {
     }
 
     // Clone the container with the alternative image
-    return await this.podmanService.clone(engineId, containerId, alternativeImage, options);
+    return await this.podmanService.clone(engineId, containerId, alternativeImage, {
+      ...options,
+      task: {
+        title: `Cloning container ${container.Name} (${container.Id.substring(0, 8)})`,
+      },
+    });
   }
 }
