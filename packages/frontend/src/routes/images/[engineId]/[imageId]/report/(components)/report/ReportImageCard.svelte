@@ -72,7 +72,7 @@ let {
       <span class="text-xs text-[var(--pd-content-text)] opacity-50 uppercase tracking-wide">Size</span>
       <span class="text-sm text-[var(--pd-content-header)]">
         {size}
-        {#if isHummingbird && sizeReductionPercent !== undefined}
+        {#if isHummingbird && sizeReductionPercent !== undefined && sizeReductionPercent > 0}
           <span class="text-xs text-purple-400 font-medium">(-{sizeReductionPercent.toFixed(0)}%)</span>
         {/if}
       </span>

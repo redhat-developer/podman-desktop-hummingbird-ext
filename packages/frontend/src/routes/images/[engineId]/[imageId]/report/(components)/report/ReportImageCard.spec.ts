@@ -47,3 +47,16 @@ test('Expect that ReportImageCard displays reduction info for Hummingbird', asyn
 
   expect(screen.getByText('(-40%)')).toBeInTheDocument();
 });
+
+test('Expect that ReportImageCard hides reduction info when it is not positive', async () => {
+  render(ReportImageCard, {
+    title: 'hummingbird-image',
+    subtitle: 'Hummingbird hardened image',
+    version: 'latest',
+    size: '120 MB',
+    sizeReductionPercent: -20,
+    isHummingbird: true,
+  });
+
+  expect(screen.queryByText('(-20%)')).not.toBeInTheDocument();
+});

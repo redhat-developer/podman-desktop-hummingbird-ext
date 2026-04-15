@@ -19,11 +19,21 @@ let { cveReductionCount, cveReductionPercent, sizeReductionPercent }: Props = $p
       </div>
       <div class="flex flex-col">
         <span class="text-lg font-bold text-purple-300">Hardened Alternative Found!</span>
-        <span class="text-sm text-[var(--pd-content-text)] opacity-70"
+        <span
+          class:hidden={!!cveReductionPercent && cveReductionPercent <= 0}
+          class="text-sm text-[var(--pd-content-text)] opacity-70"
           >A Hummingbird image is available with significant security improvements</span>
       </div>
     </div>
-    <div class="flex items-center gap-8 bg-[var(--pd-content-card-bg)]/50 rounded-lg px-6 py-3">
+
+    <div
+      role="region"
+      aria-label="Optimization metrics"
+      class:hidden={!!cveReductionPercent &&
+        cveReductionPercent <= 0 &&
+        !!sizeReductionPercent &&
+        sizeReductionPercent <= 0}
+      class="flex items-center gap-8 bg-[var(--pd-content-card-bg)]/50 rounded-lg px-6 py-3">
       {#if cveReductionCount !== undefined && cveReductionPercent !== undefined}
         <!-- CVEs -->
         <div class="text-center">
@@ -38,7 +48,7 @@ let { cveReductionCount, cveReductionPercent, sizeReductionPercent }: Props = $p
         </div>
       {/if}
 
-      {#if sizeReductionPercent !== undefined}
+      {#if sizeReductionPercent !== undefined && sizeReductionPercent > 0}
         <!-- Size Reduction -->
         <div class="text-center">
           <div class="text-3xl font-bold text-purple-300">-{sizeReductionPercent.toFixed(0)}%</div>

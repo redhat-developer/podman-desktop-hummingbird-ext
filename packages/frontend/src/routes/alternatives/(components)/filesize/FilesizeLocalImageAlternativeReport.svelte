@@ -24,6 +24,14 @@ let saved = $derived.by(() => {
   if (!reduction || reduction <= 0) return undefined;
   return filesize(reduction);
 });
+
+let result: 'smaller' | 'larger' | 'equal' | undefined = $derived.by(() => {
+  if (!valid) return undefined;
+  if (reduction === undefined) return undefined;
+  if (reduction > 0) return 'smaller';
+  if (reduction < 0) return 'larger';
+  return 'equal';
+});
 </script>
 
 {#if valid}
@@ -31,16 +39,17 @@ let saved = $derived.by(() => {
     <div class="flex items-center gap-2">
       <span class="text-base font-medium">{filesize(object.localImage.size)}</span>
       <span class="text-[var(--pd-content-text)] opacity-30">→</span>
-      <span class="text-base font-medium text-green-400">{filesize(object.alternative.size)}</span>
+      <span class:text-green-400={result === 'smaller'} class="text-base font-medium"
+        >{filesize(object.alternative.size)}</span>
     </div>
-    {#if reduction !== undefined && reduction > 0}
+    {#if result === 'smaller'}
       <div class="flex items-center gap-1">
         <span class="text-sm text-green-400">-{reductionPercent}% smaller</span>
         <span class="text-xs text-[var(--pd-content-text)] opacity-50">({saved} saved)</span>
       </div>
-    {:else if reduction !== undefined && reduction < 0}
+    {:else if result === 'larger'}
       <span class="text-xs text-[var(--pd-content-text)] opacity-50">Larger</span>
-    {:else}
+    {:else if result === 'equal'}
       <span class="text-xs text-[var(--pd-content-text)] opacity-50">Same size</span>
     {/if}
   </div>

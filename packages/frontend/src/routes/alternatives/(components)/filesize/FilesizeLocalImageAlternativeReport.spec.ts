@@ -56,6 +56,40 @@ test('should display local and alternative sizes', () => {
 
   expect(screen.getByText('100 MB')).toBeInTheDocument();
   expect(screen.getByText('50 MB')).toBeInTheDocument();
+  expect(screen.getByText('50 MB')).toHaveClass('text-green-400');
+});
+
+test('should not have green text when alternative size is larger', () => {
+  const report: LocalImageAlternativeReport = {
+    localImage: {
+      size: 50_000_000,
+      vulnerabilities: {
+        critical: 0,
+        high: 0,
+        medium: 0,
+        low: 0,
+        negligible: 0,
+        unknown: 0,
+        total: 0,
+      },
+    },
+    alternative: {
+      size: 100_000_000,
+      vulnerabilities: {
+        critical: 0,
+        high: 0,
+        medium: 0,
+        low: 0,
+        negligible: 0,
+        unknown: 0,
+        total: 0,
+      },
+    },
+  };
+
+  render(FilesizeLocalImageAlternativeReport, { object: report });
+
+  expect(screen.getByText('100 MB')).not.toHaveClass('text-green-400');
 });
 
 test('should display size reduction percentage and saved amount', () => {
