@@ -22,7 +22,7 @@ function close(): Promise<void> {
     {#await data.report}
       <span>Loading...</span>
     {:then report}
-      <div class="px-5 pt-5 w-full">
+      <div class="pt-5 w-full">
         <OptimisationReport object={report} />
       </div>
     {/await}
