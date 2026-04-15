@@ -15,13 +15,25 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-import type { ProviderContainerConnection, Extension, ContainerEngineInfo, TelemetryLogger } from '@podman-desktop/api';
-import { extensions as extensionsAPI, containerEngine as containerEngineAPI } from '@podman-desktop/api';
+import type {
+  ProviderContainerConnection,
+  Extension,
+  ContainerEngineInfo,
+  TelemetryLogger,
+  CancellationToken,
+} from '@podman-desktop/api';
+import {
+  extensions as extensionsAPI,
+  containerEngine as containerEngineAPI,
+  window as windowAPI,
+  ProgressLocation,
+} from '@podman-desktop/api';
 import type { PodmanExtensionApi } from '@podman-desktop/podman-extension-api';
 
 import { beforeEach, vi, test, expect, describe } from 'vitest';
 import { PodmanService } from '/@/services/podman-service';
 import type { ProviderService } from '/@/services/provider-service';
+import { TelemetryEvents } from '/@/utils/telemetry-events';
 
 const PROVIDER_SERVICE_MOCK: ProviderService = {
   getContainerConnections: vi.fn(),
@@ -54,12 +66,20 @@ const TELEMETRY_LOGGER_MOCK: TelemetryLogger = {
   dispose: vi.fn(),
 };
 
+const CANCELLATION_TOKEN_MOCK: CancellationToken = {
+  onCancellationRequested: vi.fn(),
+  isCancellationRequested: false,
+} as CancellationToken;
+
 beforeEach(() => {
   vi.resetAllMocks();
 
   vi.mocked(extensionsAPI.getExtension).mockReturnValue(PODMAN_EXTENSION_MOCK);
   vi.mocked(PROVIDER_SERVICE_MOCK.getContainerConnections).mockReturnValue([STARTED_PROVIDER_CONNECTION_MOCK]);
   vi.mocked(containerEngineAPI.listInfos).mockResolvedValue([ENGINE_INFO_MOCK]);
+  vi.mocked(windowAPI.withProgress).mockImplementation(async (_, task) => {
+    return task({ report: vi.fn() }, CANCELLATION_TOKEN_MOCK);
+  });
 });
 
 function getPodmanService(): PodmanService {
@@ -118,6 +138,89 @@ describe('getRunningProviderContainerConnectionByEngineId', () => {
 
     await expect(service.getRunningProviderContainerConnectionByEngineId('test-engine-id')).rejects.toThrowError(
       'connection not found for engineId test-engine-id',
+    );
+  });
+});
+
+describe('clone', () => {
+  test('should pull image and replicate container', async () => {
+    vi.mocked(containerEngineAPI.replicatePodmanContainer).mockResolvedValue({
+      Id: 'new-container-id',
+      Warnings: [],
+    });
+
+    const service = getPodmanService();
+    const result = await service.clone('test-engine-id', 'old-container-id', 'alt-image', {
+      name: 'new-name',
+      task: {
+        title: 'Cloning container',
+      },
+    });
+
+    expect(windowAPI.withProgress).toHaveBeenCalledExactlyOnceWith(
+      {
+        location: ProgressLocation.TASK_WIDGET,
+        title: 'Cloning container',
+      },
+      expect.any(Function),
+    );
+
+    expect(result).toStrictEqual({
+      engineId: 'test-engine-id',
+      Id: 'new-container-id',
+    });
+
+    expect(containerEngineAPI.pullImage).toHaveBeenCalledWith(
+      STARTED_PROVIDER_CONNECTION_MOCK.connection,
+      'alt-image',
+      expect.any(Function),
+      undefined,
+      CANCELLATION_TOKEN_MOCK,
+    );
+
+    expect(containerEngineAPI.replicatePodmanContainer).toHaveBeenCalledWith(
+      {
+        engineId: 'test-engine-id',
+        id: 'old-container-id',
+      },
+      {
+        engineId: 'test-engine-id',
+      },
+      {
+        image: 'alt-image',
+        name: 'new-name',
+      },
+    );
+
+    expect(TELEMETRY_LOGGER_MOCK.logUsage).toHaveBeenCalledWith(
+      TelemetryEvents.CLONE_CONTAINER,
+      expect.objectContaining({
+        alternative: 'alt-image',
+        warnings: 0,
+      }),
+    );
+  });
+
+  test('should log error telemetry if clone fails', async () => {
+    const error = new Error('clone failed');
+    vi.mocked(containerEngineAPI.replicatePodmanContainer).mockRejectedValue(error);
+
+    const service = getPodmanService();
+    await expect(
+      service.clone('test-engine-id', 'old-container-id', 'alt-image', {
+        name: 'new-name',
+        task: {
+          title: 'Cloning container',
+        },
+      }),
+    ).rejects.toThrowError(error);
+
+    expect(TELEMETRY_LOGGER_MOCK.logUsage).toHaveBeenCalledWith(
+      TelemetryEvents.CLONE_CONTAINER,
+      expect.objectContaining({
+        alternative: 'alt-image',
+        error: error,
+      }),
     );
   });
 });
