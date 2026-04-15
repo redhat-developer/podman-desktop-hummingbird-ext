@@ -126,7 +126,7 @@ jobs:
     outputs:
       artifact-id: ${{ steps.build-oci.outputs.artifact-id }}
     steps:
-      - uses: podman-desktop/gh-extensions-actions/.github/actions/oci-build@19efb8f2422c54ad8904ad068ad363bcabaacc96 # v0.1.0
+      - uses: podman-desktop/gh-extensions-actions/.github/actions/oci-build@af8cfa4713ec24dccca2b5f42eb2ca3b91c10264 # v0.1.1
         name: build-oci
         id: build-oci
         with:
@@ -142,7 +142,7 @@ jobs:
       id-token: write
       attestations: write
     steps:
-      - uses: podman-desktop/gh-extensions-actions/.github/actions/oci-publish@19efb8f2422c54ad8904ad068ad363bcabaacc96 # v0.1.0
+      - uses: podman-desktop/gh-extensions-actions/.github/actions/oci-publish@af8cfa4713ec24dccca2b5f42eb2ca3b91c10264 # v0.1.1
         name: publish-oci
         with:
           image-name: '${{ github.repository }}'
