@@ -38,7 +38,7 @@ let columns = $derived([
   new TableColumn<Row>('', {
     width: '2fr',
     renderer: NameColumn,
-    overflow: true,
+    overflow: false,
   }),
   ...(isGrypeInstalled
     ? [
@@ -48,7 +48,6 @@ let columns = $derived([
           align: 'center',
           renderMapping: (row: Row): Promise<LocalImageAlternativeReport> | undefined =>
             'report' in row ? row.report : undefined,
-          overflow: true,
         }),
         new TableColumn<Row, Promise<LocalImageAlternativeReport> | undefined>('Size Reduction', {
           width: '1fr',
@@ -56,7 +55,6 @@ let columns = $derived([
           align: 'center',
           renderMapping: (row: Row): Promise<LocalImageAlternativeReport> | undefined =>
             'report' in row ? row.report : undefined,
-          overflow: true,
         }),
       ]
     : []),

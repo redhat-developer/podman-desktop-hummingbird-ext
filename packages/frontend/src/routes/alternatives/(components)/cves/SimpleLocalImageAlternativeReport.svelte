@@ -30,7 +30,7 @@ let reductionPercent = $derived.by(() => {
     <span class="text-base font-semibold text-green-400">{object.alternative.vulnerabilities.total}</span>
   </div>
   {#if reduction !== undefined && reduction > 0}
-    <div class="flex items-center gap-1">
+    <div class="flex items-center gap-1 max-lg:hidden">
       <span class="text-base text-[var(--pd-content-text)]">{reduction} CVEs eliminated</span>
       {#if reductionPercent !== undefined}
         <span class="text-base text-[var(--pd-content-text)]">({reductionPercent}%)</span>
