@@ -19,4 +19,6 @@
 export enum TelemetryEvents {
   OPEN_EXTERNAL = 'open-external',
   PULL_IMAGE = 'pull-image',
+  CLONE_CONTAINER = 'clone-image',
+  IMAGE_REPORT = 'image-report',
 }

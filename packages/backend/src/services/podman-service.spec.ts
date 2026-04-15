@@ -15,7 +15,7 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-import type { ProviderContainerConnection, Extension, ContainerEngineInfo } from '@podman-desktop/api';
+import type { ProviderContainerConnection, Extension, ContainerEngineInfo, TelemetryLogger } from '@podman-desktop/api';
 import { extensions as extensionsAPI, containerEngine as containerEngineAPI } from '@podman-desktop/api';
 import type { PodmanExtensionApi } from '@podman-desktop/podman-extension-api';
 
@@ -45,6 +45,15 @@ const ENGINE_INFO_MOCK: ContainerEngineInfo = {
   engineId: 'test-engine-id',
 } as ContainerEngineInfo;
 
+const TELEMETRY_LOGGER_MOCK: TelemetryLogger = {
+  logUsage: vi.fn(),
+  onDidChangeEnableStates: vi.fn(),
+  isUsageEnabled: true,
+  isErrorsEnabled: true,
+  logError: vi.fn(),
+  dispose: vi.fn(),
+};
+
 beforeEach(() => {
   vi.resetAllMocks();
 
@@ -54,7 +63,7 @@ beforeEach(() => {
 });
 
 function getPodmanService(): PodmanService {
-  return new PodmanService(PROVIDER_SERVICE_MOCK);
+  return new PodmanService(PROVIDER_SERVICE_MOCK, TELEMETRY_LOGGER_MOCK);
 }
 
 describe('getPodmanExtension', () => {
