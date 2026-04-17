@@ -17,6 +17,8 @@ let { object }: Props = $props();
       engineId: object.localImage.engineId,
       imageId: object.localImage.id,
     })}
+    aria-label="Open report"
+    class:pointer-events-none={!object.report}
     class="flex items-center gap-2 w-full overflow-hidden">
     <span class="text-base">
       {object.localImage.name}:{object.localImage.tag}

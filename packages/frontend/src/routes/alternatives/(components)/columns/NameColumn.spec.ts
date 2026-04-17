@@ -44,10 +44,38 @@ test('should display alternative image mapping', () => {
     report: Promise.resolve({} as LocalImageAlternativeReport),
   } as unknown as AlternativeRow;
 
-  const { getByText } = render(NameColumn, { object: alternativeRow });
+  const { getByText, getByLabelText } = render(NameColumn, { object: alternativeRow });
+
+  const a = getByLabelText('Open report');
+  expect(a.classList).not.toContain('pointer-events-none');
 
   expect(getByText('docker.io/library/nginx:latest')).toBeInTheDocument();
   expect(getByText('quay.io/hummingbird/nginx')).toBeInTheDocument();
+});
+
+test('link should have pointer-events-none if grype is not installed', () => {
+  const alternativeRow: AlternativeRow = {
+    name: 'nginx:latest',
+    localImage: {
+      id: 'sha256:abc123',
+      engineId: 'podman',
+      name: 'docker.io/library/nginx',
+      tag: 'latest',
+      size: 1024000,
+      architecture: 'amd64',
+      containers: [],
+    },
+    alternative: {
+      name: 'nginx',
+      latest_tag: '1.21',
+    },
+    report: undefined,
+  } as unknown as AlternativeRow;
+
+  const { getByLabelText } = render(NameColumn, { object: alternativeRow });
+
+  const a = getByLabelText('Open report');
+  expect(a.classList).toContain('pointer-events-none');
 });
 
 test('should display container name and ID', () => {
