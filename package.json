@@ -2,7 +2,7 @@
   "name": "hummingbird",
   "displayName": "Hummingbird",
   "description": "Hummingbird extension",
-  "version": "0.1.0-next",
+  "version": "0.1.1",
   "icon": "icon.png",
   "publisher": "redhat",
   "private": true,
