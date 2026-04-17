@@ -21,6 +21,7 @@ import type {
   ContainerEngineInfo,
   TelemetryLogger,
   CancellationToken,
+  ImageInspectInfo,
 } from '@podman-desktop/api';
 import {
   extensions as extensionsAPI,
@@ -71,12 +72,20 @@ const CANCELLATION_TOKEN_MOCK: CancellationToken = {
   isCancellationRequested: false,
 } as CancellationToken;
 
+const IMAGE_INSPECT_MOCK = {
+  Config: {
+    Entrypoint: ['entrypoint'],
+    Cmd: ['command'],
+  },
+} as unknown as ImageInspectInfo;
+
 beforeEach(() => {
   vi.resetAllMocks();
 
   vi.mocked(extensionsAPI.getExtension).mockReturnValue(PODMAN_EXTENSION_MOCK);
   vi.mocked(PROVIDER_SERVICE_MOCK.getContainerConnections).mockReturnValue([STARTED_PROVIDER_CONNECTION_MOCK]);
   vi.mocked(containerEngineAPI.listInfos).mockResolvedValue([ENGINE_INFO_MOCK]);
+  vi.mocked(containerEngineAPI.getImageInspect).mockResolvedValue(IMAGE_INSPECT_MOCK);
   vi.mocked(windowAPI.withProgress).mockImplementation(async (_, task) => {
     return task({ report: vi.fn() }, CANCELLATION_TOKEN_MOCK);
   });
@@ -191,6 +200,8 @@ describe('clone', () => {
         image: 'alt-image',
         name: 'new-name',
         pod: 'pod-id',
+        entrypoint: IMAGE_INSPECT_MOCK.Config.Entrypoint,
+        command: IMAGE_INSPECT_MOCK.Config.Cmd,
       },
     );
 
