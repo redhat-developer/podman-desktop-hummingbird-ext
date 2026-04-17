@@ -100,6 +100,7 @@ const plugin = {
     onEvent: vi.fn(),
     pullImage: vi.fn(),
     replicatePodmanContainer: vi.fn(),
+    getImageInspect: vi.fn(),
   } as unknown as typeof podmanDesktopApi.containerEngine,
   configuration: {} as unknown as typeof podmanDesktopApi.configuration,
   authentication: {} as unknown as typeof podmanDesktopApi.authentication,

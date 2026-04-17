@@ -100,6 +100,7 @@ export class PodmanService implements Disposable {
 
           // Pull the image
           await containerEngineAPI.pullImage(connection.connection, alternative, console.debug, undefined, token);
+          const alternativeInspect = await containerEngineAPI.getImageInspect(engineId, alternative);
 
           // Replicate the podman container
           const result = await containerEngineAPI.replicatePodmanContainer(
@@ -114,6 +115,8 @@ export class PodmanService implements Disposable {
               image: alternative,
               name: options.name,
               pod: options.pod,
+              entrypoint: alternativeInspect.Config.Entrypoint,
+              command: alternativeInspect.Config.Cmd,
             },
           );
 
