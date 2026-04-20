@@ -23,7 +23,7 @@
   "devDependencies": {
     "@podman-desktop/grype-extension-api": "^0.1.0-next.202604011405-f6be4bb",
     "@podman-desktop/extension-hummingbird-core-api": "workspace:^",
-    "@podman-desktop/podman-extension-api": "^1.26.1",
+    "@podman-desktop/podman-extension-api": "^1.26.2",
     "@podman-desktop/api": "^1.26.2",
     "@types/node": "^24",
     "vite": "^8.0.8",
