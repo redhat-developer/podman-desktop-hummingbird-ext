@@ -26,7 +26,7 @@
     "@podman-desktop/podman-extension-api": "^1.26.2",
     "@podman-desktop/api": "^1.26.2",
     "@types/node": "^24",
-    "vite": "^8.0.8",
+    "vite": "^8.0.9",
     "vitest": "^4.1.4",
     "swagger-typescript-api": "^13.6.10"
   },
