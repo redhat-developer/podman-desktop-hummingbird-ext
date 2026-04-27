@@ -135,8 +135,8 @@ importers:
         specifier: ^24
         version: 24.12.2
       swagger-typescript-api:
-        specifier: ^13.6.10
-        version: 13.6.10(magicast@0.5.2)
+        specifier: ^13.7.2
+        version: 13.7.2(magicast@0.5.2)
       vite:
         specifier: ^8.0.10
         version: 8.0.10(@types/node@24.12.2)(esbuild@0.27.2)(jiti@2.6.1)(yaml@2.8.3)
@@ -250,8 +250,8 @@ importers:
         specifier: ^1.26.2
         version: 1.26.2
       swagger-typescript-api:
-        specifier: ^13.6.10
-        version: 13.6.10(magicast@0.5.2)
+        specifier: ^13.7.2
+        version: 13.7.2(magicast@0.5.2)
       unplugin-dts:
         specifier: ^1.0.0-beta.6
         version: 1.0.0-beta.6(@microsoft/api-extractor@7.56.0(@types/node@25.2.0))(esbuild@0.27.2)(typescript@5.9.3)(vite@8.0.10(@types/node@25.2.0)(esbuild@0.27.2)(jiti@2.6.1)(yaml@2.8.3))
@@ -359,8 +359,8 @@ packages:
       '@biomejs/wasm-web':
         optional: true
 
-  '@biomejs/wasm-nodejs@2.4.12':
-    resolution: {integrity: sha512-3SGczq2LKHJw9TYhJEmNwgBY767wSu+nRZVkp+oDiczYn2u7Xekb4smn/r3KJpaxGKkxxtTV4h6RTwBUKzf8Fw==}
+  '@biomejs/wasm-nodejs@2.4.13':
+    resolution: {integrity: sha512-BA64wwPmk5NUz+kP+jrHa8dnIjZSqeX6Q+Q9CC5skZ9c1AqkdS+3vR1QQUzqJ4btbxLPoYVSe1OiTYil7nr8YQ==}
 
   '@bramus/specificity@2.4.2':
     resolution: {integrity: sha512-ctxtJ/eA+t+6q2++vj5j7FYX3nRu311q1wfYH3xjlLOsczhlhxAg2FWNUXhpGvAw3BWo1xBcvOV6/YLc2r5FJw==}
@@ -1547,8 +1547,8 @@ packages:
   ajv@6.14.0:
     resolution: {integrity: sha512-IWrosm/yrn43eiKqkfkHis7QioDleaXQHdDVPKg0FSwwd/DuvyX79TZnFOnYpB7dcsFAMmtFztZuXPDvSePkFw==}
 
-  ajv@8.18.0:
-    resolution: {integrity: sha512-PlXPeEWMXMZ7sPYOHqmDyCJzcfNrUr3fGNKtezX14ykXOEIvyK81d+qydx89KY5O71FKMPaQ2vBfBFI5NHR63A==}
+  ajv@8.20.0:
+    resolution: {integrity: sha512-Thbli+OlOj+iMPYFBVBfJ3OmCAnaSyNn4M1vz9T6Gka5Jt9ba/HIR56joy65tY6kx/FCF5VXNB819Y7/GUrBGA==}
 
   ansi-regex@5.0.1:
     resolution: {integrity: sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ==}
@@ -1905,8 +1905,8 @@ packages:
   dom-accessibility-api@0.6.3:
     resolution: {integrity: sha512-7ZgogeTnjuHbo+ct10G9Ffp0mif17idi0IyWNVA/wcwcm7NPOD/WEHVP3n7n3MhXqxoIYm8d6MuZohYWIZ4T3w==}
 
-  dompurify@3.4.0:
-    resolution: {integrity: sha512-nolgK9JcaUXMSmW+j1yaSvaEaoXYHwWyGJlkoCTghc97KgGDDSnpoU/PlEnw63Ah+TGKFOyY+X5LnxaWbCSfXg==}
+  dompurify@3.4.1:
+    resolution: {integrity: sha512-JahakDAIg1gyOm7dlgWSDjV4n7Ip2PKR55NIT6jrMfIgLFgWo81vdr1/QGqWtFNRqXP9UV71oVePtjqS2ebnPw==}
 
   dotenv@17.4.2:
     resolution: {integrity: sha512-nI4U3TottKAcAD9LLud4Cb7b2QztQMUEfHbvhTH09bqXTxnSie8WnjPALV/WMCrJZ6UV/qHJ6L03OqO3LcdYZw==}
@@ -1961,8 +1961,8 @@ packages:
     resolution: {integrity: sha512-w+5mJ3GuFL+NjVtJlvydShqE1eN3h3PbI7/5LAsYJP/2qtuMXjfL2LpHSRqo4b4eSF5K/DH1JXKUAHSB2UW50g==}
     engines: {node: '>= 0.4'}
 
-  es-toolkit@1.45.1:
-    resolution: {integrity: sha512-/jhoOj/Fx+A+IIyDNOvO3TItGmlMKhtX8ISAHKE90c4b/k1tqaqEZ+uUqfpU8DMnW5cgNJv606zS55jGvza0Xw==}
+  es-toolkit@1.46.0:
+    resolution: {integrity: sha512-IToJ6ct9OLl5zz6WsC/1vZEwfSZ7Myil+ygl5Tf30Xjn9AEkzNB4kqp2G7VUJKF1DtTx/ra5M5KLlXvzOg51BA==}
 
   es6-promise@3.3.1:
     resolution: {integrity: sha512-SOp9Phqvqn7jtEUxPWdWfWoLmyt2VaJ6MpvP9Comy1MceMXqE6bxvaTu4iaxpYYPzhny28Lc+M87/c2cPK6lDg==}
@@ -3335,8 +3335,8 @@ packages:
   swagger-schema-official@2.0.0-bab6bed:
     resolution: {integrity: sha512-rCC0NWGKr/IJhtRuPq/t37qvZHI/mH4I4sxflVM+qgVe5Z2uOCivzWaVbuioJaB61kvm5UvB7b49E+oBY0M8jA==}
 
-  swagger-typescript-api@13.6.10:
-    resolution: {integrity: sha512-X+DenKK2txtI0LdNcpmWddcZWiWaf6erIZ+m9Wz7vk/yMFmPJ9EljSuX+dnJQ9YuzjV1imaRCDKsHA4CG2wUZA==}
+  swagger-typescript-api@13.7.2:
+    resolution: {integrity: sha512-LQ6LJ6c7HM2/inzly0whDTwme3yAQa6VAHVLh+lBr6ZqDmKt6Zmdu8zFZM793qxX6Rm/WX5uu9GhjeC71KLUiA==}
     engines: {node: '>=20'}
     hasBin: true
 
@@ -3452,8 +3452,8 @@ packages:
     resolution: {integrity: sha512-XleUoc9uwGXqjWwXaUTZAmzMcFZ5858QA2vvx1Ur5xIcixXIP+8LnFDgRplU30us6teqdlskFfu+ae4K79Ooew==}
     engines: {node: '>= 0.8.0'}
 
-  type-fest@5.5.0:
-    resolution: {integrity: sha512-PlBfpQwiUvGViBNX84Yxwjsdhd1TUlXr6zjX7eoirtCPIr08NAmxwa+fcYBTeRQxHo9YC9wwF3m9i700sHma8g==}
+  type-fest@5.6.0:
+    resolution: {integrity: sha512-8ZiHFm91orbSAe2PSAiSVBVko18pbhbiB3U9GglSzF/zCGkR+rxpHx6sEMCUm4kxY4LjDIUGgCfUMtwfZfjfUA==}
     engines: {node: '>=20'}
 
   typed-array-buffer@1.0.3:
@@ -3761,8 +3761,8 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
 
-  yummies@7.18.0:
-    resolution: {integrity: sha512-fgldINrxPi20XJjIa1LOniyqHROm5HwDmmq0VZtQml4u3cMerm8H7H2BM8kMhHilgd8l7rg3mN4xt2apc2l/xA==}
+  yummies@7.19.2:
+    resolution: {integrity: sha512-3a8C0lsYP3c1sMsnQiPffS/X6hj1T0oIWOV/P6515ytGY5scAtcgaIg4mv8pe3856vyoTjagllvixdMxnitNUg==}
     peerDependencies:
       mobx: ^6.12.4
       react: ^18 || ^19
@@ -3830,8 +3830,8 @@ snapshots:
       '@apidevtools/json-schema-ref-parser': 14.0.1
       '@apidevtools/openapi-schemas': 2.1.0
       '@apidevtools/swagger-methods': 3.0.2
-      ajv: 8.18.0
-      ajv-draft-04: 1.0.0(ajv@8.18.0)
+      ajv: 8.20.0
+      ajv-draft-04: 1.0.0(ajv@8.20.0)
       call-me-maybe: 1.0.2
       openapi-types: 12.1.3
 
@@ -3876,11 +3876,11 @@ snapshots:
 
   '@bcoe/v8-coverage@1.0.2': {}
 
-  '@biomejs/js-api@4.0.0(@biomejs/wasm-nodejs@2.4.12)':
+  '@biomejs/js-api@4.0.0(@biomejs/wasm-nodejs@2.4.13)':
     optionalDependencies:
-      '@biomejs/wasm-nodejs': 2.4.12
+      '@biomejs/wasm-nodejs': 2.4.13
 
-  '@biomejs/wasm-nodejs@2.4.12': {}
+  '@biomejs/wasm-nodejs@2.4.13': {}
 
   '@bramus/specificity@2.4.2':
     dependencies:
@@ -4207,7 +4207,7 @@ snapshots:
   '@microsoft/tsdoc-config@0.18.1':
     dependencies:
       '@microsoft/tsdoc': 0.16.0
-      ajv: 8.18.0
+      ajv: 8.20.0
       jju: 1.4.0
       resolve: 1.22.12
     optional: true
@@ -4385,9 +4385,9 @@ snapshots:
 
   '@rushstack/node-core-library@5.19.1(@types/node@25.2.0)':
     dependencies:
-      ajv: 8.18.0
-      ajv-draft-04: 1.0.0(ajv@8.18.0)
-      ajv-formats: 3.0.1(ajv@8.18.0)
+      ajv: 8.20.0
+      ajv-draft-04: 1.0.0(ajv@8.20.0)
+      ajv-formats: 3.0.1(ajv@8.20.0)
       fs-extra: 11.3.4
       import-lazy: 4.0.0
       jju: 1.4.0
@@ -5025,13 +5025,13 @@ snapshots:
 
   acorn@8.16.0: {}
 
-  ajv-draft-04@1.0.0(ajv@8.18.0):
+  ajv-draft-04@1.0.0(ajv@8.20.0):
     optionalDependencies:
-      ajv: 8.18.0
+      ajv: 8.20.0
 
-  ajv-formats@3.0.1(ajv@8.18.0):
+  ajv-formats@3.0.1(ajv@8.20.0):
     optionalDependencies:
-      ajv: 8.18.0
+      ajv: 8.20.0
     optional: true
 
   ajv@6.14.0:
@@ -5041,7 +5041,7 @@ snapshots:
       json-schema-traverse: 0.4.1
       uri-js: 4.4.1
 
-  ajv@8.18.0:
+  ajv@8.20.0:
     dependencies:
       fast-deep-equal: 3.1.3
       fast-uri: 3.1.0
@@ -5398,7 +5398,7 @@ snapshots:
 
   dom-accessibility-api@0.6.3: {}
 
-  dompurify@3.4.0:
+  dompurify@3.4.1:
     optionalDependencies:
       '@types/trusted-types': 2.0.7
 
@@ -5505,7 +5505,7 @@ snapshots:
       is-date-object: 1.1.0
       is-symbol: 1.1.1
 
-  es-toolkit@1.45.1: {}
+  es-toolkit@1.46.0: {}
 
   es6-promise@3.3.1: {}
 
@@ -6995,25 +6995,25 @@ snapshots:
 
   swagger-schema-official@2.0.0-bab6bed: {}
 
-  swagger-typescript-api@13.6.10(magicast@0.5.2):
+  swagger-typescript-api@13.7.2(magicast@0.5.2):
     dependencies:
       '@apidevtools/swagger-parser': 12.1.0(openapi-types@12.1.3)
-      '@biomejs/js-api': 4.0.0(@biomejs/wasm-nodejs@2.4.12)
-      '@biomejs/wasm-nodejs': 2.4.12
+      '@biomejs/js-api': 4.0.0(@biomejs/wasm-nodejs@2.4.13)
+      '@biomejs/wasm-nodejs': 2.4.13
       '@types/swagger-schema-official': 2.0.25
       c12: 3.3.4(magicast@0.5.2)
       citty: 0.2.2
       consola: 3.4.2
-      es-toolkit: 1.45.1
+      es-toolkit: 1.46.0
       eta: 3.5.0
       nanoid: 5.1.9
       openapi-types: 12.1.3
       swagger-schema-official: 2.0.0-bab6bed
       swagger2openapi: 7.0.8
-      type-fest: 5.5.0
+      type-fest: 5.6.0
       typescript: 6.0.3
       yaml: 2.8.3
-      yummies: 7.18.0
+      yummies: 7.19.2
     transitivePeerDependencies:
       - '@biomejs/wasm-bundler'
       - '@biomejs/wasm-web'
@@ -7125,7 +7125,7 @@ snapshots:
     dependencies:
       prelude-ls: 1.2.1
 
-  type-fest@5.5.0:
+  type-fest@5.6.0:
     dependencies:
       tagged-tag: 1.0.0
 
@@ -7468,12 +7468,12 @@ snapshots:
 
   yocto-queue@0.1.0: {}
 
-  yummies@7.18.0:
+  yummies@7.19.2:
     dependencies:
       class-variance-authority: 0.7.1
       clsx: 2.1.1
       dayjs: 1.11.20
-      dompurify: 3.4.0
+      dompurify: 3.4.1
       nanoid: 5.1.9
       tailwind-merge: 3.5.0
 
