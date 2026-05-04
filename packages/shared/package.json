@@ -14,7 +14,7 @@
     "test:watch": "vitest watch --coverage --passWithNoTests"
   },
   "dependencies": {
-    "zod": "^4.4.1"
+    "zod": "^4.4.2"
   },
   "devDependencies": {
     "vite": "^8.0.10",
