@@ -7,7 +7,7 @@ This extension integrates the [Hummingbird project](https://hummingbird-project.
 ### Hummingbird Catalog
 
 The Podman Desktop Hummingbird extension allows you to directly list the Hummingbird hardened images
-from withing Podman Desktop and pull them.
+from within Podman Desktop and pull them.
 
 ![hummingbird-catalog-dark.png](screenshots/hummingbird-catalog-dark.png)
 
