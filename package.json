@@ -1,5 +1,7 @@
 {
   "name": "hummingbird",
+  "repository": "https://github.com/redhat-developer/podman-desktop-hummingbird-ext",
+  "homepage": "https://github.com/redhat-developer/podman-desktop-hummingbird-ext#readme",
   "displayName": "Hummingbird",
   "description": "Hummingbird extension",
   "version": "0.1.0-next",
