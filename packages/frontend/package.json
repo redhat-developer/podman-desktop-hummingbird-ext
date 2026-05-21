@@ -38,7 +38,7 @@
     "filesize": "^11.0.17",
     "jsdom": "^29.1.1",
     "prettier": "^3.8.3",
-    "prettier-plugin-svelte": "^3.5.2",
+    "prettier-plugin-svelte": "^4.0.0",
     "svelte": "5.55.9",
     "svelte-check": "^4.4.8",
     "svelte-fa": "^4.0.4",
