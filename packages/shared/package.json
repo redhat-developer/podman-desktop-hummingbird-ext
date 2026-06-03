@@ -19,7 +19,7 @@
   "devDependencies": {
     "vite": "^8.0.14",
     "unplugin-dts": "^1.0.1",
-    "vitest": "^4.1.7",
+    "vitest": "^4.1.8",
     "@podman-desktop/api": "^1.27.2",
     "swagger-typescript-api": "^13.12.0"
   },
