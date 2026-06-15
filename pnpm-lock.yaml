@@ -19,7 +19,6 @@ overrides:
   brace-expansion@^5: '>=5.0.6'
   cookie: 0.7.0
   postcss: ^8.5.12
-  concurrently>shell-quote: '>=1.8.4'
 
 importers:
 
