@@ -22,7 +22,7 @@ overrides:
   concurrently>shell-quote: '>=1.8.4'
   esbuild: '>=0.28.1'
   js-yaml: '>=4.2.0'
-  dompurify: '>=3.4.9'
+  dompurify: '>=3.4.11'
   undici@>=7: '>=7.28.0 <8'
   undici@^6: '>=6.27.0 <7'
 
@@ -1777,8 +1777,8 @@ packages:
   dom-accessibility-api@0.6.3:
     resolution: {integrity: sha512-7ZgogeTnjuHbo+ct10G9Ffp0mif17idi0IyWNVA/wcwcm7NPOD/WEHVP3n7n3MhXqxoIYm8d6MuZohYWIZ4T3w==}
 
-  dompurify@3.4.10:
-    resolution: {integrity: sha512-0xzNv0e7oYC6yyuOGZIABPM4qtg3QxLFniDNPP4ZP90wR8Yq3zgwpRbrNiT4N3IKqDbbYFEJLV+JWEs19aZ//w==}
+  dompurify@3.4.11:
+    resolution: {integrity: sha512-zhlUV12GsaRzMsf9q5M254YhA4+VuF0fG+QFqu6aYpoGlKtz+w8//jBcGVYBgQkR5GHjUomejY84AV+/uPbWdw==}
 
   dotenv@17.4.2:
     resolution: {integrity: sha512-nI4U3TottKAcAD9LLud4Cb7b2QztQMUEfHbvhTH09bqXTxnSie8WnjPALV/WMCrJZ6UV/qHJ6L03OqO3LcdYZw==}
@@ -5228,7 +5228,7 @@ snapshots:
 
   dom-accessibility-api@0.6.3: {}
 
-  dompurify@3.4.10:
+  dompurify@3.4.11:
     optionalDependencies:
       '@types/trusted-types': 2.0.7
 
@@ -7298,7 +7298,7 @@ snapshots:
       class-variance-authority: 0.7.1
       clsx: 2.1.1
       dayjs: 1.11.21
-      dompurify: 3.4.10
+      dompurify: 3.4.11
       nanoid: 5.1.11
       tailwind-merge: 3.6.0
 
