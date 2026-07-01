@@ -137,8 +137,8 @@ importers:
         specifier: ^0.1.0-next.202604011405-f6be4bb
         version: 0.1.0-next.202604011405-f6be4bb
       '@podman-desktop/podman-extension-api':
-        specifier: ^1.27.2
-        version: 1.27.2
+        specifier: ^1.28.2
+        version: 1.28.2
       '@types/node':
         specifier: ^24
         version: 24.13.2
@@ -688,17 +688,14 @@ packages:
     peerDependencies:
       typescript: ^3 || ^4 || ^5
 
-  '@podman-desktop/api@1.27.2':
-    resolution: {integrity: sha512-Vd47yX6EInOmrm+ci6tywIhZzmBbzuipJvIXuZ9PIIXfy1Zkog9YFLviOZz/o5wLQovZVBS0c0/jyJe1GlK+6g==}
-
   '@podman-desktop/api@1.28.2':
     resolution: {integrity: sha512-kSBVWUSyuijS5a9HvqFAlihmy6D26nwTPZ0Yw9K/2W11grWeI/AvaS+THTmxHvXk8EbB9y8ydWpXhA8el67NKQ==}
 
   '@podman-desktop/grype-extension-api@0.1.0-next.202604011405-f6be4bb':
     resolution: {integrity: sha512-xQsDP8zDUCwjg7TFA/ZYqmS4pwA3lHKNRq7b01lBWaFwYokXRZCdN5+bvIt/Mxt58/wHzFN8ja+drXRHOk3kAw==}
 
-  '@podman-desktop/podman-extension-api@1.27.2':
-    resolution: {integrity: sha512-HeIU34otQ7J/KM34n6rDgW/eH1EfoPHqsA9WkB01yIEH464x1CuferGRtm7i3n2SWqTaatWHaRDsl61NQI3zSg==}
+  '@podman-desktop/podman-extension-api@1.28.2':
+    resolution: {integrity: sha512-VdQcrL+FJ8DCD667WGuJTLLYXDwUlcHjYgJWT9TuqNzX9xhcTLGX74uwyaxgBjDtyzwu5195QkDX7RweDyUkJg==}
 
   '@podman-desktop/ui-svelte@1.28.2':
     resolution: {integrity: sha512-BONAC07WOpeD0nB5JoFNHTOWOQX298g8/6uvCImW+rs5013tdyAK3ymeOhCcUXdvz7bX8qbuAdhqY94G9msJxg==}
@@ -4255,17 +4252,15 @@ snapshots:
       esquery: 1.6.0
       typescript: 5.9.3
 
-  '@podman-desktop/api@1.27.2': {}
-
   '@podman-desktop/api@1.28.2': {}
 
   '@podman-desktop/grype-extension-api@0.1.0-next.202604011405-f6be4bb':
     dependencies:
       zod: 4.4.3
 
-  '@podman-desktop/podman-extension-api@1.27.2':
+  '@podman-desktop/podman-extension-api@1.28.2':
     dependencies:
-      '@podman-desktop/api': 1.27.2
+      '@podman-desktop/api': 1.28.2
 
   '@podman-desktop/ui-svelte@1.28.2(svelte-fa@4.0.4(svelte@5.56.3(@typescript-eslint/types@8.62.1)))(svelte@5.56.3(@typescript-eslint/types@8.62.1))':
     dependencies:
