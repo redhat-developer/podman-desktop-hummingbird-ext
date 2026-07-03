@@ -21,7 +21,7 @@
     "unplugin-dts": "^1.0.3",
     "vitest": "^4.1.9",
     "@podman-desktop/api": "^1.28.2",
-    "swagger-typescript-api": "^13.12.3"
+    "swagger-typescript-api": "^13.12.4"
   },
   "files": [
     "dist",
