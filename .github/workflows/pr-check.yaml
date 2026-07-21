@@ -31,7 +31,7 @@ jobs:
     name: linter, formatters
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v7.0.1
       - uses: pnpm/action-setup@v6
         name: Install pnpm
         with:
@@ -64,7 +64,7 @@ jobs:
       matrix:
         os: [windows-2022, ubuntu-24.04, macos-15]
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v7.0.1
 
       - uses: pnpm/action-setup@v6
         name: Install pnpm
