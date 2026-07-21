@@ -15,19 +15,24 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
+import { CoreApi } from '@podman-desktop/extension-hummingbird-core-api';
+import { injectable } from 'inversify';
+import { version, apiVersion } from '@podman-desktop/api';
+import { coerce } from 'semver';
 
-import type { LayoutLoad } from './$types';
-import { coreAPI } from '/@/api/client';
+@injectable()
+export class CoreApiImpl extends CoreApi {
+  constructor() {
+    super();
+  }
 
-interface Data {
-  version: { major: number; minor: number; patch: number };
+  override async getCoreVersion(): Promise<{ major: number; minor: number; patch: number }> {
+    const raw = apiVersion ?? version;
+    const parsed = coerce(raw);
+    if (!parsed) {
+      throw new Error('cannot parse the version provided by the extension api');
+    }
+
+    return parsed;
+  }
 }
-
-export const load: LayoutLoad = async (): Promise<Data> => {
-  return {
-    version: await coreAPI.getCoreVersion(),
-  };
-};
-
-export const prerender = true;
-export const ssr = false;

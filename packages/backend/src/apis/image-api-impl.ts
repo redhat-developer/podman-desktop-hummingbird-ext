@@ -78,4 +78,8 @@ export class ImageApiImpl extends ImageApi {
   override navigateToImageDetails(image: SimpleImageInfo): Promise<void> {
     return this.images.navigateToImageDetails(image);
   }
+
+  override navigateToImageRun(image: SimpleImageInfo): Promise<void> {
+    return this.images.navigateToImageRun(image);
+  }
 }

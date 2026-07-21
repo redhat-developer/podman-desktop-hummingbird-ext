@@ -24,6 +24,7 @@ import {
   ImageApi,
   ProviderApi,
   AlternativesApi,
+  CoreApi,
 } from '@podman-desktop/extension-hummingbird-core-api';
 
 import type { AsyncInit } from '/@/utils/async-init';
@@ -38,6 +39,7 @@ import type { IAsyncDisposable } from '/@/utils/async-disposable';
 import { AlternativesApiImpl } from '/@/apis/alternatives-api-impl';
 import { ContainerApi } from '@podman-desktop/extension-hummingbird-core-api/src';
 import { ContainerApiImpl } from '/@/apis/container-api-impl';
+import { CoreApiImpl } from '/@/apis/core-api-impl';
 
 export class MainService implements IAsyncDisposable, AsyncInit<ExtensionContext> {
   #inversify: InversifyBinding | undefined;
@@ -66,5 +68,6 @@ export class MainService implements IAsyncDisposable, AsyncInit<ExtensionContext
     rpcExtension.registerInstance<ImageApi>(ImageApi, await container.getAsync(ImageApiImpl));
     rpcExtension.registerInstance<AlternativesApi>(AlternativesApi, await container.getAsync(AlternativesApiImpl));
     rpcExtension.registerInstance<ContainerApi>(ContainerApi, await container.getAsync(ContainerApiImpl));
+    rpcExtension.registerInstance<CoreApi>(CoreApi, await container.getAsync(CoreApiImpl));
   }
 }

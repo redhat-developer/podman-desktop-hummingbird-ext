@@ -38,4 +38,10 @@ export abstract class ImageApi {
    * Open the image details page for the given image.
    */
   abstract navigateToImageDetails(image: SimpleImageInfo): Promise<void>;
+  /**
+   * Open the image run page for the given image.
+   *
+   * @remarks only work for Podman Desktop >= 1.29
+   */
+  abstract navigateToImageRun(image: SimpleImageInfo): Promise<void>;
 }

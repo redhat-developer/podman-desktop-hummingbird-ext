@@ -15,19 +15,8 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
+export abstract class CoreApi {
+  static readonly CHANNEL: string = 'core-api';
 
-import type { LayoutLoad } from './$types';
-import { coreAPI } from '/@/api/client';
-
-interface Data {
-  version: { major: number; minor: number; patch: number };
+  abstract getCoreVersion(): Promise<{ major: number, minor: number, patch: number }>;
 }
-
-export const load: LayoutLoad = async (): Promise<Data> => {
-  return {
-    version: await coreAPI.getCoreVersion(),
-  };
-};
-
-export const prerender = true;
-export const ssr = false;

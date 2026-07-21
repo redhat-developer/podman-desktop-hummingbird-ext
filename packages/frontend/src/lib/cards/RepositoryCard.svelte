@@ -13,12 +13,15 @@ import RepositoryIcon from '$lib/icons/RepositoryIcon.svelte';
 interface Props {
   object: ImageSummary;
   pulled?: Promise<SimpleImageInfo | undefined>;
+  version: { major: number; minor: number; };
   connection?: ProviderContainerConnectionDetailedInfo;
 }
 
-let { object: image, pulled, connection }: Props = $props();
+let { object: image, pulled, version, connection }: Props = $props();
 
 let loading: boolean = $state(false);
+
+let canNavigateToImageRun = $derived(version.major >= 1 && version.minor >= 29);
 
 async function pullImage(): Promise<void> {
   if (!connection) throw new Error('connection is not defined');
@@ -35,8 +38,12 @@ async function pullImage(): Promise<void> {
   }
 }
 
-function navigateToImage(image: SimpleImageInfo): Promise<void> {
+function navigateToImageDetails(image: SimpleImageInfo): Promise<void> {
   return imageAPI.navigateToImageDetails(image);
+}
+
+function navigateToImageRun(image: SimpleImageInfo): Promise<void> {
+  return imageAPI.navigateToImageRun(image);
 }
 
 function openExternal(): Promise<boolean> {
@@ -91,8 +98,18 @@ function openExternal(): Promise<boolean> {
         <div class="animate-pulse grow rounded-[4px] bg-gray-900"></div>
       {:then result}
         {#if result}
-          <Button type="secondary" class="grow" aria-label="Open" onclick={navigateToImage.bind(undefined, result)}
-            >Open</Button>
+          <div class="flex flex-row grow items-center gap-x-2">
+            <Button type="secondary" class="grow" aria-label="Open" onclick={navigateToImageDetails.bind(undefined, result)}
+              >Open</Button>
+
+            {#if canNavigateToImageRun}
+              <Button
+                type="primary"
+                class="grow"
+                aria-label="Run"
+                onclick={navigateToImageRun.bind(undefined, result)}>Run</Button>
+            {/if}
+          </div>
         {:else}
           <Button
             inProgress={loading}

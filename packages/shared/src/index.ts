@@ -27,6 +27,7 @@ export * from './apis/image-api';
 export * from './apis/provider-api';
 export * from './apis/alternatives-api';
 export * from './apis/container-api';
+export * from './apis/core-api';
 
 // proxy utils
 export * from './messages/message-proxy';
