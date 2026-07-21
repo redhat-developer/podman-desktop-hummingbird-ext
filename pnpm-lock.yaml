@@ -39,8 +39,8 @@ importers:
         specifier: ^9.39.5
         version: 9.39.5
       '@podman-desktop/api':
-        specifier: ^1.28.2
-        version: 1.28.2
+        specifier: ^1.28.3
+        version: 1.28.3
       '@typescript-eslint/eslint-plugin':
         specifier: ^8.64.0
         version: 8.64.0(@typescript-eslint/parser@8.64.0(eslint@9.39.2(jiti@2.7.0))(typescript@5.9.3))(eslint@9.39.2(jiti@2.7.0))(typescript@5.9.3)
@@ -127,8 +127,8 @@ importers:
         version: 4.4.3
     devDependencies:
       '@podman-desktop/api':
-        specifier: ^1.28.2
-        version: 1.28.2
+        specifier: ^1.28.3
+        version: 1.28.3
       '@podman-desktop/extension-hummingbird-core-api':
         specifier: workspace:^
         version: link:../shared
@@ -251,8 +251,8 @@ importers:
         version: 4.4.3
     devDependencies:
       '@podman-desktop/api':
-        specifier: ^1.28.2
-        version: 1.28.2
+        specifier: ^1.28.3
+        version: 1.28.3
       swagger-typescript-api:
         specifier: ^13.12.6
         version: 13.12.6(magicast@0.5.3)
@@ -684,8 +684,8 @@ packages:
     peerDependencies:
       typescript: ^3 || ^4 || ^5
 
-  '@podman-desktop/api@1.28.2':
-    resolution: {integrity: sha512-kSBVWUSyuijS5a9HvqFAlihmy6D26nwTPZ0Yw9K/2W11grWeI/AvaS+THTmxHvXk8EbB9y8ydWpXhA8el67NKQ==}
+  '@podman-desktop/api@1.28.3':
+    resolution: {integrity: sha512-RCYrD90VfVn59oa8vTaDXj8Qy9BD0jxyiTNBhKNcloYf1hBCDMIKgqTcXYgNq15/5P1aGjRmgaG/jnhDEuux/g==}
 
   '@podman-desktop/grype-extension-api@0.1.0-next.202604011405-f6be4bb':
     resolution: {integrity: sha512-xQsDP8zDUCwjg7TFA/ZYqmS4pwA3lHKNRq7b01lBWaFwYokXRZCdN5+bvIt/Mxt58/wHzFN8ja+drXRHOk3kAw==}
@@ -4151,7 +4151,7 @@ snapshots:
       esquery: 1.6.0
       typescript: 5.9.3
 
-  '@podman-desktop/api@1.28.2': {}
+  '@podman-desktop/api@1.28.3': {}
 
   '@podman-desktop/grype-extension-api@0.1.0-next.202604011405-f6be4bb':
     dependencies:
