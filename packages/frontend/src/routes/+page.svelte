@@ -96,7 +96,11 @@ function refresh(): Promise<void> {
               {@const pulled = data.pulled?.then(images =>
                 images.find(image => image.name.startsWith(`quay.io/hummingbird/${repository.name}`)),
               )}
-              <RepositoryCard object={repository} version={data.version} pulled={pulled} connection={selectedContainerProviderConnection} />
+              <RepositoryCard
+                object={repository}
+                version={data.version}
+                pulled={pulled}
+                connection={selectedContainerProviderConnection} />
             {/each}
           </div>
         {:catch err}

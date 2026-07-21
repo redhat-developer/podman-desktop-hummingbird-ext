@@ -18,5 +18,5 @@
 export abstract class CoreApi {
   static readonly CHANNEL: string = 'core-api';
 
-  abstract getCoreVersion(): Promise<{ major: number, minor: number, patch: number }>;
+  abstract getCoreVersion(): Promise<{ major: number; minor: number; patch: number }>;
 }

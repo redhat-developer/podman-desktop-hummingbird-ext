@@ -9,11 +9,12 @@ import { faDownload } from '@fortawesome/free-solid-svg-icons/faDownload';
 import { faExternalLink } from '@fortawesome/free-solid-svg-icons/faExternalLink';
 import { dialogAPI, imageAPI } from '/@/api/client';
 import RepositoryIcon from '$lib/icons/RepositoryIcon.svelte';
+import { faPlay } from '@fortawesome/free-solid-svg-icons/faPlay';
 
 interface Props {
   object: ImageSummary;
   pulled?: Promise<SimpleImageInfo | undefined>;
-  version: { major: number; minor: number; };
+  version: { major: number; minor: number };
   connection?: ProviderContainerConnectionDetailedInfo;
 }
 
@@ -99,11 +100,15 @@ function openExternal(): Promise<boolean> {
       {:then result}
         {#if result}
           <div class="flex flex-row grow items-center gap-x-2">
-            <Button type="secondary" class="grow" aria-label="Open" onclick={navigateToImageDetails.bind(undefined, result)}
-              >Open</Button>
+            <Button
+              type="secondary"
+              class="grow"
+              aria-label="Open"
+              onclick={navigateToImageDetails.bind(undefined, result)}>Open</Button>
 
             {#if canNavigateToImageRun}
               <Button
+                icon={faPlay}
                 type="primary"
                 class="grow"
                 aria-label="Run"
