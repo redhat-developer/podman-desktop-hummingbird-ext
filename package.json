@@ -41,7 +41,7 @@
     "@vitest/coverage-v8": "^4.1.10",
     "@vitest/eslint-plugin": "^1.6.24",
     "autoprefixer": "^10.5.4",
-    "concurrently": "^10.0.3",
+    "concurrently": "^10.0.4",
     "eslint": "^9.39.2",
     "@eslint/compat": "^2.1.0",
     "@eslint/js": "^9.39.5",
