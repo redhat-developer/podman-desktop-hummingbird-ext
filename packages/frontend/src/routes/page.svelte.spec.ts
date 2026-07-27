@@ -105,7 +105,7 @@ describe('loading', () => {
     });
 
     const skeletons = getAllByLabelText('Loading repository card');
-    expect(skeletons.length).toBe(10);
+    expect(skeletons).toHaveLength(10);
   });
 });
 
