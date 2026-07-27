@@ -41,7 +41,7 @@ describe('RepositoryIcon', () => {
     expect(svg).toBeDefined();
 
     const paths = container.querySelectorAll('path');
-    expect(paths.length).toBe(2);
+    expect(paths).toHaveLength(2);
     expect(paths[0]).toHaveAttribute('fill', 'var(--pd-label-primary-bg)');
     expect(paths[1]).toHaveAttribute('fill', 'var(--pd-link)');
   });
@@ -54,7 +54,7 @@ describe('RepositoryIcon', () => {
     expect(svg).toBeDefined();
 
     const paths = container.querySelectorAll('path');
-    expect(paths.length).toBe(2);
+    expect(paths).toHaveLength(2);
     expect(paths[0]).toHaveAttribute('fill', 'var(--pd-label-primary-bg)');
     expect(paths[1]).toHaveAttribute('fill', 'var(--pd-link)');
   });
