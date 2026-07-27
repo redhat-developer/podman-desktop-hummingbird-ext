@@ -15,7 +15,6 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-// eslint-disable-next-line etc/no-commented-out-code
 // podman-desktop-api.d.ts
 /* eslint-disable @typescript-eslint/no-explicit-any */
 declare global {
