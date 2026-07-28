@@ -9,6 +9,7 @@ import { faDownload } from '@fortawesome/free-solid-svg-icons/faDownload';
 import { faExternalLink } from '@fortawesome/free-solid-svg-icons/faExternalLink';
 import { dialogAPI, imageAPI } from '/@/api/client';
 import RepositoryIcon from '$lib/icons/RepositoryIcon.svelte';
+import { faPlay } from '@fortawesome/free-solid-svg-icons/faPlay';
 
 interface Props {
   object: ImageSummary;
@@ -35,8 +36,12 @@ async function pullImage(): Promise<void> {
   }
 }
 
-function navigateToImage(image: SimpleImageInfo): Promise<void> {
+function navigateToImageDetails(image: SimpleImageInfo): Promise<void> {
   return imageAPI.navigateToImageDetails(image);
+}
+
+function navigateToImageRun(image: SimpleImageInfo): Promise<void> {
+  return imageAPI.navigateToImageRun(image);
 }
 
 function openExternal(): Promise<boolean> {
@@ -91,8 +96,20 @@ function openExternal(): Promise<boolean> {
         <div class="animate-pulse grow rounded-[4px] bg-gray-900"></div>
       {:then result}
         {#if result}
-          <Button type="secondary" class="grow" aria-label="Open" onclick={navigateToImage.bind(undefined, result)}
-            >Open</Button>
+          <div class="flex flex-row grow items-center gap-x-2">
+            <Button
+              type="secondary"
+              class="grow"
+              aria-label="Open"
+              onclick={navigateToImageDetails.bind(undefined, result)}>Open</Button>
+
+            <Button
+              icon={faPlay}
+              type="primary"
+              class="grow"
+              aria-label="Run"
+              onclick={navigateToImageRun.bind(undefined, result)}>Run</Button>
+          </div>
         {:else}
           <Button
             inProgress={loading}

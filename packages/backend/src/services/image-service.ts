@@ -139,6 +139,18 @@ export class ImageService extends Publisher<void> implements AsyncInit, Disposab
     return navigationAPI.navigateToImage(image.id, engineId, image.name);
   }
 
+  public async navigateToImageRun(image: SimpleImageInfo): Promise<void> {
+    const connection = this.providers.getProviderContainerConnection(image.connection);
+
+    const info = await containerEngineAPI.listInfos({
+      provider: connection.connection,
+    });
+    if (info.length !== 1) throw new Error('Unexpected number of connections');
+    const engineId = info[0].engineId;
+
+    return navigationAPI.navigateToImageRun(image.id, engineId, image.name);
+  }
+
   @preDestroy()
   override dispose(): void {
     super.dispose();

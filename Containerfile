@@ -41,4 +41,4 @@ COPY --from=builder /app/README.md /extension/
 LABEL org.opencontainers.image.title="Hummingbird Extension" \
         org.opencontainers.image.description="Hummingbird Extension" \
         org.opencontainers.image.vendor="redhat" \
-        io.podman-desktop.api.version=">= 1.25.0"
+        io.podman-desktop.api.version=">= 1.29.0"
