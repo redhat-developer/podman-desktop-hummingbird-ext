@@ -23,7 +23,6 @@ import { ProviderApiImpl } from '/@/apis/provider-api-impl';
 import { RoutingApiImpl } from '/@/apis/routing-api-impl';
 import { AlternativesApiImpl } from '/@/apis/alternatives-api-impl';
 import { ContainerApiImpl } from '/@/apis/container-api-impl';
-import { CoreApiImpl } from '/@/apis/core-api-impl';
 
 const module = new ContainerModule(options => {
   const impls: Array<new (...args: never[]) => unknown> = [
@@ -34,7 +33,6 @@ const module = new ContainerModule(options => {
     ProviderApiImpl,
     RoutingApiImpl,
     ContainerApiImpl,
-    CoreApiImpl,
   ];
 
   impls.forEach(implementation => {

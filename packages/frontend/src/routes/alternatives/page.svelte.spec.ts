@@ -64,7 +64,6 @@ describe('error', () => {
   test('promise reject should display error screen', async () => {
     const { getByLabelText } = render(Page, {
       data: {
-        version: { major: 1, minor: 29, patch: 0 },
         alternatives: Promise.reject<Array<LocalImageAlternative>>(ERROR_MOCK),
         isGrypeInstalled: false,
       },
@@ -83,7 +82,6 @@ describe('loading', () => {
   test('should display skeleton when alternatives promise is pending', async () => {
     const { getByRole } = render(Page, {
       data: {
-        version: { major: 1, minor: 29, patch: 0 },
         alternatives: new Promise<Array<LocalImageAlternative>>(vi.fn()),
         isGrypeInstalled: false,
       },
@@ -97,9 +95,8 @@ describe('loading', () => {
   test('skeleton table columns should match alternatives table columns', async () => {
     const { getByRole: getSkeletonRole } = render(Page, {
       data: {
-        version: { major: 1, minor: 29, patch: 0 },
-          alternatives: new Promise<Array<LocalImageAlternative>>(vi.fn()),
-          isGrypeInstalled: false,
+        alternatives: new Promise<Array<LocalImageAlternative>>(vi.fn()),
+        isGrypeInstalled: false,
       },
       params: {},
     });
@@ -113,7 +110,6 @@ describe('loading', () => {
 
     const { getByRole } = render(Page, {
       data: {
-        version: { major: 1, minor: 29, patch: 0 },
         alternatives: Promise.resolve(ALTERNATIVES),
         isGrypeInstalled: false,
       },
@@ -133,7 +129,6 @@ describe('data', () => {
   test('should display alternatives when promise resolves', async () => {
     const { getByLabelText } = render(Page, {
       data: {
-        version: { major: 1, minor: 29, patch: 0 },
         alternatives: Promise.resolve(ALTERNATIVES),
         isGrypeInstalled: false,
       },
@@ -148,7 +143,6 @@ describe('data', () => {
   test('should display empty state when no alternatives found', async () => {
     const { getByLabelText } = render(Page, {
       data: {
-        version: { major: 1, minor: 29, patch: 0 },
         alternatives: Promise.resolve([]),
         isGrypeInstalled: false,
       },

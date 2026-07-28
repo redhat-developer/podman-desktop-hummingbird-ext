@@ -51,7 +51,6 @@ describe('RepositoryCard', () => {
   test('should display the image name', async () => {
     const { getByText } = render(RepositoryCard, {
       object: IMAGE_SUMMARY,
-      version: { major: 1, minor: 28 },
     });
 
     expect(getByText('curl')).toBeDefined();
@@ -60,7 +59,6 @@ describe('RepositoryCard', () => {
   test('should display the description when provided', async () => {
     const { getByText } = render(RepositoryCard, {
       object: IMAGE_SUMMARY,
-      version: { major: 1, minor: 28 },
     });
 
     expect(getByText('A curl image')).toBeDefined();
@@ -69,7 +67,6 @@ describe('RepositoryCard', () => {
   test('should show Run button when version >= 1.29', async () => {
     const { getByRole } = render(RepositoryCard, {
       object: IMAGE_SUMMARY,
-      version: { major: 1, minor: 29 },
       pulled: Promise.resolve(SIMPLE_IMAGE_INFO),
     });
 
@@ -78,24 +75,9 @@ describe('RepositoryCard', () => {
     });
   });
 
-  test('should not show Run button when version < 1.29', async () => {
-    const { queryByRole, getByRole } = render(RepositoryCard, {
-      object: IMAGE_SUMMARY,
-      version: { major: 1, minor: 28 },
-      pulled: Promise.resolve(SIMPLE_IMAGE_INFO),
-    });
-
-    await vi.waitFor(() => {
-      expect(getByRole('button', { name: 'Open' })).toBeDefined();
-    });
-
-    expect(queryByRole('button', { name: 'Run' })).toBeNull();
-  });
-
   test('should show Pull button when image is not pulled', async () => {
     const { getByRole } = render(RepositoryCard, {
       object: IMAGE_SUMMARY,
-      version: { major: 1, minor: 28 },
       pulled: Promise.resolve(undefined),
     });
 

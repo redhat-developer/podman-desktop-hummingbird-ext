@@ -14,15 +14,12 @@ import { faPlay } from '@fortawesome/free-solid-svg-icons/faPlay';
 interface Props {
   object: ImageSummary;
   pulled?: Promise<SimpleImageInfo | undefined>;
-  version: { major: number; minor: number };
   connection?: ProviderContainerConnectionDetailedInfo;
 }
 
-let { object: image, pulled, version, connection }: Props = $props();
+let { object: image, pulled, connection }: Props = $props();
 
 let loading: boolean = $state(false);
-
-let canNavigateToImageRun = $derived(version.major >= 1 && version.minor >= 29);
 
 async function pullImage(): Promise<void> {
   if (!connection) throw new Error('connection is not defined');
@@ -106,14 +103,12 @@ function openExternal(): Promise<boolean> {
               aria-label="Open"
               onclick={navigateToImageDetails.bind(undefined, result)}>Open</Button>
 
-            {#if canNavigateToImageRun}
-              <Button
-                icon={faPlay}
-                type="primary"
-                class="grow"
-                aria-label="Run"
-                onclick={navigateToImageRun.bind(undefined, result)}>Run</Button>
-            {/if}
+            <Button
+              icon={faPlay}
+              type="primary"
+              class="grow"
+              aria-label="Run"
+              onclick={navigateToImageRun.bind(undefined, result)}>Run</Button>
           </div>
         {:else}
           <Button
