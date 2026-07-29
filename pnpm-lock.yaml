@@ -40,8 +40,8 @@ importers:
         specifier: ^10.0.1
         version: 10.0.1(eslint@10.8.0(jiti@2.7.0))
       '@podman-desktop/api':
-        specifier: ^1.28.3
-        version: 1.28.3
+        specifier: ^1.29.0-next.202607271349-e2d650c
+        version: 1.29.0-next.202607271349-e2d650c
       '@typescript-eslint/eslint-plugin':
         specifier: ^8.65.0
         version: 8.65.0(@typescript-eslint/parser@8.65.0(eslint@10.8.0(jiti@2.7.0))(typescript@6.0.3))(eslint@10.8.0(jiti@2.7.0))(typescript@6.0.3)
@@ -125,7 +125,7 @@ importers:
         version: 4.4.3
     devDependencies:
       '@podman-desktop/api':
-        specifier: ^1.29.0-next.202607210731-f5075de
+        specifier: ^1.29.0-next.202607271349-e2d650c
         version: 1.29.0-next.202607271349-e2d650c
       '@podman-desktop/extension-hummingbird-core-api':
         specifier: workspace:^
@@ -249,8 +249,8 @@ importers:
         version: 4.4.3
     devDependencies:
       '@podman-desktop/api':
-        specifier: ^1.28.3
-        version: 1.28.3
+        specifier: ^1.29.0-next.202607271349-e2d650c
+        version: 1.29.0-next.202607271349-e2d650c
       swagger-typescript-api:
         specifier: ^13.12.6
         version: 13.12.6(magicast@0.5.3)
@@ -674,9 +674,6 @@ packages:
 
   '@oxc-project/types@0.139.0':
     resolution: {integrity: sha512-r9gHphtCs+1M7J0pw6Sn/hh/Wpa/iQrOOkrNAlVLF/gHq+/CJmHIWKKUUhdWjcD6CIa8idarspCsASiXCXvFUw==}
-
-  '@podman-desktop/api@1.28.3':
-    resolution: {integrity: sha512-RCYrD90VfVn59oa8vTaDXj8Qy9BD0jxyiTNBhKNcloYf1hBCDMIKgqTcXYgNq15/5P1aGjRmgaG/jnhDEuux/g==}
 
   '@podman-desktop/api@1.29.0-next.202607271349-e2d650c':
     resolution: {integrity: sha512-525PLsr/CtCyXwuHToQiBaEW+nz8NsiHpKgagEoXxhzSlJzlXTk+fy3ynzHJApJZl16FIYEcBruU3uBRycSjBA==}
@@ -4103,8 +4100,6 @@ snapshots:
       '@octokit/openapi-types': 27.0.0
 
   '@oxc-project/types@0.139.0': {}
-
-  '@podman-desktop/api@1.28.3': {}
 
   '@podman-desktop/api@1.29.0-next.202607271349-e2d650c': {}
 
