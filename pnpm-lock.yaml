@@ -113,7 +113,7 @@ importers:
         version: 8.1.5(@types/node@25.2.0)(jiti@2.7.0)(yaml@2.9.0)
       vitest:
         specifier: ^4.1.10
-        version: 4.1.10(@types/node@25.2.0)(@vitest/coverage-v8@4.1.10)(jsdom@30.0.0)(vite@8.1.5(@types/node@25.2.0)(jiti@2.7.0)(yaml@2.9.0))
+        version: 4.1.10(@types/node@25.2.0)(@vitest/coverage-v8@4.1.10)(jsdom@30.0.1)(vite@8.1.5(@types/node@25.2.0)(jiti@2.7.0)(yaml@2.9.0))
 
   packages/backend:
     dependencies:
@@ -144,7 +144,7 @@ importers:
         version: 8.1.5(@types/node@24.13.3)(jiti@2.7.0)(yaml@2.9.0)
       vitest:
         specifier: ^4.1.10
-        version: 4.1.10(@types/node@24.13.3)(@vitest/coverage-v8@4.1.10)(jsdom@30.0.0)(vite@8.1.5(@types/node@24.13.3)(jiti@2.7.0)(yaml@2.9.0))
+        version: 4.1.10(@types/node@24.13.3)(@vitest/coverage-v8@4.1.10)(jsdom@30.0.1)(vite@8.1.5(@types/node@24.13.3)(jiti@2.7.0)(yaml@2.9.0))
 
   packages/frontend:
     devDependencies:
@@ -209,8 +209,8 @@ importers:
         specifier: ^11.0.22
         version: 11.0.22
       jsdom:
-        specifier: ^30.0.0
-        version: 30.0.0
+        specifier: ^30.0.1
+        version: 30.0.1
       prettier:
         specifier: ^3.9.6
         version: 3.9.6
@@ -240,7 +240,7 @@ importers:
         version: 8.1.5(@types/node@25.2.0)(jiti@2.7.0)(yaml@2.9.0)
       vitest:
         specifier: ^4.1.10
-        version: 4.1.10(@types/node@25.2.0)(@vitest/coverage-v8@4.1.10)(jsdom@30.0.0)(vite@8.1.5(@types/node@25.2.0)(jiti@2.7.0)(yaml@2.9.0))
+        version: 4.1.10(@types/node@25.2.0)(@vitest/coverage-v8@4.1.10)(jsdom@30.0.1)(vite@8.1.5(@types/node@25.2.0)(jiti@2.7.0)(yaml@2.9.0))
 
   packages/shared:
     dependencies:
@@ -262,7 +262,7 @@ importers:
         version: 8.1.5(@types/node@25.2.0)(jiti@2.7.0)(yaml@2.9.0)
       vitest:
         specifier: ^4.1.10
-        version: 4.1.10(@types/node@25.2.0)(@vitest/coverage-v8@4.1.10)(jsdom@30.0.0)(vite@8.1.5(@types/node@25.2.0)(jiti@2.7.0)(yaml@2.9.0))
+        version: 4.1.10(@types/node@25.2.0)(@vitest/coverage-v8@4.1.10)(jsdom@30.0.1)(vite@8.1.5(@types/node@25.2.0)(jiti@2.7.0)(yaml@2.9.0))
 
 packages:
 
@@ -2376,8 +2376,8 @@ packages:
     resolution: {integrity: sha512-zfLtNfQqxVqq3uaTqSkh4x4hZw3KHobGUA0fJUj4wawW8bsQLTVqpHdXSIzidh7o+4lEW36tANuAGdaFx6Zgnw==}
     hasBin: true
 
-  jsdom@30.0.0:
-    resolution: {integrity: sha512-JQHfRGmmKmaZoUAvIgff5jjG/0SzTQlGz8c7t72KzBzo8ZULEjAjnYE0sNwBOUA4QtWwYE2xoYitg8NFsmiYxA==}
+  jsdom@30.0.1:
+    resolution: {integrity: sha512-52v7mUVUfNQVYYqE1lcdaymWL0njO7lTLUog6ZvW2U5KsbiLk/GnZlVJ+qx0xfNJZ6Gn+KSpPNE52vurbxZwrA==}
     engines: {node: ^22.22.2 || ^24.15.0 || >=26.0.0}
     peerDependencies:
       canvas: ^3.2.3
@@ -4381,7 +4381,7 @@ snapshots:
       svelte: 5.56.8(@typescript-eslint/types@8.65.0)
     optionalDependencies:
       vite: 8.1.5(@types/node@25.2.0)(jiti@2.7.0)(yaml@2.9.0)
-      vitest: 4.1.10(@types/node@25.2.0)(@vitest/coverage-v8@4.1.10)(jsdom@30.0.0)(vite@8.1.5(@types/node@25.2.0)(jiti@2.7.0)(yaml@2.9.0))
+      vitest: 4.1.10(@types/node@25.2.0)(@vitest/coverage-v8@4.1.10)(jsdom@30.0.1)(vite@8.1.5(@types/node@25.2.0)(jiti@2.7.0)(yaml@2.9.0))
 
   '@testing-library/user-event@14.6.1(@testing-library/dom@10.4.1)':
     dependencies:
@@ -4654,7 +4654,7 @@ snapshots:
       obug: 2.1.3
       std-env: 4.1.0
       tinyrainbow: 3.1.0
-      vitest: 4.1.10(@types/node@24.13.3)(@vitest/coverage-v8@4.1.10)(jsdom@30.0.0)(vite@8.1.5(@types/node@24.13.3)(jiti@2.7.0)(yaml@2.9.0))
+      vitest: 4.1.10(@types/node@24.13.3)(@vitest/coverage-v8@4.1.10)(jsdom@30.0.1)(vite@8.1.5(@types/node@24.13.3)(jiti@2.7.0)(yaml@2.9.0))
 
   '@vitest/eslint-plugin@1.6.24(@typescript-eslint/eslint-plugin@8.65.0(@typescript-eslint/parser@8.65.0(eslint@10.8.0(jiti@2.7.0))(typescript@6.0.3))(eslint@10.8.0(jiti@2.7.0))(typescript@6.0.3))(eslint@10.8.0(jiti@2.7.0))(typescript@6.0.3)(vitest@4.1.10)':
     dependencies:
@@ -4664,7 +4664,7 @@ snapshots:
     optionalDependencies:
       '@typescript-eslint/eslint-plugin': 8.65.0(@typescript-eslint/parser@8.65.0(eslint@10.8.0(jiti@2.7.0))(typescript@6.0.3))(eslint@10.8.0(jiti@2.7.0))(typescript@6.0.3)
       typescript: 6.0.3
-      vitest: 4.1.10(@types/node@25.2.0)(@vitest/coverage-v8@4.1.10)(jsdom@30.0.0)(vite@8.1.5(@types/node@25.2.0)(jiti@2.7.0)(yaml@2.9.0))
+      vitest: 4.1.10(@types/node@25.2.0)(@vitest/coverage-v8@4.1.10)(jsdom@30.0.1)(vite@8.1.5(@types/node@25.2.0)(jiti@2.7.0)(yaml@2.9.0))
     transitivePeerDependencies:
       - supports-color
 
@@ -5883,7 +5883,7 @@ snapshots:
     dependencies:
       argparse: 2.0.1
 
-  jsdom@30.0.0:
+  jsdom@30.0.1:
     dependencies:
       '@asamuzakjp/css-color': 6.0.5
       '@asamuzakjp/dom-selector': 8.3.0
@@ -7039,7 +7039,7 @@ snapshots:
     optionalDependencies:
       vite: 8.1.5(@types/node@25.2.0)(jiti@2.7.0)(yaml@2.9.0)
 
-  vitest@4.1.10(@types/node@24.13.3)(@vitest/coverage-v8@4.1.10)(jsdom@30.0.0)(vite@8.1.5(@types/node@24.13.3)(jiti@2.7.0)(yaml@2.9.0)):
+  vitest@4.1.10(@types/node@24.13.3)(@vitest/coverage-v8@4.1.10)(jsdom@30.0.1)(vite@8.1.5(@types/node@24.13.3)(jiti@2.7.0)(yaml@2.9.0)):
     dependencies:
       '@vitest/expect': 4.1.10
       '@vitest/mocker': 4.1.10(vite@8.1.5(@types/node@24.13.3)(jiti@2.7.0)(yaml@2.9.0))
@@ -7064,11 +7064,11 @@ snapshots:
     optionalDependencies:
       '@types/node': 24.13.3
       '@vitest/coverage-v8': 4.1.10(vitest@4.1.10)
-      jsdom: 30.0.0
+      jsdom: 30.0.1
     transitivePeerDependencies:
       - msw
 
-  vitest@4.1.10(@types/node@25.2.0)(@vitest/coverage-v8@4.1.10)(jsdom@30.0.0)(vite@8.1.5(@types/node@25.2.0)(jiti@2.7.0)(yaml@2.9.0)):
+  vitest@4.1.10(@types/node@25.2.0)(@vitest/coverage-v8@4.1.10)(jsdom@30.0.1)(vite@8.1.5(@types/node@25.2.0)(jiti@2.7.0)(yaml@2.9.0)):
     dependencies:
       '@vitest/expect': 4.1.10
       '@vitest/mocker': 4.1.10(vite@8.1.5(@types/node@25.2.0)(jiti@2.7.0)(yaml@2.9.0))
@@ -7093,7 +7093,7 @@ snapshots:
     optionalDependencies:
       '@types/node': 25.2.0
       '@vitest/coverage-v8': 4.1.10(vitest@4.1.10)
-      jsdom: 30.0.0
+      jsdom: 30.0.1
     transitivePeerDependencies:
       - msw
 
