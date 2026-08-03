@@ -167,8 +167,8 @@ importers:
         specifier: workspace:^
         version: link:../shared
       '@podman-desktop/ui-svelte':
-        specifier: ^1.28.3
-        version: 1.28.3(svelte-fa@4.0.4(svelte@5.56.8(@typescript-eslint/types@8.65.0)))(svelte@5.56.8(@typescript-eslint/types@8.65.0))
+        specifier: ^1.29.0
+        version: 1.29.0(svelte-fa@4.0.4(svelte@5.56.8(@typescript-eslint/types@8.65.0)))(svelte@5.56.8(@typescript-eslint/types@8.65.0))
       '@sveltejs/adapter-static':
         specifier: ^3.0.10
         version: 3.0.10(@sveltejs/kit@2.70.2(@sveltejs/vite-plugin-svelte@7.2.0(svelte@5.56.8(@typescript-eslint/types@8.65.0))(vite@8.1.5(@types/node@25.2.0)(jiti@2.7.0)(yaml@2.9.0)))(svelte@5.56.8(@typescript-eslint/types@8.65.0))(typescript@6.0.3)(vite@8.1.5(@types/node@25.2.0)(jiti@2.7.0)(yaml@2.9.0)))
@@ -684,8 +684,8 @@ packages:
   '@podman-desktop/grype-extension-api@0.1.0-next.202604011405-f6be4bb':
     resolution: {integrity: sha512-xQsDP8zDUCwjg7TFA/ZYqmS4pwA3lHKNRq7b01lBWaFwYokXRZCdN5+bvIt/Mxt58/wHzFN8ja+drXRHOk3kAw==}
 
-  '@podman-desktop/ui-svelte@1.28.3':
-    resolution: {integrity: sha512-kodRltBjRKVkd40YNZRnU50TDGEmG/rW9YgnDk5S+w35WPglea8LOMP4fUZKRsXmFhj4OTqIyNgVHyXo01d0jQ==}
+  '@podman-desktop/ui-svelte@1.29.0':
+    resolution: {integrity: sha512-jdBTk5qK/Txl3+lO9IbbzkxFo6VzXJ8zpcxL9Y3HRjnoyelaFMckAiFyivijHBhXeT1bpRQNCzGHGGFbogznQg==}
     peerDependencies:
       svelte: ^4.0.0 || ^5.0.0
       svelte-fa: ^4.0.0
@@ -1468,6 +1468,10 @@ packages:
 
   brace-expansion@5.0.8:
     resolution: {integrity: sha512-JZyDyq3D4AUifKTPOB7DELf6XsB3WdPuNxCtob1vFXPsSXhdAiHBWJ/tJ8HAc9aH84BK+5JFZLNkJKx3G9kzQg==}
+    engines: {node: 20 || >=22}
+
+  brace-expansion@5.0.9:
+    resolution: {integrity: sha512-ScQ4IuvIEF1TMlP7Zt+vjJ//9zlPb2SDcxWxM3bk8s6t6GGdJ7KO1dCcTidOPJKePW30LE/2cT7wCyPho9/Wxg==}
     engines: {node: 20 || >=22}
 
   braces@3.0.3:
@@ -4110,7 +4114,7 @@ snapshots:
     dependencies:
       zod: 4.4.3
 
-  '@podman-desktop/ui-svelte@1.28.3(svelte-fa@4.0.4(svelte@5.56.8(@typescript-eslint/types@8.65.0)))(svelte@5.56.8(@typescript-eslint/types@8.65.0))':
+  '@podman-desktop/ui-svelte@1.29.0(svelte-fa@4.0.4(svelte@5.56.8(@typescript-eslint/types@8.65.0)))(svelte@5.56.8(@typescript-eslint/types@8.65.0))':
     dependencies:
       '@floating-ui/dom': 1.8.0
       '@fortawesome/fontawesome-free': 7.3.1
@@ -4884,6 +4888,11 @@ snapshots:
   brace-expansion@5.0.8:
     dependencies:
       balanced-match: 4.0.4
+
+  brace-expansion@5.0.9:
+    dependencies:
+      balanced-match: 4.0.4
+    optional: true
 
   braces@3.0.3:
     dependencies:
@@ -6065,7 +6074,7 @@ snapshots:
 
   minimatch@10.2.6:
     dependencies:
-      brace-expansion: 5.0.8
+      brace-expansion: 5.0.9
     optional: true
 
   minimatch@3.1.5:
