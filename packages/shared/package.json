@@ -20,7 +20,7 @@
     "vite": "^8.2.0",
     "unplugin-dts": "^1.0.3",
     "vitest": "^4.1.10",
-    "@podman-desktop/api": "^1.29.0",
+    "@podman-desktop/api": "^1.29.1",
     "swagger-typescript-api": "^13.12.6"
   },
   "files": [
