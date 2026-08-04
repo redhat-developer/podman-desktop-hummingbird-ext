@@ -17,10 +17,11 @@
  ***********************************************************************/
 import type { Plugin } from 'vite';
 import { generateApi } from 'swagger-typescript-api';
-import { writeFile, mkdir } from 'node:fs/promises';
+import { writeFile, mkdir, copyFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
 export const HUMMINGBIRD_SERVER_OPEN_API_URL = 'https://api-hummingbird.hummingbird-project.io/v1/openapi.json';
+export const HUMMINGBIRD_OPENAPI_LOCAL_ENV = 'HUMMINGBIRD_OPENAPI_LOCAL';
 
 export function openapi(): Plugin {
   return {
@@ -31,10 +32,16 @@ export function openapi(): Plugin {
       await mkdir(generated, { recursive: true });
 
       const swaggerPath = join(generated, 'openapi.json');
+      const localPath = process.env[HUMMINGBIRD_OPENAPI_LOCAL_ENV];
 
-      const response = await fetch(HUMMINGBIRD_SERVER_OPEN_API_URL);
-
-      await writeFile(swaggerPath, JSON.stringify(await response.json(), undefined, 2), 'utf-8');
+      if (localPath) {
+        console.log(`[vite-plugin-openapi] using local OpenAPI spec from ${localPath}`);
+        await copyFile(localPath, swaggerPath);
+      } else {
+        console.log(`[vite-plugin-openapi] fetching OpenAPI spec from ${HUMMINGBIRD_SERVER_OPEN_API_URL}`);
+        const response = await fetch(HUMMINGBIRD_SERVER_OPEN_API_URL);
+        await writeFile(swaggerPath, JSON.stringify(await response.json(), undefined, 2), 'utf-8');
+      }
 
       await generateApi({
         input: swaggerPath,
