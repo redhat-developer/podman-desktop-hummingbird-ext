@@ -40,8 +40,8 @@ importers:
         specifier: ^10.0.1
         version: 10.0.1(eslint@10.8.0(jiti@2.7.0))
       '@podman-desktop/api':
-        specifier: ^1.29.0
-        version: 1.29.0
+        specifier: ^1.29.1
+        version: 1.29.1
       '@typescript-eslint/eslint-plugin':
         specifier: ^8.65.0
         version: 8.65.0(@typescript-eslint/parser@8.65.0(eslint@10.8.0(jiti@2.7.0))(typescript@6.0.3))(eslint@10.8.0(jiti@2.7.0))(typescript@6.0.3)
@@ -125,8 +125,8 @@ importers:
         version: 4.4.3
     devDependencies:
       '@podman-desktop/api':
-        specifier: ^1.29.0
-        version: 1.29.0
+        specifier: ^1.29.1
+        version: 1.29.1
       '@podman-desktop/extension-hummingbird-core-api':
         specifier: workspace:^
         version: link:../shared
@@ -249,8 +249,8 @@ importers:
         version: 4.4.3
     devDependencies:
       '@podman-desktop/api':
-        specifier: ^1.29.0
-        version: 1.29.0
+        specifier: ^1.29.1
+        version: 1.29.1
       swagger-typescript-api:
         specifier: ^13.12.6
         version: 13.12.6(magicast@0.5.3)
@@ -676,8 +676,8 @@ packages:
   '@oxc-project/types@0.142.0':
     resolution: {integrity: sha512-7W+2q5AKQVU36fkaryontrHn3YDt1RyUYXatw9i5H8ocYe2sPKSFB6eS8WNPeRKiN1qAWWZUPm7gwFzJGrccqQ==}
 
-  '@podman-desktop/api@1.29.0':
-    resolution: {integrity: sha512-atFcg3OrOEBPuPzvkclbUCAoMVfSg+hqexNcE5Z/YJ5f7PakTUS6BpcVTG/bL3l66N2uGdYWes/tM0W5xdSLWA==}
+  '@podman-desktop/api@1.29.1':
+    resolution: {integrity: sha512-UtCY2t5hVLz5pHXSV5DmQESPLUqSxDgKhJfqlQ4GO7L0x/fQdaX22KGbuzOEUSs1KzB0nwWNB3ylaTcE/OBdZA==}
 
   '@podman-desktop/grype-extension-api@0.1.0-next.202604011405-f6be4bb':
     resolution: {integrity: sha512-xQsDP8zDUCwjg7TFA/ZYqmS4pwA3lHKNRq7b01lBWaFwYokXRZCdN5+bvIt/Mxt58/wHzFN8ja+drXRHOk3kAw==}
@@ -4173,7 +4173,7 @@ snapshots:
 
   '@oxc-project/types@0.142.0': {}
 
-  '@podman-desktop/api@1.29.0': {}
+  '@podman-desktop/api@1.29.1': {}
 
   '@podman-desktop/grype-extension-api@0.1.0-next.202604011405-f6be4bb':
     dependencies:

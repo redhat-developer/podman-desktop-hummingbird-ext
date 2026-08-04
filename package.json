@@ -63,7 +63,7 @@
     "vite": "^8.2.0",
     "vitest": "^4.1.10",
     "globals": "^17.8.0",
-    "@podman-desktop/api": "^1.29.0"
+    "@podman-desktop/api": "^1.29.1"
   },
   "workspaces": {
     "packages": [
