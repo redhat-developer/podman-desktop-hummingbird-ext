@@ -15,30 +15,39 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# tag 10.1-1764649731
-FROM registry.access.redhat.com/ubi10/nodejs-24@sha256:dd07ba12178fe2b929c81461e9bb7a4cd41e4b255fd46209f5a293daa85efec2 AS builder
+ARG BASE_IMAGE=registry.access.redhat.com/ubi10/nodejs-24-minimal:10.2-1785374286
+FROM ${BASE_IMAGE} AS builder
 
-USER 0
+ARG HERMETO_DIR=/tmp/hermeto-output
+ARG PODMAN_DESKTOP_ENGINE_VERSION=>=1.29.0
 
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-RUN npm i -g corepack@0.31.0 && corepack enable
+USER 1001
+WORKDIR /opt/app-root/src
+COPY --chown=1001:0 . .
 
-COPY . /app
-WORKDIR /app
-RUN pnpm install --frozen-lockfile
+RUN sed -i 's/"podman-desktop":.*/"podman-desktop": "'"${PODMAN_DESKTOP_ENGINE_VERSION}"'"/' packages/backend/package.json
+
+RUN PNPM_TGZ=$(ls ${HERMETO_DIR}/deps/generic/pnpm-*.tgz 2>/dev/null | head -1) && \
+    npm install --global "$PNPM_TGZ"
+
+RUN pnpm install --frozen-lockfile --ignore-scripts && \
+    pnpm rebuild esbuild
+
+ENV HUMMINGBIRD_OPENAPI_LOCAL=${HERMETO_DIR}/deps/generic/openapi.json
 RUN pnpm build
 
 FROM scratch
 
-COPY --from=builder /app/packages/backend/dist/ /extension/dist
-COPY --from=builder /app/packages/backend/package.json /extension/
-COPY --from=builder /app/packages/backend/media/ /extension/media
-COPY --from=builder /app/LICENSE /extension/
-COPY --from=builder /app/packages/backend/icon.png /extension/
-COPY --from=builder /app/README.md /extension/
+ARG PODMAN_DESKTOP_ENGINE_VERSION=>=1.29.0
 
 LABEL org.opencontainers.image.title="Hummingbird Extension" \
-        org.opencontainers.image.description="Hummingbird Extension" \
-        org.opencontainers.image.vendor="redhat" \
-        io.podman-desktop.api.version=">= 1.29.0"
+      org.opencontainers.image.description="Hummingbird extension for Podman Desktop" \
+      org.opencontainers.image.vendor="Red Hat" \
+      io.podman-desktop.api.version="${PODMAN_DESKTOP_ENGINE_VERSION}"
+
+COPY --from=builder /opt/app-root/src/packages/backend/dist/ /extension/dist
+COPY --from=builder /opt/app-root/src/packages/backend/package.json /extension/
+COPY --from=builder /opt/app-root/src/packages/backend/media/ /extension/media
+COPY --from=builder /opt/app-root/src/LICENSE /extension/
+COPY --from=builder /opt/app-root/src/packages/backend/icon.png /extension/
+COPY --from=builder /opt/app-root/src/README.md /extension/

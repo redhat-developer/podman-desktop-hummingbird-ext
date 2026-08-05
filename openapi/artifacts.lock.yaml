@@ -1,0 +1,7 @@
+---
+metadata:
+  version: "1.0"
+artifacts:
+  - download_url: https://api-hummingbird.hummingbird-project.io/v1/openapi.json
+    checksum: sha256:8ebea56a43e0196f2958ade13c4993a2872bb0e4edaa06234744d22f3efc0c0d
+    filename: openapi.json

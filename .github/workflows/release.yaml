@@ -129,16 +129,56 @@ jobs:
         with:
           ref: ${{ needs.tag.outputs.githubTag }}
 
+      - name: Generate pnpm artifacts lockfile
+        uses: ./.github/actions/hermeto
+        with:
+          image: quay.io/redhat-user-workloads/red-hat-desktop-tenant/extensions-common-nightly:ecbaba34ccca8bf37055ec16d652bfe66712eeda
+          args: generate-pnpm-artifacts-lock
+
+      - name: Prefetch pnpm dependencies
+        uses: ./.github/actions/hermeto
+        with:
+          args: fetch-deps pnpm
+
+      - name: Prefetch generic artifacts (pnpm tarball)
+        uses: ./.github/actions/hermeto
+        with:
+          args: fetch-deps generic
+
+      - name: Prefetch generic artifacts (OpenAPI spec)
+        uses: ./.github/actions/hermeto
+        with:
+          args: |
+            fetch-deps '{"type": "generic", "path": "openapi"}'
+
+      - name: Inject file modifications
+        uses: ./.github/actions/hermeto
+        with:
+          args: inject-files ./hermeto-output --for-output-dir /tmp/hermeto-output
+
       - name: Login to ghcr.io
         run: podman login --username ${{ github.repository_owner }} --password ${{ secrets.GITHUB_TOKEN }} ghcr.io
 
       - name: Build Image
         id: build-image
-        run: |
-          podman build --squash-all -t ghcr.io/${{ github.repository }}:${{ needs.tag.outputs.extVersion }} .
-          podman push ghcr.io/${{ github.repository }}:${{ needs.tag.outputs.extVersion }}
-          podman tag ghcr.io/${{ github.repository }}:${{ needs.tag.outputs.extVersion }} ghcr.io/${{ github.repository }}:latest
-          podman push ghcr.io/${{ github.repository }}:latest
+        uses: redhat-actions/buildah-build@v3
+        with:
+          image: ${{ github.repository }}
+          tags: |
+            ${{ needs.tag.outputs.extVersion }}
+            latest
+          containerfiles: ./Containerfile
+          extra-args: |
+            --squash
+            --network none
+            --volume ${{ github.workspace }}/hermeto-output:/tmp/hermeto-output:Z
+
+      - name: Push Image
+        uses: redhat-actions/push-to-registry@v3
+        with:
+          image: ${{ steps.build-image.outputs.image }}
+          tags: ${{ steps.build-image.outputs.tags }}
+          registry: ghcr.io
 
   release:
     needs: [tag, build]

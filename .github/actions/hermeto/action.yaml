@@ -1,0 +1,20 @@
+name: 'Hermeto'
+description: 'Run a command in a container via podman with workspace volume-mounted'
+
+inputs:
+  image:
+    description: 'Container image to run'
+    default: 'ghcr.io/hermetoproject/hermeto:latest'
+  args:
+    description: 'Arguments to pass to the container'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - shell: bash
+      run: |
+        podman run --rm \
+          -v "$PWD:$PWD:z" -w "$PWD" \
+          ${{ inputs.image }} \
+          ${{ inputs.args }}
