@@ -58,7 +58,7 @@ function getProviderStatusColor(item: ProviderContainerConnectionDetailedInfo): 
     value: key(containerProviderConnection),
     label: containerProviderConnection.name,
   }))}>
-  <div slot="item" let:item>
+  {#snippet item({ item })}
     <div class="flex items-center w-full">
       <div class="w-2 h-2 min-w-2 me-2 rounded-full {getProviderStatusColor(item)}"></div>
 
@@ -74,5 +74,5 @@ function getProviderStatusColor(item: ProviderContainerConnectionDetailedInfo): 
         </div>
       {/if}
     </div>
-  </div>
+  {/snippet}
 </Select>
