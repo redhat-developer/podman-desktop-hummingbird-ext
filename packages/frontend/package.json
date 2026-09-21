@@ -37,7 +37,7 @@
     "autoprefixer": "^10.6.1",
     "filesize": "^11.0.24",
     "jsdom": "^30.0.1",
-    "prettier": "^3.9.6",
+    "prettier": "^3.9.8",
     "prettier-plugin-svelte": "^4.1.1",
     "svelte": "5.57.0",
     "svelte-check": "^4.7.6",
