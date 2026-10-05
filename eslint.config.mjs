@@ -30,7 +30,6 @@ import unicorn from 'eslint-plugin-unicorn';
 import noNull from 'eslint-plugin-no-null';
 import sonarjs from 'eslint-plugin-sonarjs';
 import svelte from 'eslint-plugin-svelte';
-import redundantUndefined from 'eslint-plugin-redundant-undefined';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
 import vitest from '@vitest/eslint-plugin';
 
@@ -77,7 +76,6 @@ export default [
       // non-compliant v9 plug-ins
       import: fixupPluginRules(importPlugin),
       'no-null': fixupPluginRules(noNull),
-      'redundant-undefined': fixupPluginRules(redundantUndefined),
       'simple-import-sort': fixupPluginRules(simpleImportSort),
       vitest,
     },
@@ -172,7 +170,6 @@ export default [
       'sonarjs/no-empty-collection': 'off',
       'sonarjs/no-small-switch': 'off',
       'sonarjs/no-unused-expressions': 'off',
-      'redundant-undefined/redundant-undefined': 'error',
       'import/no-extraneous-dependencies': 'error',
       'import/no-restricted-paths': [
         'error',
