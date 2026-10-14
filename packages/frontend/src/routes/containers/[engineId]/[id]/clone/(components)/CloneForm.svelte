@@ -21,6 +21,7 @@ let { container, alternative, localImage, close }: Props = $props();
 
 let name = $state(`${container.name}-clone`);
 let stopExisting = $state(true);
+let startAfterClone = $state(true);
 
 let result: CloneResult | undefined = $state();
 let loading: boolean = $state(false);
@@ -36,6 +37,7 @@ async function clone(): Promise<void> {
       `quay.io/hummingbird/${alternative.name}:${alternative.latest_tag}`,
       {
         stopBeforeClone: $state.snapshot(stopExisting),
+        startAfterClone: $state.snapshot(startAfterClone),
         name: $state.snapshot(name),
       },
     );
@@ -77,6 +79,11 @@ async function navigateToContainer(): Promise<void> {
       <label class="flex items-center gap-2 cursor-pointer mt-4">
         <Checkbox bind:checked={stopExisting} disabled={loading || !!result} />
         <span class="text-[var(--pd-content-text)]"> Stop existing container before proceeding (recommended) </span>
+      </label>
+
+      <label class="flex items-center gap-2 cursor-pointer mt-4">
+        <Checkbox bind:checked={startAfterClone} disabled={loading || !!result} />
+        <span class="text-[var(--pd-content-text)]"> Start the cloned container after creation </span>
       </label>
 
       {#if result}

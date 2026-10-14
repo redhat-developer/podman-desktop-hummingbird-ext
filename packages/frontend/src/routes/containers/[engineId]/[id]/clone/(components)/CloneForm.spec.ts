@@ -79,12 +79,45 @@ test('Expect that clicking Clone calls containerAPI.clone', async () => {
     'quay.io/hummingbird/nginx-hardened:1.2.3',
     {
       stopBeforeClone: true,
+      startAfterClone: true,
       name: 'my-container-clone',
     },
   );
 
   expect(getByText('Container new-cont created')).toBeInTheDocument();
   expect(getByRole('button', { name: 'Open container details' })).toBeInTheDocument();
+});
+
+test('Expect that unchecking startAfterClone passes false', async () => {
+  vi.mocked(containerAPI.clone).mockResolvedValue({
+    Id: 'new-container-id',
+    engineId: 'podman',
+  });
+
+  const { getByRole, getByText } = render(CloneForm, {
+    container: CONTAINER,
+    alternative: ALTERNATIVE,
+    localImage: LOCAL_IMAGE,
+    close: CLOSE_FN,
+  });
+
+  // Uncheck the "Start the cloned container after creation" checkbox (checked by default)
+  const startCheckbox = getByText('Start the cloned container after creation');
+  await fireEvent.click(startCheckbox);
+
+  const cloneButton = getByRole('button', { name: 'Clone' });
+  await fireEvent.click(cloneButton);
+
+  expect(containerAPI.clone).toHaveBeenCalledWith(
+    'podman',
+    'container-id',
+    'quay.io/hummingbird/nginx-hardened:1.2.3',
+    {
+      stopBeforeClone: true,
+      startAfterClone: false,
+      name: 'my-container-clone',
+    },
+  );
 });
 
 test('Expect that cloning error is displayed', async () => {

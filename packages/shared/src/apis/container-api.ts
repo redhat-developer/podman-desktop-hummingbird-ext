@@ -19,6 +19,7 @@ import type { LocalContainer } from '../models/local-container';
 
 export interface CloneOptions {
   stopBeforeClone: boolean;
+  startAfterClone: boolean;
   name: string;
 }
 
