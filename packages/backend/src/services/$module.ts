@@ -30,7 +30,7 @@ import { AlternativeService } from '/@/services/alternative-service';
 
 const module = new ContainerModule(options => {
   options.bind<GrypeService>(GrypeService).toSelf().inSingletonScope();
-  options.bind<GrypeService>(AlternativeService).toSelf().inSingletonScope();
+  options.bind<AlternativeService>(AlternativeService).toSelf().inSingletonScope();
   options.bind<DialogService>(DialogService).toSelf().inSingletonScope();
   options.bind<HummingbirdService>(HummingbirdService).toSelf().inSingletonScope();
   options.bind<ImageService>(ImageService).toSelf().inSingletonScope();
