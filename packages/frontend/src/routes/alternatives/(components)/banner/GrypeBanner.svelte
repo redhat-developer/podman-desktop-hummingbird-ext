@@ -1,22 +1,3 @@
-<style>
-.page-description {
-  margin-bottom: 16px;
-  padding: 12px 16px;
-  background: color-mix(in srgb, var(--pd-button-primary-bg) 8%, transparent);
-  border-left: 3px solid var(--pd-link);
-  border-radius: 0 4px 4px 0;
-}
-.page-description p {
-  color: var(--pd-content-text);
-  font-size: 12px;
-  line-height: 1.5;
-  margin: 0;
-}
-.page-description strong {
-  color: var(--pd-badge-green);
-}
-</style>
-
 <script lang="ts">
 import { Button } from '@podman-desktop/ui-svelte';
 import { routingAPI } from '/@/api/client';
@@ -33,8 +14,8 @@ function navigateToCatalog(): Promise<void> {
 }
 </script>
 
-<div class={['page-description', className]}>
-  <p>
+<div class={['mb-4 py-3 px-4 bg-(--pd-button-primary-bg)/8 border-l-3 border-l-(--pd-link) rounded-r', className]}>
+  <p class="text-(--pd-content-text) text-base leading-normal m-0">
     To compare vulnerabilities between your local images and the Hummingbird alternatives you can install the Grype
     extension
   </p>

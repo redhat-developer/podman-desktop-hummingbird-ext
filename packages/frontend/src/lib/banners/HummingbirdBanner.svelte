@@ -1,26 +1,8 @@
-<style>
-.page-description {
-  margin-bottom: 16px;
-  padding: 12px 16px;
-  background: color-mix(in srgb, var(--pd-button-primary-bg) 8%, transparent);
-  border-left: 3px solid var(--pd-link);
-  border-radius: 0 4px 4px 0;
-}
-.page-description p {
-  color: var(--pd-content-text);
-  font-size: 12px;
-  line-height: 1.5;
-  margin: 0;
-}
-.page-description strong {
-  color: var(--pd-badge-green);
-}
-</style>
-
-<div class="page-description">
-  <p>
-    Hummingbird images are hardened, minimal container images with <strong>zero known CVEs</strong>. They are rebuilt
-    daily to ensure security and are significantly smaller than traditional images, reducing attack surface and
-    improving deployment speed.
+<div class="mb-4 py-3 px-4 bg-(--pd-button-primary-bg)/8 border-l-3 border-l-(--pd-link) rounded-r">
+  <p class="text-(--pd-content-text) text-base leading-normal m-0">
+    Hummingbird images are hardened, minimal container images with <strong class="text-(--pd-badge-green)"
+      >zero known CVEs</strong
+    >. They are rebuilt daily to ensure security and are significantly smaller than traditional images, reducing attack
+    surface and improving deployment speed.
   </p>
 </div>

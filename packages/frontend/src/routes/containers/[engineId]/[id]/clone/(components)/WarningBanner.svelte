@@ -1,22 +1,3 @@
-<style>
-.page-description {
-  margin-bottom: 16px;
-  padding: 12px 16px;
-  background: color-mix(in srgb, var(--pd-button-primary-bg) 8%, transparent);
-  border-left: 3px solid var(--pd-link);
-  border-radius: 0 4px 4px 0;
-}
-.page-description p {
-  color: var(--pd-content-text);
-  font-size: 12px;
-  line-height: 1.5;
-  margin: 0;
-}
-.page-description strong {
-  color: var(--pd-badge-green);
-}
-</style>
-
 <script lang="ts">
 import type { LocalContainer } from '@podman-desktop/extension-hummingbird-core-api';
 
@@ -27,7 +8,7 @@ interface Props {
 let { container }: Props = $props();
 </script>
 
-<div class="page-description flex gap-3">
+<div class="mb-4 py-3 px-4 bg-(--pd-button-primary-bg)/8 border-l-3 border-l-(--pd-link) rounded-r flex gap-3">
   <div class="text-yellow-400 mt-1">
     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
       <path
@@ -37,11 +18,12 @@ let { container }: Props = $props();
     </svg>
   </div>
   <div>
-    <p class="text-[var(--pd-content-text)] opacity-80 mb-2">
-      This will clone the container <strong>{container.name?.replace(/^\//, '') ?? container.id}</strong>
+    <p class="text-(--pd-content-text) text-base leading-normal m-0 opacity-80 mb-2">
+      This will clone the container <strong class="text-(--pd-badge-green)"
+        >{container.name?.replace(/^\//, '') ?? container.id}</strong>
       and replace its base image with the Hummingbird hardened alternative
     </p>
-    <p class="text-[var(--pd-content-text)] opacity-80">
+    <p class="text-(--pd-content-text) text-base leading-normal m-0 opacity-80">
       The cloned container will have a new ID and name. Your original container will remain unchanged.
     </p>
   </div>
