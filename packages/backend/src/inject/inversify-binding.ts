@@ -40,8 +40,8 @@ export class InversifyBinding implements AsyncInit<never, Container>, IAsyncDisp
     this.#container.bind(ExtensionContextSymbol).toConstantValue(this.extensionContext);
 
     // loading modules
-    await this.#container.load(serviceModule);
-    await this.#container.load(apiModule);
+    await this.#container.loadAsync(serviceModule);
+    await this.#container.loadAsync(apiModule);
 
     // instantiate all startup services
     await this.#container?.getAllAsync(StartupSymbol);
@@ -57,7 +57,7 @@ export class InversifyBinding implements AsyncInit<never, Container>, IAsyncDisp
 
   async asyncDispose(): Promise<void> {
     if (this.#container) {
-      await this.#container.unbindAll();
+      await this.#container.unbindAllAsync();
     }
   }
 }
