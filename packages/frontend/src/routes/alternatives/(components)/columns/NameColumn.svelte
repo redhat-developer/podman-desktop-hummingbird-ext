@@ -1,6 +1,6 @@
 <script lang="ts">
 import type { Row } from '/@/routes/alternatives/(components)/row';
-import LocalContainerNameColumn from '$lib/columns/LocalContainerNameColumn.svelte';
+import LocalContainerNameColumn from '#lib/columns/LocalContainerNameColumn.svelte';
 import { resolve } from '$app/paths';
 import { IMAGE_QUERY_KEY } from '/@/routes/images/[engineId]/[imageId]/report/constants';
 

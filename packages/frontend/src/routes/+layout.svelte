@@ -7,7 +7,7 @@ import { getRouterState, rpcBrowser } from '/@/api/client';
 import { goto } from '$app/navigation';
 import { page } from '$app/state';
 import { Messages } from '@podman-desktop/extension-hummingbird-core-api';
-import Navigation from '$lib/navigations/Navigation.svelte';
+import Navigation from '#lib/navigations/Navigation.svelte';
 
 let { children } = $props();
 

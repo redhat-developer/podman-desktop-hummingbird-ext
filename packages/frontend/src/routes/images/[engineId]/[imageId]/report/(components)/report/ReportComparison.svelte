@@ -1,6 +1,6 @@
 <script lang="ts">
 import { filesize } from 'filesize';
-import RepositoryIcon from '$lib/icons/RepositoryIcon.svelte';
+import RepositoryIcon from '#lib/icons/RepositoryIcon.svelte';
 
 interface Props {
   cveReductionPercent?: number;

@@ -11,7 +11,7 @@ import { faLightbulb } from '@fortawesome/free-solid-svg-icons/faLightbulb';
 let { data }: PageProps = $props();
 
 function close(): Promise<void> {
-  return goto(resolve('/alternatives'));
+  return goto(resolve('alternatives'));
 }
 </script>
 

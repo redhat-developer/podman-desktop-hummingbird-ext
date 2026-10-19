@@ -3,7 +3,7 @@ import { NavPage, EmptyScreen, Button } from '@podman-desktop/ui-svelte';
 import { faWarning } from '@fortawesome/free-solid-svg-icons/faWarning';
 import type { PageProps } from './$types';
 import AlternativeTable from '/@/routes/alternatives/(components)/AlternativeTable.svelte';
-import TableSkeleton from '$lib/skeleton/TableSkeleton.svelte';
+import TableSkeleton from '#lib/skeleton/TableSkeleton.svelte';
 import { onMount } from 'svelte';
 import { rpcBrowser, alternativesAPI } from '/@/api/client';
 import { invalidate } from '$app/navigation';

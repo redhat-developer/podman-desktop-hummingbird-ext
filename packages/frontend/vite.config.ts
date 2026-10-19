@@ -17,6 +17,7 @@
  ***********************************************************************/
 import { join, dirname } from 'node:path';
 import { sveltekit } from '@sveltejs/kit/vite';
+import adapter from '@sveltejs/adapter-static';
 import { defineConfig } from 'vite';
 import { fileURLToPath } from 'node:url';
 import tailwindcss from '@tailwindcss/vite';
@@ -34,7 +35,22 @@ export default defineConfig({
       '/@store/': join(PACKAGE_ROOT, 'src', 'stores') + '/',
     },
   },
-  plugins: [tailwindcss(), sveltekit(), svelteTesting()],
+  plugins: [
+    tailwindcss(),
+    sveltekit({
+      compilerOptions: { experimental: { async: true } },
+      adapter: adapter({
+        pages: '../backend/media',
+        assets: '../backend/media',
+        strict: false,
+      }),
+      prerender: { handleUnseenRoutes: 'ignore' },
+      paths: { relative: false },
+      alias: { '/@/*': './src/*', '/@store/*': './src/stores/*' },
+      output: { bundleStrategy: 'inline' },
+    }),
+    svelteTesting(),
+  ],
   build: {
     // vite module preload option create dynamically a <link rel="modulepreload" ../>
     // preloading a module do not send referrer header

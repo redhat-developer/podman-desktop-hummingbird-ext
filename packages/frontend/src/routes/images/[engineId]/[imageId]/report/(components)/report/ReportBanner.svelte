@@ -1,5 +1,5 @@
 <script lang="ts">
-import RepositoryIcon from '$lib/icons/RepositoryIcon.svelte';
+import RepositoryIcon from '#lib/icons/RepositoryIcon.svelte';
 
 interface Props {
   cveReductionCount?: number;
