@@ -23,9 +23,9 @@ import { cleanup, render, within, screen } from '@testing-library/svelte';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import type { LocalImageAlternative } from '@podman-desktop/extension-hummingbird-core-api';
 import Page from './+page.svelte';
-import { rpcBrowser } from '/@/api/client';
+import { rpcBrowser } from '#api/client.js';
 
-vi.mock(import('/@/api/client'));
+vi.mock(import('#api/client.js'));
 
 const ALTERNATIVES: Array<LocalImageAlternative> = [
   {

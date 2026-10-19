@@ -50,6 +50,11 @@
     "svelte-select": "^6.0.0"
   },
   "imports": {
-    "#lib/*": "./src/lib/*"
+    "#api/*": "./src/api/*",
+    "#lib/*": "./src/lib/*",
+    "#routes/*": "./src/routes/*",
+    "#states/*": "./src/states/*",
+    "#stores/*": "./src/stores/*",
+    "#utils/*": "./src/utils/*"
   }
 }

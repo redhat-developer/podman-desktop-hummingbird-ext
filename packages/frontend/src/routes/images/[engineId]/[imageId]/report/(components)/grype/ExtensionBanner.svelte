@@ -1,7 +1,7 @@
 <script lang="ts">
 import { Icon } from '@podman-desktop/ui-svelte/icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons/faMagnifyingGlass';
-import { routingAPI } from '/@/api/client';
+import { routingAPI } from '#api/client.js';
 
 let featuredExtension = {
   displayName: 'Grype',

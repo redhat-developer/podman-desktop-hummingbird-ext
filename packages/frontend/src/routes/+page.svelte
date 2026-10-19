@@ -6,12 +6,12 @@ import HummingbirdBanner from '#lib/banners/HummingbirdBanner.svelte';
 import RepositoryCardSkeleton from '#lib/skeleton/RepositoryCardSkeleton.svelte';
 import { faWarning } from '@fortawesome/free-solid-svg-icons/faWarning';
 import { goto, refreshAll, invalidate } from '$app/navigation';
-import { providerConnectionsInfo } from '/@/stores/connections';
+import { providerConnectionsInfo } from '#stores/connections.js';
 import ContainerProviderConnectionSelect from '#lib/selects/ContainerProviderConnectionSelect.svelte';
 import { Messages, type ProviderContainerConnectionDetailedInfo } from '@podman-desktop/extension-hummingbird-core-api';
 import { page } from '$app/state';
 import { onMount } from 'svelte';
-import { rpcBrowser } from '/@/api/client';
+import { rpcBrowser } from '#api/client.js';
 
 let { data }: PageProps = $props();
 

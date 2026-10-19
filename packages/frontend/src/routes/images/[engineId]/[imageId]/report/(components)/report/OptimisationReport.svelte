@@ -1,6 +1,6 @@
 <script lang="ts">
 import type { OptimisationReport } from '@podman-desktop/extension-hummingbird-core-api';
-import RawReport from '/@/routes/images/[engineId]/[imageId]/report/(components)/report/RawReport.svelte';
+import RawReport from '#routes/images/[engineId]/[imageId]/report/(components)/report/RawReport.svelte';
 import { EmptyScreen } from '@podman-desktop/ui-svelte';
 import { faShieldHalved } from '@fortawesome/free-solid-svg-icons/faShieldHalved';
 

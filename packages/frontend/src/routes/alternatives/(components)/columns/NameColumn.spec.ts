@@ -23,7 +23,7 @@ import { expect, test } from 'vitest';
 
 import NameColumn from './NameColumn.svelte';
 import type { LocalImageAlternativeReport } from '@podman-desktop/extension-hummingbird-core-api';
-import type { AlternativeRow } from '/@/routes/alternatives/(components)/row';
+import type { AlternativeRow } from '#routes/alternatives/(components)/row.js';
 
 test('should display alternative image mapping', () => {
   const alternativeRow: AlternativeRow = {
