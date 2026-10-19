@@ -332,8 +332,8 @@ importers:
         specifier: workspace:^
         version: link:../shared
       '@podman-desktop/ui-svelte':
-        specifier: ^1.29.1
-        version: 1.29.1(svelte-fa@4.0.4(svelte@5.57.2(@typescript-eslint/types@8.71.1)))(svelte@5.57.2(@typescript-eslint/types@8.71.1))
+        specifier: ^1.30.5
+        version: 1.30.5(svelte-fa@4.0.4(svelte@5.57.2(@typescript-eslint/types@8.71.1)))(svelte@5.57.2(@typescript-eslint/types@8.71.1))
       '@sveltejs/adapter-static':
         specifier: ^3.0.10
         version: 3.0.10(@sveltejs/kit@2.70.3(@sveltejs/vite-plugin-svelte@7.3.1(svelte@5.57.2(@typescript-eslint/types@8.71.1))(vite@8.3.4(@types/node@24.19.2)(jiti@2.7.0)(yaml@2.9.1)))(svelte@5.57.2(@typescript-eslint/types@8.71.1))(typescript@6.0.3)(vite@8.3.4(@types/node@24.19.2)(jiti@2.7.0)(yaml@2.9.1)))
@@ -821,8 +821,8 @@ packages:
   '@podman-desktop/grype-extension-api@0.1.0-next.202604011405-f6be4bb':
     resolution: {integrity: sha512-xQsDP8zDUCwjg7TFA/ZYqmS4pwA3lHKNRq7b01lBWaFwYokXRZCdN5+bvIt/Mxt58/wHzFN8ja+drXRHOk3kAw==}
 
-  '@podman-desktop/ui-svelte@1.29.1':
-    resolution: {integrity: sha512-q7Uw1Jtw+mQuukFpV2F++Qh4FWviJCVLGgglSxeWSlhHXw58OTIOPTHiyLdxjP1flo3miUuYUAJwQ4LuIkQmKA==}
+  '@podman-desktop/ui-svelte@1.30.5':
+    resolution: {integrity: sha512-gJiXt7bQhEoNAwy6fi8dXZ9zr6WQVr6XGxlZrKl6LluL/nBcUCApjbbEZC+ws4icSoabSkrpCtN4p6VtvtTX9g==}
     peerDependencies:
       svelte: ^4.0.0 || ^5.0.0
       svelte-fa: ^4.0.0
@@ -2314,8 +2314,8 @@ packages:
   http2-client@1.3.5:
     resolution: {integrity: sha512-EC2utToWl4RKfs5zd36Mxq7nzHHBuomZboI0yYL6Y0RmBgT7Sgkq4rQ0ezFTYoIsSs7Tm9SJe+o2FcAg6GBhGA==}
 
-  humanize-duration@3.34.0:
-    resolution: {integrity: sha512-NDxhYxiiRzsST6xULIHuYWRvsCtviJXRdjarhyWyh78S4Ou+MWhM2k4HQ+y7iegdrzreXe11isd0au1N2PB/pQ==}
+  humanize-duration@3.35.0:
+    resolution: {integrity: sha512-+KYh+R85n1yadHHwy/QXF0JgPq5NPPBNrvigA5aAKrlKFd0bJpMx7wE3Xd6rM0kEaBQMCFrdMihkaDSgWERNvQ==}
 
   identifier-regex@1.1.0:
     resolution: {integrity: sha512-SLX4H/vtcYlYnL7XqnuJKHU7Z8517TgsW9nmQiGOgMCjQ8V/deLYu6bEmbGoXe7WMMhc9+EUGyFFneHja8KabA==}
@@ -4252,14 +4252,14 @@ snapshots:
     dependencies:
       zod: 4.6.7
 
-  '@podman-desktop/ui-svelte@1.29.1(svelte-fa@4.0.4(svelte@5.57.2(@typescript-eslint/types@8.71.1)))(svelte@5.57.2(@typescript-eslint/types@8.71.1))':
+  '@podman-desktop/ui-svelte@1.30.5(svelte-fa@4.0.4(svelte@5.57.2(@typescript-eslint/types@8.71.1)))(svelte@5.57.2(@typescript-eslint/types@8.71.1))':
     dependencies:
       '@floating-ui/dom': 1.8.0
       '@fortawesome/fontawesome-free': 7.3.1
       '@fortawesome/free-brands-svg-icons': 7.3.1
       '@fortawesome/free-regular-svg-icons': 7.3.1
       '@fortawesome/free-solid-svg-icons': 7.3.1
-      humanize-duration: 3.34.0
+      humanize-duration: 3.35.0
       moment: 2.31.0
       svelte: 5.57.2(@typescript-eslint/types@8.71.1)
       svelte-fa: 4.0.4(svelte@5.57.2(@typescript-eslint/types@8.71.1))
@@ -5767,7 +5767,7 @@ snapshots:
 
   http2-client@1.3.5: {}
 
-  humanize-duration@3.34.0: {}
+  humanize-duration@3.35.0: {}
 
   identifier-regex@1.1.0:
     dependencies:
