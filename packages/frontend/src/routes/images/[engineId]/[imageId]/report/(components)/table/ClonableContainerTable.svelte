@@ -1,9 +1,9 @@
 <script lang="ts">
 import type { LocalContainer } from '@podman-desktop/extension-hummingbird-core-api/src';
 import { Table, TableColumn, TableRow } from '@podman-desktop/ui-svelte';
-import LocalContainerNameColumn from '$lib/columns/LocalContainerNameColumn.svelte';
-import HardenAction from '/@/routes/images/[engineId]/[imageId]/report/(components)/table/columns/HardenAction.svelte';
-import ContainerStatus from '/@/lib/columns/ContainerStatus.svelte';
+import LocalContainerNameColumn from '#lib/columns/LocalContainerNameColumn.svelte';
+import HardenAction from '#routes/images/[engineId]/[imageId]/report/(components)/table/columns/HardenAction.svelte';
+import ContainerStatus from '#lib/columns/ContainerStatus.svelte';
 
 interface Props {
   containers: Array<LocalContainer>;

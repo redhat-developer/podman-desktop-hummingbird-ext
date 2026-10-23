@@ -1,17 +1,17 @@
 <script lang="ts">
 import { NavPage, EmptyScreen, Button } from '@podman-desktop/ui-svelte';
 import type { PageProps } from './$types';
-import RepositoryCard from '$lib/cards/RepositoryCard.svelte';
-import HummingbirdBanner from '$lib/banners/HummingbirdBanner.svelte';
-import RepositoryCardSkeleton from '$lib/skeleton/RepositoryCardSkeleton.svelte';
+import RepositoryCard from '#lib/cards/RepositoryCard.svelte';
+import HummingbirdBanner from '#lib/banners/HummingbirdBanner.svelte';
+import RepositoryCardSkeleton from '#lib/skeleton/RepositoryCardSkeleton.svelte';
 import { faWarning } from '@fortawesome/free-solid-svg-icons/faWarning';
-import { goto, invalidateAll, invalidate } from '$app/navigation';
-import { providerConnectionsInfo } from '/@/stores/connections';
-import ContainerProviderConnectionSelect from '$lib/selects/ContainerProviderConnectionSelect.svelte';
+import { goto, refreshAll, invalidate } from '$app/navigation';
+import { providerConnectionsInfo } from '#stores/connections.js';
+import ContainerProviderConnectionSelect from '#lib/selects/ContainerProviderConnectionSelect.svelte';
 import { Messages, type ProviderContainerConnectionDetailedInfo } from '@podman-desktop/extension-hummingbird-core-api';
 import { page } from '$app/state';
 import { onMount } from 'svelte';
-import { rpcBrowser } from '/@/api/client';
+import { rpcBrowser } from '#api/client.js';
 
 let { data }: PageProps = $props();
 
@@ -40,7 +40,7 @@ onMount(() => {
 });
 
 function onContainerProviderConnectionChange(value: ProviderContainerConnectionDetailedInfo | undefined): void {
-  const nURL = new URL(page.url);
+  const nURL = new URL(page.url.href);
 
   if (value) {
     nURL.searchParams.set('providerId', value.providerId);
@@ -56,7 +56,7 @@ function onContainerProviderConnectionChange(value: ProviderContainerConnectionD
 }
 
 function refresh(): Promise<void> {
-  return invalidateAll();
+  return refreshAll();
 }
 </script>
 

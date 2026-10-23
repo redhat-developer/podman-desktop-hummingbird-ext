@@ -17,7 +17,7 @@
  ***********************************************************************/
 import type { PageLoad } from './$types';
 import type { LocalImageAlternative } from '@podman-desktop/extension-hummingbird-core-api';
-import { alternativesAPI } from '/@/api/client';
+import { alternativesAPI } from '#api/client.js';
 
 interface Data {
   alternatives: Promise<Array<LocalImageAlternative>>;

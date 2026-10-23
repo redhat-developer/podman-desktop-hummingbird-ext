@@ -23,14 +23,14 @@ import { render, within } from '@testing-library/svelte';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import type { ImageSummary } from '@podman-desktop/extension-hummingbird-core-api';
 import Page from './+page.svelte';
-import { invalidateAll } from '$app/navigation';
-import { rpcBrowser } from '/@/api/client';
-import * as connections from '/@/stores/connections';
+import { refreshAll } from '$app/navigation';
+import { rpcBrowser } from '#api/client.js';
+import * as connections from '#stores/connections.js';
 import { readable } from 'svelte/store';
 
 vi.mock(import('$app/navigation'));
-vi.mock(import('/@/api/client'));
-vi.mock(import('/@/stores/connections'));
+vi.mock(import('#api/client.js'));
+vi.mock(import('#stores/connections.js'));
 
 const REPOSITORIES: Array<ImageSummary> = [
   {
@@ -74,7 +74,7 @@ describe('error', () => {
     expect(element).toBeDefined();
   });
 
-  test('retry button should call invalidateAll', async () => {
+  test('retry button should call refreshAll', async () => {
     const { getByLabelText } = render(Page, {
       data: {
         repositories: Promise.reject<Array<ImageSummary>>(ERROR_MOCK),
@@ -89,7 +89,7 @@ describe('error', () => {
     retryBtn.click();
 
     await vi.waitFor(() => {
-      expect(invalidateAll).toHaveBeenCalledOnce();
+      expect(refreshAll).toHaveBeenCalledOnce();
     });
   });
 });

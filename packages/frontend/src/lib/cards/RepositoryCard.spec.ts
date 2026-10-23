@@ -22,7 +22,7 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import type { ImageSummary, SimpleImageInfo } from '@podman-desktop/extension-hummingbird-core-api';
 import RepositoryCard from './RepositoryCard.svelte';
 
-vi.mock(import('/@/api/client'));
+vi.mock(import('#api/client.js'));
 
 const IMAGE_SUMMARY: ImageSummary = {
   name: 'curl',

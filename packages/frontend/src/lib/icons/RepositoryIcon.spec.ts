@@ -20,10 +20,10 @@ import '@testing-library/jest-dom/vitest';
 import { render } from '@testing-library/svelte';
 import { describe, expect, test, vi } from 'vitest';
 import RepositoryIcon from './RepositoryIcon.svelte';
-import * as colorSchemeState from '/@/states/color-scheme.svelte';
+import * as colorSchemeState from '#states/color-scheme.svelte.js';
 
 vi.mock(
-  import('/@/states/color-scheme.svelte'),
+  import('#states/color-scheme.svelte.js'),
   () =>
     ({
       colorScheme: {

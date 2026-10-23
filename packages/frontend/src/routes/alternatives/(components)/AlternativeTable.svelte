@@ -9,9 +9,9 @@ import type {
 import CVEReductionCell from './columns/CVEReductionColumn.svelte';
 import FilesizeReductionColumn from './columns/FilesizeReductionColumn.svelte';
 import StatusColumn from './columns/StatusColumn.svelte';
-import type { Row } from '/@/routes/alternatives/(components)/row';
-import NameColumn from '/@/routes/alternatives/(components)/columns/NameColumn.svelte';
-import ActionColumn from '/@/routes/alternatives/(components)/columns/ActionColumn.svelte';
+import type { Row } from '#routes/alternatives/(components)/row.js';
+import NameColumn from '#routes/alternatives/(components)/columns/NameColumn.svelte';
+import ActionColumn from '#routes/alternatives/(components)/columns/ActionColumn.svelte';
 
 interface Props {
   alternatives: LocalImageAlternative[];

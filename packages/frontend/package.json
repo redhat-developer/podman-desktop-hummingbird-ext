@@ -23,8 +23,8 @@
     "@fortawesome/free-regular-svg-icons": "^7.3.1",
     "@fortawesome/free-solid-svg-icons": "^7.3.1",
     "@podman-desktop/ui-svelte": "^1.30.5",
-    "@sveltejs/adapter-static": "^3.0.10",
-    "@sveltejs/kit": "^2.70.3",
+    "@sveltejs/adapter-static": "^4.0.0",
+    "@sveltejs/kit": "^3.1.0",
     "@sveltejs/vite-plugin-svelte": "7.3.1",
     "@tailwindcss/typography": "^0.5.20",
     "@tailwindcss/vite": "^4.3.3",
@@ -48,5 +48,13 @@
     "vitest": "^5.0.5",
     "@codecov/vite-plugin": "^2.0.1",
     "svelte-select": "^6.0.0"
+  },
+  "imports": {
+    "#api/*": "./src/api/*",
+    "#lib/*": "./src/lib/*",
+    "#routes/*": "./src/routes/*",
+    "#states/*": "./src/states/*",
+    "#stores/*": "./src/stores/*",
+    "#utils/*": "./src/utils/*"
   }
 }

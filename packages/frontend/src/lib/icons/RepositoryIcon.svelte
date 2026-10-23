@@ -1,5 +1,5 @@
 <script lang="ts">
-import { colorScheme } from '/@/states/color-scheme.svelte';
+import { colorScheme } from '#states/color-scheme.svelte.js';
 import type { ClassValue } from 'svelte/elements';
 
 interface Props {

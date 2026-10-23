@@ -17,8 +17,8 @@
  ***********************************************************************/
 import type { OptimisationReport } from '@podman-desktop/extension-hummingbird-core-api';
 import type { PageLoad } from './$types';
-import { alternativesAPI } from '/@/api/client';
-import { IMAGE_QUERY_KEY } from '/@/routes/images/[engineId]/[imageId]/report/constants';
+import { alternativesAPI } from '#api/client.js';
+import { IMAGE_QUERY_KEY } from '#routes/images/[engineId]/[imageId]/report/constants.js';
 
 interface Data {
   engineId: string;

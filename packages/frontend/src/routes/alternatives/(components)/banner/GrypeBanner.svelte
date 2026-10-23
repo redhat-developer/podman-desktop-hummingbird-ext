@@ -1,6 +1,6 @@
 <script lang="ts">
 import { Button } from '@podman-desktop/ui-svelte';
-import { routingAPI } from '/@/api/client';
+import { routingAPI } from '#api/client.js';
 import type { ClassValue } from 'svelte/elements';
 
 interface Props {

@@ -6,7 +6,7 @@ import type { AlternativeReport, ImageReport, Tag } from '@podman-desktop/extens
 import ReportBanner from './ReportBanner.svelte';
 import ReportImageCard from './ReportImageCard.svelte';
 import ReportComparison from './ReportComparison.svelte';
-import ClonableContainerTable from '/@/routes/images/[engineId]/[imageId]/report/(components)/table/ClonableContainerTable.svelte';
+import ClonableContainerTable from '#routes/images/[engineId]/[imageId]/report/(components)/table/ClonableContainerTable.svelte';
 
 interface Props {
   alternative: AlternativeReport;

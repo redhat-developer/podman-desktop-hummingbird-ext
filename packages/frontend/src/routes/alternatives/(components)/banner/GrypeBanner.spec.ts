@@ -20,9 +20,9 @@ import '@testing-library/jest-dom/vitest';
 import { render, screen, fireEvent } from '@testing-library/svelte';
 import { expect, test, vi } from 'vitest';
 import GrypeBanner from './GrypeBanner.svelte';
-import { routingAPI } from '/@/api/client';
+import { routingAPI } from '#api/client.js';
 
-vi.mock(import('/@/api/client'), () => ({
+vi.mock(import('#api/client.js'), () => ({
   routingAPI: {
     navigateToContainerDetails: vi.fn(),
     navigateToCatalog: vi.fn(),

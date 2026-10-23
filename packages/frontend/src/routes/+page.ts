@@ -17,7 +17,7 @@
  ***********************************************************************/
 import type { PageLoad } from './$types';
 import type { SimpleImageInfo, ImageSummary } from '@podman-desktop/extension-hummingbird-core-api';
-import { hummingbirdAPI, imageAPI } from '/@/api/client';
+import { hummingbirdAPI, imageAPI } from '#api/client.js';
 
 interface Data {
   pulled?: Promise<Array<SimpleImageInfo>>;

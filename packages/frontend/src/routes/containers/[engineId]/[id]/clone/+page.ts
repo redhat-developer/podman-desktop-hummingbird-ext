@@ -17,7 +17,7 @@
  ***********************************************************************/
 import type { PageLoad } from './$types';
 import type { ImageSummary, LocalContainer } from '@podman-desktop/extension-hummingbird-core-api';
-import { containerAPI, alternativesAPI, imageAPI } from '/@/api/client';
+import { containerAPI, alternativesAPI, imageAPI } from '#api/client.js';
 import type { LocalImage } from '@podman-desktop/extension-hummingbird-core-api/src';
 
 interface Data {

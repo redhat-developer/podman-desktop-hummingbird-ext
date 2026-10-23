@@ -1,6 +1,6 @@
 <script lang="ts">
 import type { LocalImageAlternativeReport } from '@podman-desktop/extension-hummingbird-core-api';
-import TableColumnSkeleton from '$lib/skeleton/TableColumnSkeleton.svelte';
+import TableColumnSkeleton from '#lib/skeleton/TableColumnSkeleton.svelte';
 import FilesizeLocalImageAlternativeReport from '../filesize/FilesizeLocalImageAlternativeReport.svelte';
 
 interface Props {

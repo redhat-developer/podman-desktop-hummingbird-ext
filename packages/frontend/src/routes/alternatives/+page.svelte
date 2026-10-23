@@ -2,13 +2,13 @@
 import { NavPage, EmptyScreen, Button } from '@podman-desktop/ui-svelte';
 import { faWarning } from '@fortawesome/free-solid-svg-icons/faWarning';
 import type { PageProps } from './$types';
-import AlternativeTable from '/@/routes/alternatives/(components)/AlternativeTable.svelte';
-import TableSkeleton from '$lib/skeleton/TableSkeleton.svelte';
+import AlternativeTable from '#routes/alternatives/(components)/AlternativeTable.svelte';
+import TableSkeleton from '#lib/skeleton/TableSkeleton.svelte';
 import { onMount } from 'svelte';
-import { rpcBrowser, alternativesAPI } from '/@/api/client';
+import { rpcBrowser, alternativesAPI } from '#api/client.js';
 import { invalidate } from '$app/navigation';
 import { Messages } from '@podman-desktop/extension-hummingbird-core-api';
-import GrypeBanner from '/@/routes/alternatives/(components)/banner/GrypeBanner.svelte';
+import GrypeBanner from '#routes/alternatives/(components)/banner/GrypeBanner.svelte';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons/faMagnifyingGlass';
 import type { LocalImageAlternativeReport } from '@podman-desktop/extension-hummingbird-core-api/src';
 import { SvelteMap } from 'svelte/reactivity';

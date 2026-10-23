@@ -24,7 +24,7 @@ import type { OptimisationReport } from '@podman-desktop/extension-hummingbird-c
 import Page from './+page.svelte';
 
 vi.mock(import('$app/navigation'));
-vi.mock(import('/@/api/client'));
+vi.mock(import('#api/client.js'));
 
 beforeEach(() => {
   vi.resetAllMocks();

@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { SkeletonRow } from '$lib/skeleton/skeleton-row';
+import type { SkeletonRow } from '#lib/skeleton/skeleton-row.js';
 
 interface Props {
   object: SkeletonRow;

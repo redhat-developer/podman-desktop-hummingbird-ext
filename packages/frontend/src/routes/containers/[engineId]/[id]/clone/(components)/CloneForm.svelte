@@ -6,8 +6,8 @@ import type {
   CloneResult,
 } from '@podman-desktop/extension-hummingbird-core-api';
 import { Input, Checkbox, Button, ErrorMessage } from '@podman-desktop/ui-svelte';
-import WarningBanner from '/@/routes/containers/[engineId]/[id]/clone/(components)/WarningBanner.svelte';
-import { containerAPI, routingAPI } from '/@/api/client';
+import WarningBanner from '#routes/containers/[engineId]/[id]/clone/(components)/WarningBanner.svelte';
+import { containerAPI, routingAPI } from '#api/client.js';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons/faInfoCircle';
 
 interface Props {

@@ -1,7 +1,7 @@
 <script lang="ts">
 import { TableColumn, Table, TableRow } from '@podman-desktop/ui-svelte';
-import type { SkeletonRow } from '$lib/skeleton/skeleton-row';
-import TableRowSkeleton from '$lib/skeleton/TableColumnSkeleton.svelte';
+import type { SkeletonRow } from '#lib/skeleton/skeleton-row.js';
+import TableRowSkeleton from '#lib/skeleton/TableColumnSkeleton.svelte';
 
 interface Props {
   columns: Array<{

@@ -20,10 +20,10 @@ import '@testing-library/jest-dom/vitest';
 import { render, fireEvent } from '@testing-library/svelte';
 import { expect, test, vi, beforeEach } from 'vitest';
 import CloneForm from './CloneForm.svelte';
-import { containerAPI } from '/@/api/client';
+import { containerAPI } from '#api/client.js';
 import type { LocalContainer, ImageSummary, LocalImage } from '@podman-desktop/extension-hummingbird-core-api';
 
-vi.mock(import('/@/api/client'), () => ({
+vi.mock(import('#api/client.js'), () => ({
   containerAPI: {
     clone: vi.fn(),
     getContainer: vi.fn(),

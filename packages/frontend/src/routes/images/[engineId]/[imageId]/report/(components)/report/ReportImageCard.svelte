@@ -2,7 +2,7 @@
 import type { VulnerabilitiesSummary } from '@podman-desktop/extension-hummingbird-core-api';
 import VulnerabilitySummary from './VulnerabilitySummary.svelte';
 import type { Snippet } from 'svelte';
-import RepositoryIcon from '$lib/icons/RepositoryIcon.svelte';
+import RepositoryIcon from '#lib/icons/RepositoryIcon.svelte';
 
 interface Props {
   title: string;

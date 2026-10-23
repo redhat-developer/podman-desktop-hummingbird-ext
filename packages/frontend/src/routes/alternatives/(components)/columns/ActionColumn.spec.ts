@@ -23,9 +23,9 @@ import { expect, test, vi, beforeEach } from 'vitest';
 
 import ActionColumn from './ActionColumn.svelte';
 import type { LocalImageAlternativeReport } from '@podman-desktop/extension-hummingbird-core-api';
-import type { AlternativeRow } from '/@/routes/alternatives/(components)/row';
+import type { AlternativeRow } from '#routes/alternatives/(components)/row.js';
 import { goto } from '$app/navigation';
-import { IMAGE_QUERY_KEY } from '/@/routes/images/[engineId]/[imageId]/report/constants';
+import { IMAGE_QUERY_KEY } from '#routes/images/[engineId]/[imageId]/report/constants.js';
 
 vi.mock(import('$app/navigation'));
 

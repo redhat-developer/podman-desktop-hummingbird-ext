@@ -15,26 +15,30 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-import { join, dirname } from 'node:path';
 import { sveltekit } from '@sveltejs/kit/vite';
+import adapter from '@sveltejs/adapter-static';
 import { defineConfig } from 'vite';
-import { fileURLToPath } from 'node:url';
 import tailwindcss from '@tailwindcss/vite';
 import { svelteTesting } from '@testing-library/svelte/vite'; // Add this
-
-const filename = fileURLToPath(import.meta.url);
-const PACKAGE_ROOT = dirname(filename);
 
 // https://vitejs.dev/config/
 export default defineConfig({
   mode: process.env.MODE,
-  resolve: {
-    alias: {
-      '/@/': join(PACKAGE_ROOT, 'src') + '/',
-      '/@store/': join(PACKAGE_ROOT, 'src', 'stores') + '/',
-    },
-  },
-  plugins: [tailwindcss(), sveltekit(), svelteTesting()],
+  plugins: [
+    tailwindcss(),
+    sveltekit({
+      compilerOptions: { experimental: { async: true } },
+      adapter: adapter({
+        pages: '../backend/media',
+        assets: '../backend/media',
+        strict: false,
+      }),
+      prerender: { handleUnseenRoutes: 'ignore' },
+      paths: { relative: false },
+      output: { bundleStrategy: 'inline' },
+    }),
+    svelteTesting(),
+  ],
   build: {
     // vite module preload option create dynamically a <link rel="modulepreload" ../>
     // preloading a module do not send referrer header
