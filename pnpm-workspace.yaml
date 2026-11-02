@@ -19,8 +19,8 @@ overrides:
   js-yaml@^4: ^4.3.2
   js-yaml@^5: ^5.4.2
   dompurify@<3.4.17: ^3.4.17
-  undici@>=7: '>=7.30.0 <8'
-  undici@^6: '>=6.29.0 <7'
+  undici@>=7: ^7.30.1
+  undici@^6: ^6.29.1
   shell-quote: ^1.12.0
   devalue@^5: ^5.9.3
   moment: ^2.31.0
