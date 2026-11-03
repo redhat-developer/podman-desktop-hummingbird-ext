@@ -47,6 +47,7 @@ beforeEach(() => {
   vi.resetAllMocks();
 
   // vitest is not able to auto mock nested properties
+  // partial mock: the generated client follows the live OpenAPI spec, so it may gain methods we do not use
   vi.mocked(Api.prototype).v1 = {
     getImages: vi.fn(),
     getImage: vi.fn(),
@@ -59,7 +60,7 @@ beforeEach(() => {
     getTags: vi.fn(),
     getVulnerabilities: vi.fn(),
     getCatalogVulnerabilities: vi.fn(),
-  };
+  } as unknown as Api<unknown>['v1'];
 
   vi.mocked(Api.prototype.v1.getImages).mockResolvedValue({
     data: {
