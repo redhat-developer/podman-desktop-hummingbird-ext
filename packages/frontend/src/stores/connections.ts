@@ -15,9 +15,9 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-import { RPCReadable } from '/@/utils/rpcReadable';
+import { RPCReadable } from '#utils/rpcReadable.js';
 import { Messages } from '@podman-desktop/extension-hummingbird-core-api';
-import { providerAPI } from '/@/api/client';
+import { providerAPI } from '#api/client.js';
 import type { ProviderContainerConnectionDetailedInfo } from '@podman-desktop/extension-hummingbird-core-api';
 
 export const providerConnectionsInfo = RPCReadable<ProviderContainerConnectionDetailedInfo[]>(

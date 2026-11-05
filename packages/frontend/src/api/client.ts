@@ -26,7 +26,7 @@ import {
   RpcBrowser,
 } from '@podman-desktop/extension-hummingbird-core-api';
 
-import { browser } from '$app/environment';
+import { browser } from '$app/env';
 import type { PodmanDesktopApi } from '../../../../types/podman-desktop-api';
 
 /**

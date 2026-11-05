@@ -1,6 +1,6 @@
 <script lang="ts">
 import type { PageProps } from './$types';
-import OptimisationReport from '/@/routes/images/[engineId]/[imageId]/report/(components)/report/OptimisationReport.svelte';
+import OptimisationReport from '#routes/images/[engineId]/[imageId]/report/(components)/report/OptimisationReport.svelte';
 import { DetailsPage, EmptyScreen } from '@podman-desktop/ui-svelte';
 import { goto } from '$app/navigation';
 import { resolve } from '$app/paths';
@@ -11,7 +11,7 @@ import { faLightbulb } from '@fortawesome/free-solid-svg-icons/faLightbulb';
 let { data }: PageProps = $props();
 
 function close(): Promise<void> {
-  return goto(resolve('/alternatives'));
+  return goto(resolve('alternatives'));
 }
 </script>
 

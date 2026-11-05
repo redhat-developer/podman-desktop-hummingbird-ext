@@ -2,15 +2,15 @@
 import type { PageProps } from './$types';
 import { FormPage } from '@podman-desktop/ui-svelte';
 import { ContainerIcon } from '@podman-desktop/ui-svelte/icons';
-import ProgressBar from '$lib/progress/ProgressBar.svelte';
+import ProgressBar from '#lib/progress/ProgressBar.svelte';
 import { goto } from '$app/navigation';
 import { resolve } from '$app/paths';
-import CloneForm from '/@/routes/containers/[engineId]/[id]/clone/(components)/CloneForm.svelte';
+import CloneForm from '#routes/containers/[engineId]/[id]/clone/(components)/CloneForm.svelte';
 
 let { data }: PageProps = $props();
 
 function close(): Promise<void> {
-  return goto(resolve('/alternatives'));
+  return goto(resolve('alternatives'));
 }
 </script>
 

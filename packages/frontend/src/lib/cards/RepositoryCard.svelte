@@ -7,8 +7,8 @@ import type {
 import { Button, TableDurationColumn } from '@podman-desktop/ui-svelte';
 import { faDownload } from '@fortawesome/free-solid-svg-icons/faDownload';
 import { faExternalLink } from '@fortawesome/free-solid-svg-icons/faExternalLink';
-import { dialogAPI, imageAPI } from '/@/api/client';
-import RepositoryIcon from '$lib/icons/RepositoryIcon.svelte';
+import { dialogAPI, imageAPI } from '#api/client.js';
+import RepositoryIcon from '#lib/icons/RepositoryIcon.svelte';
 import { faPlay } from '@fortawesome/free-solid-svg-icons/faPlay';
 
 interface Props {

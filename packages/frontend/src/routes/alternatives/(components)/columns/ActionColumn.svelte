@@ -1,11 +1,11 @@
 <script lang="ts">
-import type { Row } from '/@/routes/alternatives/(components)/row';
+import type { Row } from '#routes/alternatives/(components)/row.js';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons/faInfoCircle';
 import { faClone } from '@fortawesome/free-solid-svg-icons/faClone';
-import ListItemButtonIcon from '$lib/buttons/ListItemButtonIcon.svelte';
+import ListItemButtonIcon from '#lib/buttons/ListItemButtonIcon.svelte';
 import { resolve } from '$app/paths';
 import { goto } from '$app/navigation';
-import { IMAGE_QUERY_KEY } from '/@/routes/images/[engineId]/[imageId]/report/constants';
+import { IMAGE_QUERY_KEY } from '#routes/images/[engineId]/[imageId]/report/constants.js';
 
 interface Props {
   object: Row;
