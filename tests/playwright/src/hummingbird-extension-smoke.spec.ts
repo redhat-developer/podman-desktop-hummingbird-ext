@@ -25,8 +25,9 @@ const extensionImage = process.env.OCI_IMAGE ?? 'ghcr.io/redhat-developer/podman
 const saveArtifactsOnPass = process.env.SAVE_TRACES_ON_PASS === 'true';
 // Podman Desktop 1.30.x renders the installed extension status as "ACTIVE" while current main renders
 // "Installed"; accept either so the suite runs against the pinned framework release locally and the
-// @next framework that CI installs.
-const extensionStatusRegex = /^(ACTIVE|Installed)$/i;
+// @next framework that CI installs. Surrounding whitespace is tolerated because the status element
+// renders an icon span before the label.
+const extensionStatusRegex = /^\s*(ACTIVE|Installed)\s*$/i;
 
 test.use({
   runnerOptions: new RunnerOptions({
@@ -81,7 +82,7 @@ test.describe.serial('Hummingbird extension installation', { tag: ['@smoke', '@i
     await expect.poll(() => extensionsPage.extensionIsInstalled(extensionLabel), { timeout: 60_000 }).toBeTruthy();
     const details = await extensionsPage.openExtensionDetails(extensionName, extensionLabel, extensionHeading);
     await expect(details.heading).toBeVisible();
-    await expect(details.status).toHaveText(extensionStatusRegex, { timeout: 60_000 });
+    await expect.poll(async () => await details.status.innerText(), { timeout: 60_000 }).toMatch(extensionStatusRegex);
     const errorTab = details.tabs.getByRole('button', { name: 'Error' });
     let stackTrace = '';
     if ((await errorTab.count()) > 0) {
@@ -96,6 +97,8 @@ test.describe.serial('Hummingbird extension installation', { tag: ['@smoke', '@i
     const extensionsPage = await navigationBar.openExtensions();
     const extension = await extensionsPage.getInstalledExtension(extensionName, extensionLabel);
     await expect(extension.card).toBeVisible();
-    await expect(extension.status).toHaveText(extensionStatusRegex);
+    await expect
+      .poll(async () => await extension.status.innerText(), { timeout: 60_000 })
+      .toMatch(extensionStatusRegex);
   });
 });
