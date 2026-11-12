@@ -84,3 +84,9 @@ jobs:
 
       - name: Run unit tests
         run: pnpm test:unit
+
+  e2e-tests:
+    name: Extension installation
+    uses: ./.github/workflows/e2e.yaml
+    with:
+      build-extension: true
