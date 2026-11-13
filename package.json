@@ -18,18 +18,20 @@
     "build:shared": "cd packages/shared && npm run build",
     "build": "npm run build:shared && concurrently \"npm run build:frontend\" \"npm run build:backend\"",
     "watch": "concurrently \"cd packages/shared && npm run watch\" \"cd packages/frontend && npm run watch\" \"cd packages/backend && npm run watch\"",
-    "format:check": "prettier --check \"packages/**/*.{ts,js,json,svelte}\"",
-    "format:fix": "prettier --write \"packages/**/*.{ts,js,json,svelte}\"",
+    "format:check": "prettier --check \"{packages,tests}/**/*.{ts,js,json,svelte}\"",
+    "format:fix": "prettier --write \"{packages,tests}/**/*.{ts,js,json,svelte}\"",
     "lint:check": "eslint . --cache",
     "lint:fix": "eslint . --cache --fix",
     "test:backend": "vitest run --project hummingbird",
     "test:frontend": "pnpm run --dir ./packages/frontend test",
     "test:shared": "vitest run --project @podman-desktop/extension-hummingbird-core-api",
     "test:unit": "concurrently \"pnpm run test:shared\" \"pnpm run test:frontend\" \"pnpm run test:backend\"",
+    "test:e2e": "pnpm --dir tests/playwright test:e2e",
     "typecheck:shared": "tsc --noEmit --project packages/shared",
     "typecheck:frontend": "cd packages/frontend && pnpm check",
     "typecheck:backend": "tsc --noEmit --project packages/backend",
-    "typecheck": "npm run typecheck:shared && npm run typecheck:frontend && npm run typecheck:backend"
+    "typecheck:e2e": "pnpm --dir tests/playwright typecheck",
+    "typecheck": "npm run typecheck:shared && npm run typecheck:frontend && npm run typecheck:backend && npm run typecheck:e2e"
   },
   "resolutions": {
     "string-width": "^4.2.0",
