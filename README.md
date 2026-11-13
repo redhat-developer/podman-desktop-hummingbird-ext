@@ -90,11 +90,13 @@ before another run.
 
 ### CI workflows
 
-- `pr-check.yaml` calls reusable `e2e.yaml` to build and preload the local OCI image on Ubuntu 26.04, install Podman
-  Desktop via `podman-desktop/gh-extensions-actions`, and run the installation smoke tests.
+- `pr-check.yaml` calls reusable `e2e.yaml` to build and preload the local OCI image, install Podman
+  Desktop via `podman-desktop/gh-extensions-actions`, and run the installation smoke tests on GitHub-hosted
+  `ubuntu-26.04` and `windows-2025` runners (same matrix pattern as
+  [extension-podman-quadlet](https://github.com/podman-desktop/extension-podman-quadlet/blob/main/.github/workflows/e2e.yaml)).
 - The same workflow also runs after a successful `next-build.yaml` on `main`. It installs the image tagged with that
   build's commit SHA, and skips the job if `main` has already moved past that commit so tests stay aligned with the
   image. Manual runs can select a published image or build from the selected branch.
 
-Both paths publish JUnit summaries and upload test artifacts. Pass-path Playwright traces and videos are off by
+Both paths publish JUnit summaries and upload per-OS test artifacts. Pass-path Playwright traces and videos are off by
 default; set `SAVE_TRACES_ON_PASS=true` locally if you need them.
