@@ -86,7 +86,7 @@ jobs:
           retention-days: 1
 
   e2e-tests:
-    name: Hummingbird installation smoke tests / ${{ matrix.os }}
+    name: Hummingbird E2E tests / ${{ matrix.os }}
     needs: build-extension
     # next-build only runs on main push/dispatch; still reject PR-triggered workflow_run.
     # When main moved past the built commit, skip so tip tests are not run against an older image.
@@ -98,7 +98,7 @@ jobs:
         github.event.workflow_run.event != 'pull_request' &&
         github.event.workflow_run.head_sha == github.sha))
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 45
+    timeout-minutes: 60
     strategy:
       fail-fast: false
       matrix:
@@ -185,7 +185,7 @@ jobs:
           fi
           echo "url=${image}" >> "$GITHUB_OUTPUT"
 
-      - name: Run installation smoke tests
+      - name: Run E2E tests
         shell: bash
         env:
           ELECTRON_DISABLE_SANDBOX: '1'
@@ -194,7 +194,9 @@ jobs:
           PODMAN_DESKTOP_BINARY: ${{ steps.podman-desktop-install.outputs.binary }}
           # Fall back to the input's declared default when the resolve step was skipped (preloaded plugin).
           OCI_IMAGE: ${{ steps.oci-image.outputs.url || inputs.extension-image }}
-        run: pnpm test:e2e --grep @installation
+        # Full suite: installation smoke tests plus the functional tests (catalog, alternatives,
+        # and the Windows-only Grype scanning flow which self-skips on other platforms).
+        run: pnpm test:e2e
 
       - name: Publish test report
         if: always()
