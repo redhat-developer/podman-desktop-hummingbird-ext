@@ -86,7 +86,7 @@ jobs:
           retention-days: 1
 
   e2e-tests:
-    name: Hummingbird installation smoke tests / ${{ matrix.os }}
+    name: Hummingbird E2E tests / ${{ matrix.os }}
     needs: build-extension
     # next-build only runs on main push/dispatch; still reject PR-triggered workflow_run.
     # When main moved past the built commit, skip so tip tests are not run against an older image.
@@ -98,7 +98,7 @@ jobs:
         github.event.workflow_run.event != 'pull_request' &&
         github.event.workflow_run.head_sha == github.sha))
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 45
+    timeout-minutes: 60
     strategy:
       fail-fast: false
       matrix:
@@ -185,7 +185,32 @@ jobs:
           fi
           echo "url=${image}" >> "$GITHUB_OUTPUT"
 
-      - name: Run installation smoke tests
+      # GitHub-hosted runners also run Docker, and Podman Desktop may pick it for pulls:
+      # on Linux the podman socket may not be running (the pull then lands on Docker, which
+      # stores short image names), and on Windows Docker runs Windows containers (Linux
+      # image pulls fail with "no matching manifest for windows"). Make Podman the only
+      # container engine so every pull goes to it.
+      - name: Make Podman the only container engine (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo systemctl stop docker.socket docker.service || true
+          sudo loginctl enable-linger "$(id -un)" || true
+          # Retry: the user session may not be up yet right after enabling lingering.
+          for attempt in 1 2 3; do systemctl --user enable --now podman.socket && break; sleep 5; done
+          systemctl --user is-active --quiet podman.socket
+          podman info
+
+      - name: Make Podman the only container engine (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          Get-Service -Name docker -ErrorAction SilentlyContinue | Stop-Service
+          # The podman-install action installs Podman per-user and only adds it to PATH for
+          # its own step: use the full path here, and export it for the later steps.
+          "$env:LOCALAPPDATA\Programs\Podman" | Out-File -Append $env:GITHUB_PATH
+          & "$env:LOCALAPPDATA\Programs\Podman\podman.exe" info
+
+      - name: Run E2E tests
         shell: bash
         env:
           ELECTRON_DISABLE_SANDBOX: '1'
@@ -194,7 +219,9 @@ jobs:
           PODMAN_DESKTOP_BINARY: ${{ steps.podman-desktop-install.outputs.binary }}
           # Fall back to the input's declared default when the resolve step was skipped (preloaded plugin).
           OCI_IMAGE: ${{ steps.oci-image.outputs.url || inputs.extension-image }}
-        run: pnpm test:e2e --grep @installation
+        # Full suite: installation smoke tests plus the functional tests (catalog, alternatives,
+        # and the Windows-only Grype scanning flow which self-skips on other platforms).
+        run: pnpm test:e2e
 
       - name: Publish test report
         if: always()

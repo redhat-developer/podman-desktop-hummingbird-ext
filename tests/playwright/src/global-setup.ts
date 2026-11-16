@@ -16,11 +16,11 @@
  ***********************************************************************/
 
 import { playwrightGlobalSetup } from '@podman-desktop/tests-playwright';
+import { resetSuiteState } from './utility/hummingbird-test-utils';
 
-// Playwright requires a module path for globalSetup, while the framework only exports
-// the setup as a function. Always run it: it installs the Chromium browser and clears
-// stale output folders (the cleanup is skipped on CI, and locally with
-// SKIP_REMOVE_FOLDER=true when the extension profile is preloaded).
+// The framework setup installs the Chromium browser and clears stale output folders
+// (skipped on CI, and locally with SKIP_REMOVE_FOLDER=true for preloaded profiles).
 export default async function globalSetup(): Promise<void> {
   await playwrightGlobalSetup();
+  resetSuiteState();
 }

@@ -16,17 +16,24 @@
  ***********************************************************************/
 
 import { expect, RunnerOptions, test } from '@podman-desktop/tests-playwright';
+import {
+  deleteImageIfExists,
+  didSuiteInstallGrype,
+  didSuiteInstallHummingbird,
+  ensureGrypeExtensionIsRemoved,
+  ensureHummingbirdIsRemoved,
+  extensionHeading,
+  extensionImage,
+  extensionInstalledAfterSettling,
+  extensionLabel,
+  extensionName,
+  getImagesPulledBySuite,
+  markHummingbirdInstalledBySuite,
+  waitForPodmanReady,
+} from './utility/hummingbird-test-utils';
 
-const extensionName = 'hummingbird';
-const extensionLabel = 'redhat.hummingbird';
-const extensionHeading = 'Hummingbird';
-const extensionImage = process.env.OCI_IMAGE ?? 'ghcr.io/redhat-developer/podman-desktop-hummingbird-ext:next';
-// Opt in locally with SAVE_TRACES_ON_PASS=true. Keep off in CI by default.
-const saveArtifactsOnPass = process.env.SAVE_TRACES_ON_PASS === 'true';
-// Podman Desktop 1.30.x renders the installed extension status as "ACTIVE" while current main renders
-// "Installed"; accept either so the suite runs against the pinned framework release locally and the
-// @next framework that CI installs. Surrounding whitespace is tolerated because the status element
-// renders an icon span before the label.
+// Podman Desktop 1.30.x renders the installed status as "ACTIVE" while current main renders
+// "Installed": accept either.
 const extensionStatusRegex = /^\s*(ACTIVE|Installed)\s*$/i;
 
 test.use({
@@ -35,30 +42,39 @@ test.use({
     customOutputFolder: 'tests/output',
     autoUpdate: false,
     autoCheckUpdates: false,
-    saveTracesOnPass: saveArtifactsOnPass,
-    saveVideosOnPass: saveArtifactsOnPass,
+    saveTracesOnPass: false,
+    saveVideosOnPass: false,
   }),
 });
 
-test.beforeAll(async ({ runner, welcomePage, navigationBar }) => {
-  runner.setVideoAndTraceName('hummingbird-extension-smoke');
+test.beforeAll(async ({ runner, welcomePage, navigationBar, page: mainPage }) => {
+  runner.setVideoAndTraceName('hummingbird-installation-smoke');
   await welcomePage.handleWelcomePage(true);
   await expect(welcomePage.skipOnBoarding).toBeHidden();
   const dashboardPage = await navigationBar.openDashboard();
   await expect(dashboardPage.heading).toBeVisible();
-});
-
-test.afterAll(async ({ navigationBar }) => {
-  const extensionsPage = await navigationBar.openExtensions();
-  if (await extensionsPage.extensionIsInstalled(extensionLabel)) {
-    const details = await extensionsPage.openExtensionDetails(extensionName, extensionLabel, extensionHeading);
-    await details.removeExtension();
-    await navigationBar.openExtensions();
-    await expect.poll(() => extensionsPage.extensionIsInstalled(extensionLabel), { timeout: 30_000 }).toBeFalsy();
+  // The final cleanup lists images: make sure Podman is connected by then.
+  if (getImagesPulledBySuite().length > 0) {
+    await waitForPodmanReady(mainPage);
   }
 });
 
-// Playwright runs this hook even if cleanup fails, after recording the failure
+// This file sorts last: its afterAll performs the single final cleanup of what the run
+// installed and pulled. The extension is installed once by the first spec file and never
+// removed between. The cleanup lives at file level so it also runs when the setup fails.
+test.afterAll(async ({ navigationBar }) => {
+  for (const image of getImagesPulledBySuite()) {
+    await deleteImageIfExists(navigationBar, image);
+  }
+  if (didSuiteInstallGrype()) {
+    await ensureGrypeExtensionIsRemoved(navigationBar);
+  }
+  if (didSuiteInstallHummingbird()) {
+    await ensureHummingbirdIsRemoved(navigationBar);
+  }
+});
+
+// Playwright runs this hook even if the previous one fails, after recording the failure,
 // so runner.close() retains its diagnostic artifacts.
 test.afterAll(async ({ runner }) => {
   await runner.close();
@@ -68,10 +84,19 @@ test.describe.serial('Hummingbird extension installation', { tag: ['@smoke', '@i
   test('Install Hummingbird from an OCI image', async ({ navigationBar }) => {
     // eslint-disable-next-line sonarjs/no-skipped-tests -- PRs preload the image; the next tests must still verify it.
     test.skip(process.env.SKIP_INSTALLATION === 'true', 'The workflow preloads the locally built OCI image');
-    const extensionsPage = await navigationBar.openExtensions();
-    // Wait for the page to render before polling, otherwise the list may not be loaded yet.
+    // eslint-disable-next-line sonarjs/no-skipped-tests -- An earlier spec file already exercised the install flow.
+    test.skip(didSuiteInstallHummingbird(), 'Extension already installed by an earlier spec file');
+    let extensionsPage = await navigationBar.openExtensions();
     await expect(extensionsPage.header).toBeVisible();
+    // A failing earlier run may have left it installed: start from a clean state.
+    if (await extensionInstalledAfterSettling(extensionsPage, extensionLabel)) {
+      await ensureHummingbirdIsRemoved(navigationBar);
+      extensionsPage = await navigationBar.openExtensions();
+      await expect(extensionsPage.header).toBeVisible();
+    }
     await expect.poll(() => extensionsPage.extensionIsInstalled(extensionLabel)).toBeFalsy();
+    // Record before acting: a failed install that still lands the extension must clean up.
+    markHummingbirdInstalledBySuite();
     await extensionsPage.installExtensionFromOCIImage(extensionImage);
     const extension = await extensionsPage.getInstalledExtension(extensionName, extensionLabel);
     await expect(extension.card).toBeVisible();
