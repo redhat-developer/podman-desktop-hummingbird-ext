@@ -20,10 +20,7 @@ import { expect } from '@playwright/test';
 import { HummingbirdAlternativesPage } from './hummingbird-alternatives-page';
 import { HummingbirdCatalogPage } from './hummingbird-catalog-page';
 
-/**
- * Page object for the navigation bar rendered inside the Hummingbird webview
- * (see packages/frontend/src/lib/navigations/Navigation.svelte).
- */
+// Navigation bar rendered inside the Hummingbird webview.
 export class HummingbirdNavigationBar {
   readonly page: Page;
   readonly webview: Page;

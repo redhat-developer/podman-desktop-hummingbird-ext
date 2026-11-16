@@ -16,17 +16,14 @@
  ***********************************************************************/
 
 import type { Locator, Page } from '@playwright/test';
-import { expect } from '@playwright/test';
 
-/**
- * Page object for the Hardened Image Alternatives page rendered inside the webview
- * (see packages/frontend/src/routes/alternatives/+page.svelte).
- */
+// Hardened Image Alternatives page rendered inside the webview.
 export class HummingbirdAlternativesPage {
   readonly page: Page;
   readonly webview: Page;
   readonly heading: Locator;
   readonly analyzeButton: Locator;
+  // Shown when the Grype extension is not installed and local images with alternatives exist.
   readonly grypeBanner: Locator;
   readonly checkCatalogButton: Locator;
   readonly noAlternativesScreen: Locator;
@@ -37,30 +34,21 @@ export class HummingbirdAlternativesPage {
     this.webview = webview;
     this.heading = webview.getByRole('region', { name: 'Hardened Image Alternatives' });
     this.analyzeButton = webview.getByRole('button', { name: 'Analyze', exact: true });
-    // GrypeBanner.svelte, shown when the grype extension is not installed and local
-    // images with Hummingbird alternatives exist.
     this.grypeBanner = webview.getByText('you can install the Grype extension');
     this.checkCatalogButton = webview.getByRole('button', { name: 'Check catalog', exact: true });
     this.noAlternativesScreen = webview.getByText('No alternatives found');
-    // The Table component of @podman-desktop/ui-svelte sets aria-label to the table kind.
     this.table = webview.getByRole('table', { name: 'alternatives' });
   }
 
-  getImageRow(imageName: string): Locator {
-    return this.table.getByRole('row').filter({ hasText: imageName });
+  // Rows are labelled with the repository name: match exactly to avoid collisions.
+  getImageRow(imageRepository: string): Locator {
+    return this.table.getByRole('row', { name: imageRepository, exact: true });
   }
 
-  /**
-   * Locator for the CVEs report cell of a row. The ui-svelte Table always renders an
-   * expander cell first, so the row cells are: expander, Status, Name, CVEs, Size
-   * Reduction, Actions — the CVEs cell sits at index 3. The report columns only exist
-   * once the analysis has started: before that the cell at the same index is the
-   * icon-only Actions cell, and while the scan is running the cell is a text-less
-   * skeleton. The locator therefore matches only once the numeric vulnerability
-   * counts are rendered.
-   */
-  getReportCell(imageName: string): Locator {
-    return this.getImageRow(imageName).getByRole('cell').nth(3);
+  // Row cells are: expander, Status, Name, CVEs, Size Reduction, Actions — the CVEs report
+  // cell sits at index 3 and only contains text once the scan has finished.
+  getReportCell(imageRepository: string): Locator {
+    return this.getImageRow(imageRepository).getByRole('cell').nth(3);
   }
 
   get cvesColumnHeader(): Locator {
@@ -69,11 +57,5 @@ export class HummingbirdAlternativesPage {
 
   get sizeReductionColumnHeader(): Locator {
     return this.table.getByRole('columnheader').filter({ hasText: 'Size Reduction' });
-  }
-
-  async openImageReport(imageName: string): Promise<void> {
-    const row = this.getImageRow(imageName);
-    await expect(row).toBeVisible();
-    await row.getByRole('button', { name: 'Open Image Report Details' }).click();
   }
 }

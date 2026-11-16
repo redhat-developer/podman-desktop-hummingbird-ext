@@ -27,9 +27,8 @@ import {
 import { HummingbirdNavigationBar } from './model/hummingbird-navigation-bar';
 import {
   cleanupRawVideoFiles,
-  deleteImageIfExists,
+  didSuiteInstallGrype,
   ensureGrypeExtensionIsRemoved,
-  ensureHummingbirdIsRemoved,
   grypeExtensionHeading,
   grypeExtensionLabel,
   grypeExtensionName,
@@ -37,21 +36,16 @@ import {
   installGrypeExtensionIfNeeded,
   installHummingbirdExtensionIfNeeded,
   pullImageIfNeeded,
+  stripImageTag,
 } from './utility/hummingbird-test-utils';
 
-// Local image with a known Hummingbird alternative (see packages/backend/src/assets/alt.json).
-// The alpine tag keeps the pull small; alternatives are matched on the repository only.
 const localImageReference = 'docker.io/library/nginx:alpine';
+const localImageRepo = stripImageTag(localImageReference);
 
-// Opt in locally with SAVE_TRACES_ON_PASS=true. Keep off in CI by default.
 const saveArtifactsOnPass = process.env.SAVE_TRACES_ON_PASS === 'true';
 
 let page: Page;
 let webview: Page;
-// Cleanup must only remove what this spec file installed / pulled itself.
-let hummingbirdInstalledBySpec = false;
-let grypeInstalledBySpec = false;
-let localImagePulledBySpec = false;
 
 test.use({
   runnerOptions: new RunnerOptions({
@@ -65,47 +59,35 @@ test.use({
 });
 
 test.beforeAll(async ({ runner, welcomePage, page: mainPage }) => {
-  // Extends the timeout of this hook (Podman machine startup can be slow) and of the
-  // subsequent hooks and tests.
-  test.setTimeout(300_000);
+  test.setTimeout(300_000); // Podman machine startup can be slow.
   runner.setVideoAndTraceName('hummingbird-grype');
   await welcomePage.handleWelcomePage(true);
   await expect(welcomePage.skipOnBoarding).toBeHidden();
-  // Pulling images and scanning them requires a running container provider connection.
   await waitForPodmanMachineStartup(mainPage);
 });
 
-// Playwright runs this hook even if the tests fail, after recording the failure,
-// so runner.close() retains its diagnostic artifacts.
 test.afterAll(async ({ runner }) => {
   const videoAndTraceName = runner.getVideoAndTraceName();
   await runner.close();
-  // The webview guest windows leave orphaned raw video files behind.
   cleanupRawVideoFiles('tests/output', videoAndTraceName);
 });
 
 test.describe.serial('Hummingbird Grype integration', { tag: ['@smoke', '@grype'] }, () => {
   // The Grype extension scanning flow is only exercised on Windows.
+  // eslint-disable-next-line sonarjs/no-skipped-tests
   test.skip(!isWindows, 'Grype scanning tests are only supported on Windows');
 
   test.beforeAll(async ({ navigationBar }) => {
-    // Extends the timeout of this hook: it installs the extensions and pulls the image
-    // that the analysis needs, which can take a while on slow runners.
-    test.setTimeout(600_000);
-    hummingbirdInstalledBySpec = await installHummingbirdExtensionIfNeeded(navigationBar);
-    grypeInstalledBySpec = await installGrypeExtensionIfNeeded(navigationBar);
-    localImagePulledBySpec = await pullImageIfNeeded(navigationBar, localImageReference);
+    test.setTimeout(600_000); // Installs the extensions and pulls the image to analyze.
+    await installHummingbirdExtensionIfNeeded(navigationBar);
+    await installGrypeExtensionIfNeeded(navigationBar);
+    await pullImageIfNeeded(navigationBar, localImageReference);
   });
 
   test.afterAll(async ({ navigationBar }) => {
-    if (grypeInstalledBySpec) {
+    // Only the Grype spec uses the Grype extension: remove it right away.
+    if (didSuiteInstallGrype()) {
       await ensureGrypeExtensionIsRemoved(navigationBar);
-    }
-    if (localImagePulledBySpec) {
-      await deleteImageIfExists(navigationBar, localImageReference);
-    }
-    if (hummingbirdInstalledBySpec) {
-      await ensureHummingbirdIsRemoved(navigationBar);
     }
   });
 
@@ -130,8 +112,6 @@ test.describe.serial('Hummingbird Grype integration', { tag: ['@smoke', '@grype'
     const alternativesPage = await hummingbirdNavigationBar.openAlternatives();
 
     await expect(alternativesPage.table).toBeVisible({ timeout: 60_000 });
-
-    // With Grype installed the banner disappears and the analysis becomes available.
     await expect(alternativesPage.grypeBanner).not.toBeVisible();
     await expect(alternativesPage.analyzeButton).toBeEnabled({ timeout: 60_000 });
   });
@@ -148,20 +128,21 @@ test.describe.serial('Hummingbird Grype integration', { tag: ['@smoke', '@grype'
     await expect(alternativesPage.analyzeButton).toBeEnabled({ timeout: 60_000 });
     await alternativesPage.analyzeButton.click();
 
-    // The CVEs / Size Reduction columns appear as soon as the analysis starts.
     await expect(alternativesPage.cvesColumnHeader).toBeVisible({ timeout: 30_000 });
     await expect(alternativesPage.sizeReductionColumnHeader).toBeVisible({ timeout: 30_000 });
 
-    // On first use the Grype extension asks to install the Syft and Grype binaries, and then
-    // possibly to install them system-wide. These dialogs are rendered by the Podman Desktop
-    // shell on the main page — not inside the webview — and the analysis only proceeds once
-    // they are answered.
-    const reportCell = alternativesPage.getReportCell('nginx');
-    const reportDone = async (): Promise<boolean> =>
-      await reportCell
-        .innerText()
+    // On first use the Grype extension asks (on the main page, not in the webview) to
+    // install the Syft and Grype binaries, and possibly to install them system-wide: the
+    // analysis only proceeds once the dialogs are answered.
+    const reportCell = alternativesPage.getReportCell(localImageRepo);
+    const reportDone = async (): Promise<boolean> => {
+      // innerText() waits for the element: only read a cell that is currently rendered.
+      if (!(await reportCell.isVisible().catch(() => false))) return false;
+      return await reportCell
+        .innerText({ timeout: 1_000 })
         .then(text => /\d/.test(text))
         .catch(() => false);
+    };
 
     await waitUntil(
       async () => {
@@ -170,10 +151,9 @@ test.describe.serial('Hummingbird Grype integration', { tag: ['@smoke', '@grype'
         const binariesDialog = page.getByRole('dialog').filter({ hasText: 'install Syft and Grype binaries' });
         const systemWideDialog = page.getByRole('dialog').filter({ hasText: 'system-wide' });
         if (await binariesDialog.isVisible().catch(() => false)) {
-          await binariesDialog.getByRole('button', { name: 'Yes', exact: true }).click();
+          await binariesDialog.getByRole('button', { name: 'Yes', exact: true }).click({ timeout: 10_000 });
         } else if (await systemWideDialog.isVisible().catch(() => false)) {
-          // Keep the binaries in the extension storage.
-          await systemWideDialog.getByRole('button', { name: 'Cancel', exact: true }).click();
+          await systemWideDialog.getByRole('button', { name: 'Cancel', exact: true }).click({ timeout: 10_000 });
         }
         return false;
       },
@@ -184,8 +164,7 @@ test.describe.serial('Hummingbird Grype integration', { tag: ['@smoke', '@grype'
       },
     );
 
-    // The report cell shows the "local CVEs -> alternative CVEs" counts once the scan is done.
     await expect(reportCell).toContainText(/\d/);
-    await expect(alternativesPage.getImageRow('nginx').getByText('Error scanning')).not.toBeVisible();
+    await expect(alternativesPage.getImageRow(localImageRepo).getByText('Error scanning')).not.toBeVisible();
   });
 });

@@ -19,16 +19,15 @@ import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 import { waitUntil } from '@podman-desktop/tests-playwright';
 
-/**
- * Page object for the Hummingbird Catalog page rendered inside the webview
- * (see packages/frontend/src/routes/+page.svelte and RepositoryCard.svelte).
- */
+// Hummingbird Catalog page rendered inside the webview.
 export class HummingbirdCatalogPage {
   readonly page: Page;
   readonly webview: Page;
   readonly heading: Locator;
   readonly searchInput: Locator;
   readonly content: Locator;
+  // Skeleton cards ("Loading repository card") are groups too: only match real cards,
+  // which all display their quay.io/hummingbird/<name> reference.
   readonly repositoryCards: Locator;
 
   constructor(page: Page, webview: Page) {
@@ -36,11 +35,7 @@ export class HummingbirdCatalogPage {
     this.webview = webview;
     this.heading = webview.getByRole('region', { name: 'Hummingbird Catalog' });
     this.searchInput = webview.getByLabel('search Hummingbird Catalog');
-    // The NavPage component renders the cards inside a region labelled "content".
     this.content = this.heading.getByRole('region', { name: 'content' });
-    // While the catalog is loading the page renders skeleton cards, which are groups
-    // labelled "Loading repository card": only match real cards — every repository card
-    // displays its quay.io/hummingbird/<name> reference.
     this.repositoryCards = this.content.getByRole('group').filter({ hasText: 'quay.io/hummingbird/' });
   }
 
@@ -65,44 +60,36 @@ export class HummingbirdCatalogPage {
   }
 
   /**
-   * Pulls the `quay.io/hummingbird/<repositoryName>:latest` image from the catalog card and
-   * waits for the card to switch to the pulled state (Open / Run buttons).
-   *
-   * The card footer goes through transient states while the page loads: a disabled Pull
-   * button before a provider connection is selected, then a skeleton while the pulled state
-   * resolves. Only act on a stable footer — either the image is already on the engine
-   * (Open / Run), or the Pull action is enabled.
-   *
-   * @returns `true` only when this method performed the pull itself: only then may the
-   * caller delete the image during cleanup, otherwise it could wipe an image that was
-   * already on the engine before the test run.
+   * Pulls the `quay.io/hummingbird/<repositoryName>:latest` image and waits for the card to
+   * switch to the pulled state. Returns true only when it performed the pull.
    */
   async pullImage(repositoryName: string, timeout = 300_000): Promise<boolean> {
-    const card = this.getRepositoryCard(repositoryName);
-    await expect(card).toBeVisible();
+    await expect(this.getRepositoryCard(repositoryName)).toBeVisible();
 
     const pullButton = this.getPullButton(repositoryName);
     const openButton = this.getOpenButton(repositoryName);
-    await waitUntil(async () => (await openButton.isVisible()) || (await pullButton.isEnabled()), {
-      timeout: 30_000,
-      message: `Catalog card for ${repositoryName} did not settle on a Pull or Open action`,
-    });
+    // Wait for a stable footer: while the page loads, the card shows a disabled Pull button
+    // (no connection selected yet) or a skeleton. isVisible() does not wait for the element,
+    // while isEnabled() does — hence the guard and the short timeouts.
+    await waitUntil(
+      async () => {
+        if (await openButton.isVisible().catch(() => false)) return true;
+        if (!(await pullButton.isVisible().catch(() => false))) return false;
+        return await pullButton.isEnabled({ timeout: 1_000 }).catch(() => false);
+      },
+      { timeout: 30_000, message: `Catalog card for ${repositoryName} did not settle on a Pull or Open action` },
+    );
 
-    // A previous run may have left the image on the engine: the card then shows Open/Run.
     if (await openButton.isVisible()) {
       console.log(`Image for ${repositoryName} already pulled`);
       return false;
     }
 
-    // The card may switch to the pulled state between the check and the click; treat a
-    // vanished Pull button as "already pulled" instead of failing.
     try {
-      await pullButton.click();
+      await pullButton.click({ timeout: 10_000 });
     } catch (error) {
-      if (await openButton.isVisible().catch(() => false)) {
-        console.log(`Image for ${repositoryName} was pulled while clicking, continuing`);
-        return false;
-      }
+      // The card switched to the pulled state between the check and the click.
+      if (await openButton.isVisible().catch(() => false)) return false;
       throw error;
     }
 

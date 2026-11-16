@@ -20,12 +20,17 @@ import { defineConfig } from '@playwright/test';
 export default defineConfig({
   testDir: './src',
   globalSetup: './src/global-setup.ts',
-  // Keep Playwright's cleaned output directory separate from the preloaded extension.
+  // Keep Playwright's per-test artifacts separate from the preloaded extension.
   outputDir: './output/test-results',
   workers: 1,
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
   timeout: 120_000,
+  // Bound every action: without a default, a call on an element that never appears blocks
+  // until the test timeout.
+  use: {
+    actionTimeout: 30_000,
+  },
   reporter: [
     ['list'],
     ['junit', { outputFile: './tests/output/junit-results.xml' }],

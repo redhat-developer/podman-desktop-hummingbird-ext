@@ -185,6 +185,26 @@ jobs:
           fi
           echo "url=${image}" >> "$GITHUB_OUTPUT"
 
+      # GitHub-hosted runners also run Docker, and Podman Desktop may pick it for pulls:
+      # on Linux the podman socket may not be running (the pull then lands on Docker, which
+      # stores short image names), and on Windows Docker runs Windows containers (Linux
+      # image pulls fail with "no matching manifest for windows"). Make Podman the only
+      # container engine so every pull goes to it.
+      - name: Make Podman the only container engine (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo systemctl stop docker.socket docker.service || true
+          sudo loginctl enable-linger "$(id -un)" || true
+          systemctl --user enable --now podman.socket
+          podman info
+
+      - name: Make Podman the only container engine (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          Get-Service -Name docker -ErrorAction SilentlyContinue | Stop-Service
+          podman info
+
       - name: Run E2E tests
         shell: bash
         env:

@@ -35,14 +35,14 @@ From the Hummingbird extension, you can take an existing container and clone its
 ## End-to-end tests
 
 The Playwright suite covers the installation (install from an OCI image, check that it is active, verify its details
-page, and — when the suite installed the extension itself — uninstall it during cleanup) as well as the extension
-functionality. The functional specs open the extension
+page) as well as the extension functionality. The functional specs open the extension
 webview — the same way the [bootc extension](https://github.com/podman-desktop/podman-desktop-extension-bootc) suite
 does — and exercise the catalog (repository cards, search, pulling a Hummingbird image, opening its details in Podman
 Desktop) and the hardened image alternatives page. The Grype scanning flow (installing the Grype extension and running
-the vulnerability analysis) runs on Windows only. It uses `@podman-desktop/tests-playwright` and an isolated Podman
-Desktop profile. CI refreshes the framework to `@next` to match Podman Desktop `main`, regardless of the version pinned
-in `tests/playwright/package.json`.
+the vulnerability analysis) runs on Windows only. The extension is installed once by the first spec file and removed by
+the last one (`hummingbird-installation-smoke.spec.ts`), along with the images pulled during the run. It uses
+`@podman-desktop/tests-playwright` and an isolated Podman Desktop profile. CI refreshes the framework to `@next` to
+match Podman Desktop `main`, regardless of the version pinned in `tests/playwright/package.json`.
 
 CI installs a Podman Desktop production binary via the shared `podman-desktop-install` action. Locally you can either
 point at a Podman Desktop checkout or a packaged binary:
@@ -93,9 +93,8 @@ SKIP_INSTALLATION=true SKIP_REMOVE_FOLDER=true PODMAN_DESKTOP_BINARY=/path/to/po
 
 `SKIP_INSTALLATION=true` skips the registry installation step, and `SKIP_REMOVE_FOLDER=true` preserves the preloaded
 profile while still running the framework's global setup (Chromium install). Activation and details checks still run
-and fail if the local extension is missing or cannot activate. The specs keep a preloaded extension installed (removing
-it would delete its files from the profile), so the same preloaded profile can be reused across runs; the extension is
-only removed when the suite installed it from an OCI image itself.
+and fail if the local extension is missing or cannot activate. A preloaded extension is never removed (removing it
+would delete its files from the profile), so the same preloaded profile can be reused across runs.
 
 ### CI workflows
 
@@ -104,6 +103,9 @@ only removed when the suite installed it from an OCI image itself.
   alternatives and the Windows-only Grype scanning flow) on GitHub-hosted
   `ubuntu-26.04` and `windows-2025` runners (same matrix pattern as
   [extension-podman-quadlet](https://github.com/podman-desktop/extension-podman-quadlet/blob/main/.github/workflows/e2e.yaml)).
+  The runners also run Docker, which Podman Desktop may pick for pulls (breaking them in different ways
+  per OS), so the workflow stops Docker and starts the Podman socket before the tests to make Podman
+  the only container engine.
 - The same workflow also runs after a successful `next-build.yaml` on `main`. It installs the image tagged with that
   build's commit SHA, and skips the job if `main` has already moved past that commit so tests stay aligned with the
   image. Manual runs can select a published image or build from the selected branch.

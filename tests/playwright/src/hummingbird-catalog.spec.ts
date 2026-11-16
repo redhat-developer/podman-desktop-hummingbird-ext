@@ -16,31 +16,25 @@
  ***********************************************************************/
 
 import type { Page } from '@playwright/test';
-import { RunnerOptions, expect, test, waitForPodmanMachineStartup } from '@podman-desktop/tests-playwright';
+import { RunnerOptions, expect, test, waitForPodmanMachineStartup, waitUntil } from '@podman-desktop/tests-playwright';
 import { HummingbirdNavigationBar } from './model/hummingbird-navigation-bar';
 import {
   cleanupRawVideoFiles,
-  deleteImageIfExists,
-  ensureHummingbirdIsRemoved,
   handleWebview,
   installHummingbirdExtensionIfNeeded,
+  markImagePulledBySuite,
   stripImageTag,
 } from './utility/hummingbird-test-utils';
 
-// Small Hummingbird image used to exercise the pull flow from the catalog card. The value
-// is the bare repository name as shown on the catalog card (e.g. "curl" or "jq"), not a
-// full image reference.
-const catalogImageName = process.env.HUMMINGBIRD_CATALOG_IMAGE ?? 'curl';
+// Bare repository name as shown on the catalog card (e.g. "curl" or "jq").
+// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+const catalogImageName = process.env.HUMMINGBIRD_CATALOG_IMAGE || 'curl';
 const catalogImageReference = `quay.io/hummingbird/${catalogImageName}:latest`;
 
-// Opt in locally with SAVE_TRACES_ON_PASS=true. Keep off in CI by default.
 const saveArtifactsOnPass = process.env.SAVE_TRACES_ON_PASS === 'true';
 
 let page: Page;
 let webview: Page;
-// Cleanup must only remove what this spec file installed / pulled itself.
-let hummingbirdInstalledBySpec = false;
-let catalogImagePulledBySpec = false;
 
 test.use({
   runnerOptions: new RunnerOptions({
@@ -54,46 +48,29 @@ test.use({
 });
 
 test.beforeAll(async ({ runner, welcomePage, page: mainPage }) => {
-  // Extends the timeout of this hook (Podman machine startup can be slow) and of the
-  // subsequent hooks and tests.
-  test.setTimeout(300_000);
+  test.setTimeout(300_000); // Podman machine startup can be slow.
   runner.setVideoAndTraceName('hummingbird-catalog');
   await welcomePage.handleWelcomePage(true);
   await expect(welcomePage.skipOnBoarding).toBeHidden();
-  // Pulling images from the catalog requires a running container provider connection.
   await waitForPodmanMachineStartup(mainPage);
 });
 
-// Playwright runs this hook even if the tests fail, after recording the failure,
-// so runner.close() retains its diagnostic artifacts.
 test.afterAll(async ({ runner }) => {
   const videoAndTraceName = runner.getVideoAndTraceName();
   await runner.close();
-  // The webview guest windows leave orphaned raw video files behind.
   cleanupRawVideoFiles('tests/output', videoAndTraceName);
 });
 
 test.describe.serial('Hummingbird catalog', { tag: ['@smoke', '@catalog'] }, () => {
   test.beforeAll(async ({ navigationBar }) => {
-    hummingbirdInstalledBySpec = await installHummingbirdExtensionIfNeeded(navigationBar);
-  });
-
-  test.afterAll(async ({ navigationBar }) => {
-    if (catalogImagePulledBySpec) {
-      await deleteImageIfExists(navigationBar, catalogImageReference);
-    }
-    if (hummingbirdInstalledBySpec) {
-      await ensureHummingbirdIsRemoved(navigationBar);
-    }
+    await installHummingbirdExtensionIfNeeded(navigationBar);
   });
 
   test('Open the Hummingbird extension from the navigation bar', async ({ runner }) => {
     [page, webview] = await handleWebview(runner);
 
-    // The webview itself is rendered on the main Podman Desktop page...
     await expect(page.getByRole('document', { name: 'Webview Hummingbird' })).toBeVisible();
 
-    // ...and its content is driven through the guest page.
     const hummingbirdNavigationBar = new HummingbirdNavigationBar(page, webview);
     await expect(hummingbirdNavigationBar.navigationBar).toBeVisible();
     await expect(hummingbirdNavigationBar.catalogButtonLocator).toBeVisible();
@@ -108,10 +85,9 @@ test.describe.serial('Hummingbird catalog', { tag: ['@smoke', '@catalog'] }, () 
     const hummingbirdNavigationBar = new HummingbirdNavigationBar(page, webview);
     const catalogPage = await hummingbirdNavigationBar.openCatalog();
 
-    // The catalog is fetched from the Hummingbird API: waiting for the cards to be
-    // rendered (out of the skeleton state) validates the extension backend too.
+    // The catalog is fetched from the Hummingbird API: waiting for the cards validates the
+    // extension backend too.
     await expect(catalogPage.repositoryCards.first()).toBeVisible({ timeout: 60_000 });
-    await expect(catalogPage.repositoryCards).not.toHaveCount(0);
 
     const card = catalogPage.getRepositoryCard('nginx');
     await expect(card).toBeVisible();
@@ -125,13 +101,19 @@ test.describe.serial('Hummingbird catalog', { tag: ['@smoke', '@catalog'] }, () 
     const catalogPage = await hummingbirdNavigationBar.openCatalog();
     await expect(catalogPage.repositoryCards.first()).toBeVisible({ timeout: 60_000 });
 
-    const totalCards = await catalogPage.repositoryCards.count();
-    expect(totalCards).toBeGreaterThan(1);
+    // The page loads twice (connection auto-selection navigates again): poll for a stable count.
+    let totalCards = 0;
+    await waitUntil(
+      async () => {
+        totalCards = await catalogPage.repositoryCards.count();
+        return totalCards > 1;
+      },
+      { timeout: 10_000, message: 'Catalog cards were not rendered' },
+    );
 
     await catalogPage.searchInput.fill('nginx');
-    // Upstream may add similarly named repositories (e.g. variants), so do not rely on an
-    // exact card count: the nginx card must be visible and no card may remain that does
-    // not match the search term.
+    // Upstream may add similarly named repositories: require the nginx card to be visible
+    // and no non-matching card to remain, instead of an exact count.
     await expect(catalogPage.getRepositoryCard('nginx')).toBeVisible();
     await expect(catalogPage.repositoryCards.filter({ hasNotText: 'nginx' })).toHaveCount(0);
 
@@ -149,10 +131,11 @@ test.describe.serial('Hummingbird catalog', { tag: ['@smoke', '@catalog'] }, () 
     const hummingbirdNavigationBar = new HummingbirdNavigationBar(page, webview);
     const catalogPage = await hummingbirdNavigationBar.openCatalog();
 
-    catalogImagePulledBySpec = await catalogPage.pullImage(catalogImageName);
+    if (await catalogPage.pullImage(catalogImageName)) {
+      markImagePulledBySuite(catalogImageReference);
+    }
 
-    // The image must be visible on the Podman Desktop Images page. Image rows are labelled
-    // with the repository only (the tag is a separate column).
+    // Image rows are labelled with the repository only.
     const imagesPage = await navigationBar.openImages();
     await imagesPage.waitForImageExists(stripImageTag(catalogImageReference), 60_000);
   });
@@ -162,12 +145,9 @@ test.describe.serial('Hummingbird catalog', { tag: ['@smoke', '@catalog'] }, () 
     const hummingbirdNavigationBar = new HummingbirdNavigationBar(page, webview);
     const catalogPage = await hummingbirdNavigationBar.openCatalog();
 
-    // After a successful pull the card switches to the Open / Run actions.
     await expect(catalogPage.getOpenButton(catalogImageName)).toBeVisible();
     await catalogPage.getOpenButton(catalogImageName).click();
 
-    // The Open action navigates the main Podman Desktop page to the image details. The page
-    // title is the image repository, the tag is displayed in the subtitle.
     await expect(page.getByRole('heading', { name: stripImageTag(catalogImageReference) })).toBeVisible({
       timeout: 30_000,
     });
