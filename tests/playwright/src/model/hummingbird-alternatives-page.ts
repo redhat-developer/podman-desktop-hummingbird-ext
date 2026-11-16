@@ -51,13 +51,16 @@ export class HummingbirdAlternativesPage {
   }
 
   /**
-   * Locator for the CVEs report cell of a row. The report columns only exist once the
-   * analysis has started: before that the cell at the same index is the icon-only Actions
-   * cell, and while the scan is running the cell is a text-less skeleton. The locator
-   * therefore matches only once the numeric vulnerability counts are rendered.
+   * Locator for the CVEs report cell of a row. The ui-svelte Table always renders an
+   * expander cell first, so the row cells are: expander, Status, Name, CVEs, Size
+   * Reduction, Actions — the CVEs cell sits at index 3. The report columns only exist
+   * once the analysis has started: before that the cell at the same index is the
+   * icon-only Actions cell, and while the scan is running the cell is a text-less
+   * skeleton. The locator therefore matches only once the numeric vulnerability
+   * counts are rendered.
    */
   getReportCell(imageName: string): Locator {
-    return this.getImageRow(imageName).getByRole('cell').nth(2);
+    return this.getImageRow(imageName).getByRole('cell').nth(3);
   }
 
   get cvesColumnHeader(): Locator {

@@ -29,14 +29,14 @@ import {
   cleanupRawVideoFiles,
   deleteImageIfExists,
   ensureGrypeExtensionIsRemoved,
+  ensureHummingbirdIsRemoved,
   grypeExtensionHeading,
-  grypeExtensionImage,
   grypeExtensionLabel,
   grypeExtensionName,
   handleWebview,
+  installGrypeExtensionIfNeeded,
   installHummingbirdExtensionIfNeeded,
   pullImageIfNeeded,
-  removeHummingbirdExtensionIfNeeded,
 } from './utility/hummingbird-test-utils';
 
 // Local image with a known Hummingbird alternative (see packages/backend/src/assets/alt.json).
@@ -48,6 +48,10 @@ const saveArtifactsOnPass = process.env.SAVE_TRACES_ON_PASS === 'true';
 
 let page: Page;
 let webview: Page;
+// Cleanup must only remove what this spec file installed / pulled itself.
+let hummingbirdInstalledBySpec = false;
+let grypeInstalledBySpec = false;
+let localImagePulledBySpec = false;
 
 test.use({
   runnerOptions: new RunnerOptions({
@@ -61,6 +65,9 @@ test.use({
 });
 
 test.beforeAll(async ({ runner, welcomePage, page: mainPage }) => {
+  // Extends the timeout of this hook (Podman machine startup can be slow) and of the
+  // subsequent hooks and tests.
+  test.setTimeout(300_000);
   runner.setVideoAndTraceName('hummingbird-grype');
   await welcomePage.handleWelcomePage(true);
   await expect(welcomePage.skipOnBoarding).toBeHidden();
@@ -82,24 +89,28 @@ test.describe.serial('Hummingbird Grype integration', { tag: ['@smoke', '@grype'
   test.skip(!isWindows, 'Grype scanning tests are only supported on Windows');
 
   test.beforeAll(async ({ navigationBar }) => {
-    await installHummingbirdExtensionIfNeeded(navigationBar);
-    // The analysis needs a local image with a Hummingbird alternative.
-    await pullImageIfNeeded(navigationBar, localImageReference);
+    // Extends the timeout of this hook: it installs the extensions and pulls the image
+    // that the analysis needs, which can take a while on slow runners.
+    test.setTimeout(600_000);
+    hummingbirdInstalledBySpec = await installHummingbirdExtensionIfNeeded(navigationBar);
+    grypeInstalledBySpec = await installGrypeExtensionIfNeeded(navigationBar);
+    localImagePulledBySpec = await pullImageIfNeeded(navigationBar, localImageReference);
   });
 
   test.afterAll(async ({ navigationBar }) => {
-    await ensureGrypeExtensionIsRemoved(navigationBar);
-    await deleteImageIfExists(navigationBar, localImageReference);
-    await removeHummingbirdExtensionIfNeeded(navigationBar);
+    if (grypeInstalledBySpec) {
+      await ensureGrypeExtensionIsRemoved(navigationBar);
+    }
+    if (localImagePulledBySpec) {
+      await deleteImageIfExists(navigationBar, localImageReference);
+    }
+    if (hummingbirdInstalledBySpec) {
+      await ensureHummingbirdIsRemoved(navigationBar);
+    }
   });
 
-  test('Install the Grype extension', async ({ navigationBar }) => {
+  test('Verify the Grype extension is installed and active', async ({ navigationBar }) => {
     const extensionsPage = await navigationBar.openExtensions();
-    await expect(extensionsPage.header).toBeVisible();
-
-    if (await extensionsPage.extensionIsInstalled(grypeExtensionLabel)) return;
-
-    await extensionsPage.installExtensionFromOCIImage(grypeExtensionImage);
     await expect
       .poll(async () => await extensionsPage.extensionIsInstalled(grypeExtensionLabel), { timeout: 60_000 })
       .toBeTruthy();

@@ -21,10 +21,10 @@ import { HummingbirdNavigationBar } from './model/hummingbird-navigation-bar';
 import {
   cleanupRawVideoFiles,
   deleteImageIfExists,
+  ensureHummingbirdIsRemoved,
   handleWebview,
   installHummingbirdExtensionIfNeeded,
   pullImageIfNeeded,
-  removeHummingbirdExtensionIfNeeded,
 } from './utility/hummingbird-test-utils';
 
 // Local image with a known Hummingbird alternative (see packages/backend/src/assets/alt.json).
@@ -36,6 +36,9 @@ const saveArtifactsOnPass = process.env.SAVE_TRACES_ON_PASS === 'true';
 
 let page: Page;
 let webview: Page;
+// Cleanup must only remove what this spec file installed / pulled itself.
+let hummingbirdInstalledBySpec = false;
+let localImagePulledBySpec = false;
 
 test.use({
   runnerOptions: new RunnerOptions({
@@ -49,6 +52,9 @@ test.use({
 });
 
 test.beforeAll(async ({ runner, welcomePage, page: mainPage }) => {
+  // Extends the timeout of this hook (Podman machine startup can be slow) and of the
+  // subsequent hooks and tests.
+  test.setTimeout(300_000);
   runner.setVideoAndTraceName('hummingbird-alternatives');
   await welcomePage.handleWelcomePage(true);
   await expect(welcomePage.skipOnBoarding).toBeHidden();
@@ -67,12 +73,16 @@ test.afterAll(async ({ runner }) => {
 
 test.describe.serial('Hummingbird alternatives', { tag: ['@smoke', '@alternatives'] }, () => {
   test.beforeAll(async ({ navigationBar }) => {
-    await installHummingbirdExtensionIfNeeded(navigationBar);
+    hummingbirdInstalledBySpec = await installHummingbirdExtensionIfNeeded(navigationBar);
   });
 
   test.afterAll(async ({ navigationBar }) => {
-    await deleteImageIfExists(navigationBar, localImageReference);
-    await removeHummingbirdExtensionIfNeeded(navigationBar);
+    if (localImagePulledBySpec) {
+      await deleteImageIfExists(navigationBar, localImageReference);
+    }
+    if (hummingbirdInstalledBySpec) {
+      await ensureHummingbirdIsRemoved(navigationBar);
+    }
   });
 
   test('Open the Alternatives page from the webview navigation', async ({ runner }) => {
@@ -91,7 +101,7 @@ test.describe.serial('Hummingbird alternatives', { tag: ['@smoke', '@alternative
 
   test('Alternatives page lists local images with a Hummingbird alternative', async ({ runner, navigationBar }) => {
     // Pull a local image that has a Hummingbird alternative (docker.io/library/nginx -> nginx).
-    await pullImageIfNeeded(navigationBar, localImageReference);
+    localImagePulledBySpec = await pullImageIfNeeded(navigationBar, localImageReference);
 
     [page, webview] = await handleWebview(runner);
     const hummingbirdNavigationBar = new HummingbirdNavigationBar(page, webview);

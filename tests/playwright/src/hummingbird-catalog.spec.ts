@@ -21,13 +21,15 @@ import { HummingbirdNavigationBar } from './model/hummingbird-navigation-bar';
 import {
   cleanupRawVideoFiles,
   deleteImageIfExists,
+  ensureHummingbirdIsRemoved,
   handleWebview,
   installHummingbirdExtensionIfNeeded,
-  removeHummingbirdExtensionIfNeeded,
   stripImageTag,
 } from './utility/hummingbird-test-utils';
 
-// Small Hummingbird image used to exercise the pull flow from the catalog card.
+// Small Hummingbird image used to exercise the pull flow from the catalog card. The value
+// is the bare repository name as shown on the catalog card (e.g. "curl" or "jq"), not a
+// full image reference.
 const catalogImageName = process.env.HUMMINGBIRD_CATALOG_IMAGE ?? 'curl';
 const catalogImageReference = `quay.io/hummingbird/${catalogImageName}:latest`;
 
@@ -36,6 +38,9 @@ const saveArtifactsOnPass = process.env.SAVE_TRACES_ON_PASS === 'true';
 
 let page: Page;
 let webview: Page;
+// Cleanup must only remove what this spec file installed / pulled itself.
+let hummingbirdInstalledBySpec = false;
+let catalogImagePulledBySpec = false;
 
 test.use({
   runnerOptions: new RunnerOptions({
@@ -49,6 +54,9 @@ test.use({
 });
 
 test.beforeAll(async ({ runner, welcomePage, page: mainPage }) => {
+  // Extends the timeout of this hook (Podman machine startup can be slow) and of the
+  // subsequent hooks and tests.
+  test.setTimeout(300_000);
   runner.setVideoAndTraceName('hummingbird-catalog');
   await welcomePage.handleWelcomePage(true);
   await expect(welcomePage.skipOnBoarding).toBeHidden();
@@ -67,12 +75,16 @@ test.afterAll(async ({ runner }) => {
 
 test.describe.serial('Hummingbird catalog', { tag: ['@smoke', '@catalog'] }, () => {
   test.beforeAll(async ({ navigationBar }) => {
-    await installHummingbirdExtensionIfNeeded(navigationBar);
+    hummingbirdInstalledBySpec = await installHummingbirdExtensionIfNeeded(navigationBar);
   });
 
   test.afterAll(async ({ navigationBar }) => {
-    await deleteImageIfExists(navigationBar, catalogImageReference);
-    await removeHummingbirdExtensionIfNeeded(navigationBar);
+    if (catalogImagePulledBySpec) {
+      await deleteImageIfExists(navigationBar, catalogImageReference);
+    }
+    if (hummingbirdInstalledBySpec) {
+      await ensureHummingbirdIsRemoved(navigationBar);
+    }
   });
 
   test('Open the Hummingbird extension from the navigation bar', async ({ runner }) => {
@@ -117,8 +129,11 @@ test.describe.serial('Hummingbird catalog', { tag: ['@smoke', '@catalog'] }, () 
     expect(totalCards).toBeGreaterThan(1);
 
     await catalogPage.searchInput.fill('nginx');
-    await expect(catalogPage.repositoryCards).toHaveCount(1);
+    // Upstream may add similarly named repositories (e.g. variants), so do not rely on an
+    // exact card count: the nginx card must be visible and no card may remain that does
+    // not match the search term.
     await expect(catalogPage.getRepositoryCard('nginx')).toBeVisible();
+    await expect(catalogPage.repositoryCards.filter({ hasNotText: 'nginx' })).toHaveCount(0);
 
     await catalogPage.searchInput.fill('no-such-hummingbird-image');
     await expect(catalogPage.repositoryCards).toHaveCount(0);
@@ -134,7 +149,7 @@ test.describe.serial('Hummingbird catalog', { tag: ['@smoke', '@catalog'] }, () 
     const hummingbirdNavigationBar = new HummingbirdNavigationBar(page, webview);
     const catalogPage = await hummingbirdNavigationBar.openCatalog();
 
-    await catalogPage.pullImage(catalogImageName);
+    catalogImagePulledBySpec = await catalogPage.pullImage(catalogImageName);
 
     // The image must be visible on the Podman Desktop Images page. Image rows are labelled
     // with the repository only (the tag is a separate column).

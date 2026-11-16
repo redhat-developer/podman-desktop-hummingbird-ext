@@ -35,7 +35,8 @@ From the Hummingbird extension, you can take an existing container and clone its
 ## End-to-end tests
 
 The Playwright suite covers the installation (install from an OCI image, check that it is active, verify its details
-page, remove it during cleanup) as well as the extension functionality. The functional specs open the extension
+page, and — when the suite installed the extension itself — uninstall it during cleanup) as well as the extension
+functionality. The functional specs open the extension
 webview — the same way the [bootc extension](https://github.com/podman-desktop/podman-desktop-extension-bootc) suite
 does — and exercise the catalog (repository cards, search, pulling a Hummingbird image, opening its details in Podman
 Desktop) and the hardened image alternatives page. The Grype scanning flow (installing the Grype extension and running
@@ -69,10 +70,10 @@ Set only one of `PODMAN_DESKTOP_BINARY` / `PODMAN_DESKTOP_ARGS`.
 
 The default image is `ghcr.io/redhat-developer/podman-desktop-hummingbird-ext:next`. Set `OCI_IMAGE` to test another
 published image. Run `pnpm test:e2e` to execute the full suite, or select a subset with tags: `@installation` (install
-smoke), `@catalog`, `@alternatives`, `@grype` (Windows only). The catalog spec pulls the small
-`quay.io/hummingbird/curl:latest` image by default; override it with `HUMMINGBIRD_CATALOG_IMAGE`. Reports, traces, and
-videos are written under `tests/playwright/tests/output/`; Playwright's per-test artifacts are under
-`tests/playwright/output/`.
+smoke), `@catalog`, `@alternatives`, `@grype` (Windows only). The catalog spec pulls the small `curl` image by default;
+override it with `HUMMINGBIRD_CATALOG_IMAGE` (bare repository name as shown on the catalog card, e.g. `jq`, not a full
+image reference). Reports, traces, and videos are written under
+`tests/playwright/tests/output/`; Playwright's per-test artifacts are under `tests/playwright/output/`.
 
 ### Test a local container image
 

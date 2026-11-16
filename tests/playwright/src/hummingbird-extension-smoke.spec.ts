@@ -16,18 +16,27 @@
  ***********************************************************************/
 
 import { expect, RunnerOptions, test } from '@podman-desktop/tests-playwright';
+import {
+  ensureHummingbirdIsRemoved,
+  extensionHeading,
+  extensionImage,
+  extensionLabel,
+  extensionName,
+} from './utility/hummingbird-test-utils';
 
-const extensionName = 'hummingbird';
-const extensionLabel = 'redhat.hummingbird';
-const extensionHeading = 'Hummingbird';
-const extensionImage = process.env.OCI_IMAGE ?? 'ghcr.io/redhat-developer/podman-desktop-hummingbird-ext:next';
-// Opt in locally with SAVE_TRACES_ON_PASS=true. Keep off in CI by default.
-const saveArtifactsOnPass = process.env.SAVE_TRACES_ON_PASS === 'true';
 // Podman Desktop 1.30.x renders the installed extension status as "ACTIVE" while current main renders
 // "Installed"; accept either so the suite runs against the pinned framework release locally and the
 // @next framework that CI installs. Surrounding whitespace is tolerated because the status element
 // renders an icon span before the label.
 const extensionStatusRegex = /^\s*(ACTIVE|Installed)\s*$/i;
+
+// Opt in locally with SAVE_TRACES_ON_PASS=true. Keep off in CI by default.
+const saveArtifactsOnPass = process.env.SAVE_TRACES_ON_PASS === 'true';
+
+// Cleanup must only remove what this spec file installed itself: a preloaded plugin cannot
+// be restored once removed (removal deletes its files from the test profile), and later
+// spec files may still need the extension.
+let hummingbirdInstalledBySpec = false;
 
 test.use({
   runnerOptions: new RunnerOptions({
@@ -49,21 +58,12 @@ test.beforeAll(async ({ runner, welcomePage, navigationBar }) => {
 });
 
 test.afterAll(async ({ navigationBar }) => {
-  // A preloaded plugin cannot be restored once removed (removal deletes its files from the
-  // test profile), so keep it installed for the spec files that may run after this one
-  // (e.g. the Grype integration spec on Windows). It is only removed when this suite
-  // installed it from an OCI image itself.
-  if (process.env.SKIP_INSTALLATION === 'true') {
-    console.log('Hummingbird extension was preloaded in the test profile, skipping removal');
-    return;
-  }
-
-  const extensionsPage = await navigationBar.openExtensions();
-  if (await extensionsPage.extensionIsInstalled(extensionLabel)) {
-    const details = await extensionsPage.openExtensionDetails(extensionName, extensionLabel, extensionHeading);
-    await details.removeExtension();
-    await navigationBar.openExtensions();
-    await expect.poll(() => extensionsPage.extensionIsInstalled(extensionLabel), { timeout: 30_000 }).toBeFalsy();
+  // The uninstall flow is only exercised when this spec installed the extension from an OCI
+  // image: removing a preloaded plugin deletes its files from the test profile, so it would
+  // not come back for the spec files that may run after this one (e.g. the Grype
+  // integration spec on Windows).
+  if (hummingbirdInstalledBySpec) {
+    await ensureHummingbirdIsRemoved(navigationBar);
   }
 });
 
@@ -84,6 +84,8 @@ test.describe.serial('Hummingbird extension installation', { tag: ['@smoke', '@i
     await extensionsPage.installExtensionFromOCIImage(extensionImage);
     const extension = await extensionsPage.getInstalledExtension(extensionName, extensionLabel);
     await expect(extension.card).toBeVisible();
+    // The extension was installed by this spec: it is ours to remove during cleanup.
+    hummingbirdInstalledBySpec = true;
   });
 
   test('Verify Hummingbird is installed and active', async ({ navigationBar }) => {

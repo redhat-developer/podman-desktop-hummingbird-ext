@@ -38,6 +38,10 @@ export const grypeExtensionImage = process.env.GRYPE_OCI_IMAGE ?? 'ghcr.io/podma
 const HUMMINGBIRD_NAVBAR_EXTENSION_LABEL = 'Hummingbird';
 const HUMMINGBIRD_PAGE_BODY_LABEL = 'Webview Hummingbird';
 
+// Podman Desktop serves webview guests from http://<uuid>.webview.localhost:<port>, which
+// identifies the guest page among the windows exposed by the runner.
+const WEBVIEW_URL_PATTERN = '.webview.localhost';
+
 /**
  * Opens the Hummingbird extension page from the Podman Desktop navigation bar and returns the
  * main Podman Desktop page together with the webview guest page.
@@ -45,7 +49,8 @@ const HUMMINGBIRD_PAGE_BODY_LABEL = 'Webview Hummingbird';
  * The extension UI runs inside an Electron `<webview>` tag, so its content cannot be queried
  * through the main page: the guest page is exposed as an additional window by
  * `runner.getWindows()` and must be driven directly (same approach as the bootc extension
- * E2E suite).
+ * E2E suite). The guest page is matched by its URL rather than by position: depending on the
+ * runner mode the window list may also contain unrelated pages.
  */
 export async function handleWebview(runner: Runner): Promise<[Page, Page]> {
   const page = runner.getPage();
@@ -58,30 +63,24 @@ export async function handleWebview(runner: Runner): Promise<[Page, Page]> {
   // panel, which can lag slightly behind the extension card on slower machines.
   await expect(hummingbirdPodmanExtensionButton).toBeEnabled({ timeout: 30_000 });
   await hummingbirdPodmanExtensionButton.click();
-  await page.waitForTimeout(2_000);
 
   const webView = page.getByRole('document', { name: HUMMINGBIRD_PAGE_BODY_LABEL });
   await expect(webView).toBeVisible({ timeout: 30_000 });
 
-  let mainPage!: Page;
-  let webViewPage!: Page;
+  let webViewPage: Page | undefined;
   await waitUntil(
     async () => {
-      const windows = runner.getWindows();
-      if (windows.length >= 2) {
-        [mainPage, webViewPage] = windows;
-        return true;
-      }
-      return false;
+      webViewPage = runner.getWindows().find(window => window !== page && window.url().includes(WEBVIEW_URL_PATTERN));
+      return webViewPage !== undefined;
     },
     {
-      timeout: 10_000,
+      timeout: 15_000,
       diff: 500,
       message: 'Webview guest window did not appear in the Electron app',
     },
   );
 
-  await mainPage.evaluate(() => {
+  await page.evaluate(() => {
     const element = document.querySelector('webview');
     if (element) {
       (element as HTMLElement).focus();
@@ -90,20 +89,35 @@ export async function handleWebview(runner: Runner): Promise<[Page, Page]> {
     }
   });
 
-  return [mainPage, webViewPage];
+  return [page, webViewPage!];
 }
 
-export async function installHummingbirdExtensionIfNeeded(navigationBar: NavigationBar): Promise<void> {
+/**
+ * Installs the Hummingbird extension from its OCI image unless it is already installed
+ * (e.g. preloaded in the test profile, or left over from an earlier spec file).
+ *
+ * @returns `true` only when this helper performed the installation itself: only then may
+ * the caller remove the extension during cleanup — removing a preloaded plugin deletes its
+ * files from the test profile, so it would not come back on the next Podman Desktop start.
+ */
+export async function installHummingbirdExtensionIfNeeded(navigationBar: NavigationBar): Promise<boolean> {
   console.log('Installing Hummingbird extension if needed');
   const extensionsPage = await navigationBar.openExtensions();
-  const extensionInstalled = await extensionsPage.extensionIsInstalled(extensionLabel);
+  // Wait for the list to render before polling, otherwise the check may wrongly report
+  // the extension as not installed.
+  await expect(extensionsPage.header).toBeVisible();
 
-  if (extensionInstalled || process.env.SKIP_INSTALLATION === 'true') {
-    // The workflow may preload the extension in the test profile: only wait for it.
+  if (await extensionsPage.extensionIsInstalled(extensionLabel)) {
+    console.log('Hummingbird extension already installed');
+    return false;
+  }
+
+  if (process.env.SKIP_INSTALLATION === 'true') {
+    // The workflow preloads the extension in the test profile: only wait for it.
     await expect
       .poll(async () => await extensionsPage.extensionIsInstalled(extensionLabel), { timeout: 60_000 })
       .toBeTruthy();
-    return;
+    return false;
   }
 
   console.log(`Installing Hummingbird extension from OCI image ${extensionImage}`);
@@ -112,59 +126,55 @@ export async function installHummingbirdExtensionIfNeeded(navigationBar: Navigat
     .poll(async () => await extensionsPage.extensionIsInstalled(extensionLabel), { timeout: 60_000 })
     .toBeTruthy();
   console.log('Hummingbird extension installed');
+  return true;
+}
+
+/** Same as {@link installHummingbirdExtensionIfNeeded} for the Grype extension. */
+export async function installGrypeExtensionIfNeeded(navigationBar: NavigationBar): Promise<boolean> {
+  console.log('Installing Grype extension if needed');
+  const extensionsPage = await navigationBar.openExtensions();
+  await expect(extensionsPage.header).toBeVisible();
+
+  if (await extensionsPage.extensionIsInstalled(grypeExtensionLabel)) {
+    console.log('Grype extension already installed');
+    return false;
+  }
+
+  console.log(`Installing Grype extension from OCI image ${grypeExtensionImage}`);
+  await extensionsPage.installExtensionFromOCIImage(grypeExtensionImage);
+  await expect
+    .poll(async () => await extensionsPage.extensionIsInstalled(grypeExtensionLabel), { timeout: 60_000 })
+    .toBeTruthy();
+  console.log('Grype extension installed');
+  return true;
+}
+
+/** Removes an installed extension identified by `name`/`label`/`heading`. No-op if absent. */
+export async function ensureExtensionIsRemoved(
+  navigationBar: NavigationBar,
+  name: string,
+  label: string,
+  heading: string,
+): Promise<void> {
+  console.log(`Ensuring extension ${label} is removed`);
+  let extensionsPage = await navigationBar.openExtensions();
+  await expect(extensionsPage.header).toBeVisible();
+  if (!(await extensionsPage.extensionIsInstalled(label))) return;
+
+  const extensionDetailsPage = await extensionsPage.openExtensionDetails(name, label, heading);
+  await extensionDetailsPage.removeExtension();
+  extensionsPage = await navigationBar.openExtensions();
+
+  await expect.poll(async () => await extensionsPage.extensionIsInstalled(label), { timeout: 30_000 }).toBeFalsy();
+  console.log(`Extension ${label} removed`);
 }
 
 export async function ensureHummingbirdIsRemoved(navigationBar: NavigationBar): Promise<void> {
-  console.log('Ensuring Hummingbird extension is removed');
-  let extensionsPage = await navigationBar.openExtensions();
-  if (!(await extensionsPage.extensionIsInstalled(extensionLabel))) return;
-
-  const hummingbirdExtensionPage = await extensionsPage.openExtensionDetails(
-    extensionName,
-    extensionLabel,
-    extensionHeading,
-  );
-  await hummingbirdExtensionPage.removeExtension();
-  extensionsPage = await navigationBar.openExtensions();
-
-  await expect
-    .poll(async () => await extensionsPage.extensionIsInstalled(extensionLabel), { timeout: 30_000 })
-    .toBeFalsy();
-  console.log('Hummingbird extension removed');
-}
-
-/**
- * Removes the Hummingbird extension unless it was preloaded in the test profile
- * (SKIP_INSTALLATION=true): removing a preloaded plugin deletes its files from the
- * profile's plugins folder, so it would not be installed again on the next Podman
- * Desktop start and the remaining spec files would fail to find it. The profile is
- * discarded at the end of the test run anyway.
- */
-export async function removeHummingbirdExtensionIfNeeded(navigationBar: NavigationBar): Promise<void> {
-  if (process.env.SKIP_INSTALLATION === 'true') {
-    console.log('Hummingbird extension was preloaded in the test profile, skipping removal');
-    return;
-  }
-  await ensureHummingbirdIsRemoved(navigationBar);
+  await ensureExtensionIsRemoved(navigationBar, extensionName, extensionLabel, extensionHeading);
 }
 
 export async function ensureGrypeExtensionIsRemoved(navigationBar: NavigationBar): Promise<void> {
-  console.log('Ensuring Grype extension is removed');
-  let extensionsPage = await navigationBar.openExtensions();
-  if (!(await extensionsPage.extensionIsInstalled(grypeExtensionLabel))) return;
-
-  const grypeExtensionPage = await extensionsPage.openExtensionDetails(
-    grypeExtensionName,
-    grypeExtensionLabel,
-    grypeExtensionHeading,
-  );
-  await grypeExtensionPage.removeExtension();
-  extensionsPage = await navigationBar.openExtensions();
-
-  await expect
-    .poll(async () => await extensionsPage.extensionIsInstalled(grypeExtensionLabel), { timeout: 30_000 })
-    .toBeFalsy();
-  console.log('Grype extension removed');
+  await ensureExtensionIsRemoved(navigationBar, grypeExtensionName, grypeExtensionLabel, grypeExtensionHeading);
 }
 
 /**
@@ -184,18 +194,23 @@ export function stripImageTag(imageReference: string): string {
  * Pulls `imageName` through the Podman Desktop Images page unless it is already available
  * on the container engine (the podman machine storage persists across spec files, so images
  * pulled by an earlier spec do not need to be pulled again).
+ *
+ * @returns `true` only when this helper performed the pull itself: only then may the caller
+ * delete the image during cleanup, otherwise it could wipe an image that was already on the
+ * engine before the test run.
  */
-export async function pullImageIfNeeded(navigationBar: NavigationBar, imageName: string): Promise<void> {
+export async function pullImageIfNeeded(navigationBar: NavigationBar, imageName: string): Promise<boolean> {
   const imagesPage = await navigationBar.openImages();
   const imageExists = await imagesPage.waitForImageExists(stripImageTag(imageName), 5_000).catch(() => false);
   if (imageExists) {
     console.log(`Image ${imageName} already available, skipping pull`);
-    return;
+    return false;
   }
 
   console.log(`Pulling image ${imageName}`);
   await imagesPage.pullImage(imageName);
   await imagesPage.waitForImageExists(stripImageTag(imageName), 60_000);
+  return true;
 }
 
 /** Deletes `imageName` from the Podman Desktop Images page, ignoring missing images and errors. */
