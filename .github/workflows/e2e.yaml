@@ -195,7 +195,8 @@ jobs:
         run: |
           sudo systemctl stop docker.socket docker.service || true
           sudo loginctl enable-linger "$(id -un)" || true
-          systemctl --user enable --now podman.socket
+          # Retry: the user session may not be up yet right after enabling lingering.
+          for attempt in 1 2 3; do systemctl --user enable --now podman.socket && break; sleep 5; done
           podman info
 
       - name: Make Podman the only container engine (Windows)

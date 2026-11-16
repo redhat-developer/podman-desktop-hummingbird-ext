@@ -142,10 +142,17 @@ test.describe.serial('Hummingbird Grype integration', { tag: ['@smoke', '@grype'
 
         const binariesDialog = page.getByRole('dialog').filter({ hasText: 'install Syft and Grype binaries' });
         const systemWideDialog = page.getByRole('dialog').filter({ hasText: 'system-wide' });
+        // Swallow click errors (e.g. the dialog closed in between): the loop retries.
         if (await binariesDialog.isVisible().catch(() => false)) {
-          await binariesDialog.getByRole('button', { name: 'Yes', exact: true }).click({ timeout: 10_000 });
+          await binariesDialog
+            .getByRole('button', { name: 'Yes', exact: true })
+            .click({ timeout: 10_000 })
+            .catch(() => {});
         } else if (await systemWideDialog.isVisible().catch(() => false)) {
-          await systemWideDialog.getByRole('button', { name: 'Cancel', exact: true }).click({ timeout: 10_000 });
+          await systemWideDialog
+            .getByRole('button', { name: 'Cancel', exact: true })
+            .click({ timeout: 10_000 })
+            .catch(() => {});
         }
         return false;
       },

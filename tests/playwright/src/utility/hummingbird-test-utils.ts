@@ -130,6 +130,7 @@ export async function waitForPodmanReady(page: Page): Promise<void> {
 
   const enhancedDashboard = await dashboardPage.systemOverviewButton.isVisible({ timeout: 5_000 }).catch(() => false);
   if (enhancedDashboard) {
+    await dashboardPage.expandSystemOverview(true);
     await expect(dashboardPage.statusButton).not.toHaveText(SystemOverviewState.Starting, { timeout: 60_000 });
     await expect(dashboardPage.statusButton).toHaveText(SystemOverviewState.Operational, { timeout: 60_000 });
   } else {
@@ -191,9 +192,9 @@ async function installExtensionIfNeeded(
     return false;
   }
 
-  await extensionsPage.installExtensionFromOCIImage(image);
-  // Record before verifying, so a failed verification still cleans up.
+  // Record before acting: a failed install that still lands the extension must clean up.
   installedBySuite();
+  await extensionsPage.installExtensionFromOCIImage(image);
   await expect.poll(async () => await extensionsPage.extensionIsInstalled(label), { timeout: 60_000 }).toBeTruthy();
   return true;
 }
@@ -253,23 +254,28 @@ export function stripImageTag(imageReference: string): string {
 // Pulls `imageName` unless already available; records it for the final cleanup.
 export async function pullImageIfNeeded(navigationBar: NavigationBar, imageName: string): Promise<boolean> {
   const imagesPage = await navigationBar.openImages();
-  const imageExists = await imagesPage.waitForImageExists(stripImageTag(imageName), 5_000).catch(() => false);
+  // Generous initial wait: wrongly concluding "absent" would pull and later delete an
+  // image that was already on the engine.
+  const imageExists = await imagesPage.waitForImageExists(stripImageTag(imageName), 15_000).catch(() => false);
   if (imageExists) return false;
 
-  await imagesPage.pullImage(imageName);
-  // Record before waiting, so a failed wait still cleans up.
+  // Record before acting: a failed pull that still lands the image must clean up.
   markImagePulledBySuite(imageName);
+  await imagesPage.pullImage(imageName);
   await imagesPage.waitForImageExists(stripImageTag(imageName), 60_000);
   return true;
 }
 
-/** Deletes `imageName`, ignoring missing images and errors. */
+// Deletes `imageName`, ignoring missing images and errors.
 export async function deleteImageIfExists(navigationBar: NavigationBar, imageName: string): Promise<void> {
   try {
     const imageRepo = stripImageTag(imageName);
     const imagesPage = await navigationBar.openImages();
-    const imageExists = await imagesPage.waitForImageExists(imageRepo, 5_000).catch(() => false);
-    if (!imageExists) return;
+    const imageExists = await imagesPage.waitForImageExists(imageRepo, 15_000).catch(() => false);
+    if (!imageExists) {
+      console.log(`Image ${imageName} not found, skipping deletion`);
+      return;
+    }
 
     const imageDetailsPage = await imagesPage.openImageDetails(imageRepo);
     await imageDetailsPage.deleteImage();

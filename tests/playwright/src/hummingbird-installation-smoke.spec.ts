@@ -55,17 +55,19 @@ test.beforeAll(async ({ runner, welcomePage, navigationBar }) => {
 // This file sorts last: its afterAll performs the single final cleanup of what the run
 // installed and pulled. The extension is installed once by the first spec file and never
 // removed between. The cleanup lives at file level so it also runs when the setup fails.
-test.afterAll(async ({ runner, navigationBar }) => {
-  try {
-    for (const image of getImagesPulledBySuite()) {
-      await deleteImageIfExists(navigationBar, image);
-    }
-    if (didSuiteInstallHummingbird()) {
-      await ensureHummingbirdIsRemoved(navigationBar);
-    }
-  } finally {
-    await runner.close();
+test.afterAll(async ({ navigationBar }) => {
+  for (const image of getImagesPulledBySuite()) {
+    await deleteImageIfExists(navigationBar, image);
   }
+  if (didSuiteInstallHummingbird()) {
+    await ensureHummingbirdIsRemoved(navigationBar);
+  }
+});
+
+// Playwright runs this hook even if the previous one fails, after recording the failure,
+// so runner.close() retains its diagnostic artifacts.
+test.afterAll(async ({ runner }) => {
+  await runner.close();
 });
 
 test.describe.serial('Hummingbird extension installation', { tag: ['@smoke', '@installation'] }, () => {

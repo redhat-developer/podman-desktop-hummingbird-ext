@@ -116,4 +116,5 @@ never removed, so the same preloaded profile can be reused across runs.
   image. Manual runs can select a published image or build from the selected branch.
 
 Both paths publish JUnit summaries and upload per-OS test artifacts. Playwright traces and videos are only kept for
-failures.
+failures; to keep them for passing tests locally, set the framework's `KEEP_TRACES_ON_PASS=true` /
+`KEEP_VIDEOS_ON_PASS=true`.
