@@ -22,6 +22,7 @@ import {
   ensureHummingbirdIsRemoved,
   extensionHeading,
   extensionImage,
+  extensionInstalledAfterSettling,
   extensionLabel,
   extensionName,
   getImagesPulledBySuite,
@@ -51,12 +52,22 @@ test.beforeAll(async ({ runner, welcomePage, navigationBar }) => {
   await expect(dashboardPage.heading).toBeVisible();
 });
 
-test.afterAll(async ({ runner }) => {
-  await runner.close();
+// This file sorts last: its afterAll performs the single final cleanup of what the run
+// installed and pulled. The extension is installed once by the first spec file and never
+// removed between. The cleanup lives at file level so it also runs when the setup fails.
+test.afterAll(async ({ runner, navigationBar }) => {
+  try {
+    for (const image of getImagesPulledBySuite()) {
+      await deleteImageIfExists(navigationBar, image);
+    }
+    if (didSuiteInstallHummingbird()) {
+      await ensureHummingbirdIsRemoved(navigationBar);
+    }
+  } finally {
+    await runner.close();
+  }
 });
 
-// This file sorts last: it performs the single final cleanup of what the run installed and
-// pulled. The extension is installed once by the first spec file and never removed between.
 test.describe.serial('Hummingbird extension installation', { tag: ['@smoke', '@installation'] }, () => {
   test('Install Hummingbird from an OCI image', async ({ navigationBar }) => {
     // eslint-disable-next-line sonarjs/no-skipped-tests -- PRs preload the image; the next tests must still verify it.
@@ -66,7 +77,7 @@ test.describe.serial('Hummingbird extension installation', { tag: ['@smoke', '@i
     let extensionsPage = await navigationBar.openExtensions();
     await expect(extensionsPage.header).toBeVisible();
     // A failing earlier run may have left it installed: start from a clean state.
-    if (await extensionsPage.extensionIsInstalled(extensionLabel)) {
+    if (await extensionInstalledAfterSettling(extensionsPage, extensionLabel)) {
       await ensureHummingbirdIsRemoved(navigationBar);
       extensionsPage = await navigationBar.openExtensions();
       await expect(extensionsPage.header).toBeVisible();
@@ -101,14 +112,5 @@ test.describe.serial('Hummingbird extension installation', { tag: ['@smoke', '@i
     await expect
       .poll(async () => await extension.status.innerText(), { timeout: 60_000 })
       .toMatch(extensionStatusRegex);
-  });
-
-  test.afterAll(async ({ navigationBar }) => {
-    for (const image of getImagesPulledBySuite()) {
-      await deleteImageIfExists(navigationBar, image);
-    }
-    if (didSuiteInstallHummingbird()) {
-      await ensureHummingbirdIsRemoved(navigationBar);
-    }
   });
 });

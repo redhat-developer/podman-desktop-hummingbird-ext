@@ -60,9 +60,10 @@ export class HummingbirdCatalogPage {
   }
 
   // Pulls the image and waits for the card to switch to the pulled state.
-  // Returns true only when it performed the pull.
-  async pullImage(repositoryName: string, timeout = 300_000): Promise<boolean> {
-    await expect(this.getRepositoryCard(repositoryName)).toBeVisible();
+  // Returns true only when it performed the pull; onPullStarted fires right after the
+  // pull is initiated, for recording the image before any wait can fail.
+  async pullImage(repositoryName: string, onPullStarted?: () => void, timeout = 300_000): Promise<boolean> {
+    await expect(this.getRepositoryCard(repositoryName)).toBeVisible({ timeout: 30_000 });
 
     const pullButton = this.getPullButton(repositoryName);
     const openButton = this.getOpenButton(repositoryName);
@@ -89,6 +90,7 @@ export class HummingbirdCatalogPage {
       if (await openButton.isVisible().catch(() => false)) return false;
       throw error;
     }
+    onPullStarted?.();
 
     await expect(openButton).toBeVisible({ timeout });
     await expect(this.getRunButton(repositoryName)).toBeVisible({ timeout: 10_000 });

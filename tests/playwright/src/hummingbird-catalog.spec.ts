@@ -16,7 +16,7 @@
  ***********************************************************************/
 
 import type { Page } from '@playwright/test';
-import { RunnerOptions, expect, test, waitForPodmanMachineStartup, waitUntil } from '@podman-desktop/tests-playwright';
+import { RunnerOptions, expect, test, waitUntil } from '@podman-desktop/tests-playwright';
 import { HummingbirdNavigationBar } from './model/hummingbird-navigation-bar';
 import {
   cleanupRawVideoFiles,
@@ -24,6 +24,7 @@ import {
   installHummingbirdExtensionIfNeeded,
   markImagePulledBySuite,
   stripImageTag,
+  waitForPodmanReady,
 } from './utility/hummingbird-test-utils';
 
 // Bare repository name as shown on the catalog card, e.g. "curl".
@@ -50,7 +51,7 @@ test.beforeAll(async ({ runner, welcomePage, page: mainPage }) => {
   runner.setVideoAndTraceName('hummingbird-catalog');
   await welcomePage.handleWelcomePage(true);
   await expect(welcomePage.skipOnBoarding).toBeHidden();
-  await waitForPodmanMachineStartup(mainPage);
+  await waitForPodmanReady(mainPage);
 });
 
 test.afterAll(async ({ runner }) => {
@@ -61,6 +62,7 @@ test.afterAll(async ({ runner }) => {
 
 test.describe.serial('Hummingbird catalog', { tag: ['@smoke', '@catalog'] }, () => {
   test.beforeAll(async ({ navigationBar }) => {
+    test.setTimeout(300_000); // Installing the extension can take a while.
     await installHummingbirdExtensionIfNeeded(navigationBar);
   });
 
@@ -114,6 +116,9 @@ test.describe.serial('Hummingbird catalog', { tag: ['@smoke', '@catalog'] }, () 
     await expect(catalogPage.repositoryCards.filter({ hasNotText: 'nginx' })).toHaveCount(0);
 
     await catalogPage.searchInput.fill('no-such-hummingbird-image');
+    // Tie the "no results" check to a known card disappearing, so it cannot pass on an
+    // unrelated empty (still loading) state.
+    await expect(catalogPage.getRepositoryCard('nginx')).toBeHidden();
     await expect(catalogPage.repositoryCards).toHaveCount(0);
 
     await catalogPage.searchInput.fill('');
@@ -127,9 +132,7 @@ test.describe.serial('Hummingbird catalog', { tag: ['@smoke', '@catalog'] }, () 
     const hummingbirdNavigationBar = new HummingbirdNavigationBar(page, webview);
     const catalogPage = await hummingbirdNavigationBar.openCatalog();
 
-    if (await catalogPage.pullImage(catalogImageName)) {
-      markImagePulledBySuite(catalogImageReference);
-    }
+    await catalogPage.pullImage(catalogImageName, () => markImagePulledBySuite(catalogImageReference));
 
     // Image rows are labelled with the repository only.
     const imagesPage = await navigationBar.openImages();
@@ -141,7 +144,7 @@ test.describe.serial('Hummingbird catalog', { tag: ['@smoke', '@catalog'] }, () 
     const hummingbirdNavigationBar = new HummingbirdNavigationBar(page, webview);
     const catalogPage = await hummingbirdNavigationBar.openCatalog();
 
-    await expect(catalogPage.getOpenButton(catalogImageName)).toBeVisible();
+    await expect(catalogPage.getOpenButton(catalogImageName)).toBeVisible({ timeout: 30_000 });
     await catalogPage.getOpenButton(catalogImageName).click();
 
     await expect(page.getByRole('heading', { name: stripImageTag(catalogImageReference) })).toBeVisible({

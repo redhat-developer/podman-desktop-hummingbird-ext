@@ -66,7 +66,10 @@ PODMAN_DESKTOP_ARGS=/path/to/podman-desktop pnpm test:e2e
 On Windows, set `$env:PODMAN_DESKTOP_ARGS` or `$env:PODMAN_DESKTOP_BINARY` in PowerShell before running the tests.
 On Linux, install Xvfb and Playwright's system dependencies with
 `pnpm --dir tests/playwright exec playwright install --with-deps chromium`.
-Set only one of `PODMAN_DESKTOP_BINARY` / `PODMAN_DESKTOP_ARGS`.
+Set only one of `PODMAN_DESKTOP_BINARY` / `PODMAN_DESKTOP_ARGS`. Locally, have Podman running
+beforehand (`podman machine start`): the suite waits for it, but never creates or resets
+machines outside CI — the framework's startup helper resets machines stuck in STARTING,
+which would delete every local machine.
 
 The default image is `ghcr.io/redhat-developer/podman-desktop-hummingbird-ext:next`. Set `OCI_IMAGE` to test another
 published image. Run `pnpm test:e2e` to execute the full suite, or select a subset with tags: `@installation` (install

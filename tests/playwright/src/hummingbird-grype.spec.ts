@@ -16,14 +16,7 @@
  ***********************************************************************/
 
 import type { Page } from '@playwright/test';
-import {
-  RunnerOptions,
-  expect,
-  isWindows,
-  test,
-  waitForPodmanMachineStartup,
-  waitUntil,
-} from '@podman-desktop/tests-playwright';
+import { RunnerOptions, expect, isWindows, test, waitUntil } from '@podman-desktop/tests-playwright';
 import { HummingbirdNavigationBar } from './model/hummingbird-navigation-bar';
 import {
   cleanupRawVideoFiles,
@@ -37,6 +30,7 @@ import {
   installHummingbirdExtensionIfNeeded,
   pullImageIfNeeded,
   stripImageTag,
+  waitForPodmanReady,
 } from './utility/hummingbird-test-utils';
 
 const localImageReference = 'docker.io/library/nginx:alpine';
@@ -61,7 +55,7 @@ test.beforeAll(async ({ runner, welcomePage, page: mainPage }) => {
   runner.setVideoAndTraceName('hummingbird-grype');
   await welcomePage.handleWelcomePage(true);
   await expect(welcomePage.skipOnBoarding).toBeHidden();
-  await waitForPodmanMachineStartup(mainPage);
+  await waitForPodmanReady(mainPage);
 });
 
 test.afterAll(async ({ runner }) => {
@@ -130,6 +124,7 @@ test.describe.serial('Hummingbird Grype integration', { tag: ['@smoke', '@grype'
     // First use prompts on the main page (not the webview) to install the Syft/Grype
     // binaries, and possibly system-wide: answer the dialogs while waiting for the report.
     const reportCell = alternativesPage.getReportCell(localImageRepo);
+    const errorScanning = alternativesPage.getImageRow(localImageRepo).getByText('Error scanning');
     const reportDone = async (): Promise<boolean> => {
       // innerText() waits for the element: only read a cell that is currently rendered.
       if (!(await reportCell.isVisible().catch(() => false))) return false;
@@ -142,6 +137,8 @@ test.describe.serial('Hummingbird Grype integration', { tag: ['@smoke', '@grype'
     await waitUntil(
       async () => {
         if (await reportDone()) return true;
+        // Stop early on a scan error: the assertions below report the real cause.
+        if (await errorScanning.isVisible().catch(() => false)) return true;
 
         const binariesDialog = page.getByRole('dialog').filter({ hasText: 'install Syft and Grype binaries' });
         const systemWideDialog = page.getByRole('dialog').filter({ hasText: 'system-wide' });
@@ -160,6 +157,6 @@ test.describe.serial('Hummingbird Grype integration', { tag: ['@smoke', '@grype'
     );
 
     await expect(reportCell).toContainText(/\d/);
-    await expect(alternativesPage.getImageRow(localImageRepo).getByText('Error scanning')).not.toBeVisible();
+    await expect(errorScanning).not.toBeVisible();
   });
 });

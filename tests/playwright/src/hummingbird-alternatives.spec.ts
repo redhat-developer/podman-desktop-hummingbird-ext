@@ -16,7 +16,7 @@
  ***********************************************************************/
 
 import type { Page } from '@playwright/test';
-import { RunnerOptions, expect, test, waitForPodmanMachineStartup } from '@podman-desktop/tests-playwright';
+import { RunnerOptions, expect, test } from '@podman-desktop/tests-playwright';
 import { HummingbirdNavigationBar } from './model/hummingbird-navigation-bar';
 import {
   cleanupRawVideoFiles,
@@ -24,6 +24,7 @@ import {
   installHummingbirdExtensionIfNeeded,
   pullImageIfNeeded,
   stripImageTag,
+  waitForPodmanReady,
 } from './utility/hummingbird-test-utils';
 
 // Local image with a known Hummingbird alternative (see packages/backend/src/assets/alt.json).
@@ -49,7 +50,7 @@ test.beforeAll(async ({ runner, welcomePage, page: mainPage }) => {
   runner.setVideoAndTraceName('hummingbird-alternatives');
   await welcomePage.handleWelcomePage(true);
   await expect(welcomePage.skipOnBoarding).toBeHidden();
-  await waitForPodmanMachineStartup(mainPage);
+  await waitForPodmanReady(mainPage);
 });
 
 test.afterAll(async ({ runner }) => {
@@ -60,6 +61,7 @@ test.afterAll(async ({ runner }) => {
 
 test.describe.serial('Hummingbird alternatives', { tag: ['@smoke', '@alternatives'] }, () => {
   test.beforeAll(async ({ navigationBar }) => {
+    test.setTimeout(300_000); // Installing the extension can take a while.
     await installHummingbirdExtensionIfNeeded(navigationBar);
   });
 

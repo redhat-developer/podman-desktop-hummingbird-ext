@@ -17,7 +17,15 @@
 
 import type { Page } from '@playwright/test';
 import type { ExtensionsPage, Runner } from '@podman-desktop/tests-playwright';
-import { NavigationBar, delay, expect, test, waitUntil } from '@podman-desktop/tests-playwright';
+import {
+  NavigationBar,
+  SystemOverviewState,
+  expect,
+  isCI,
+  test,
+  waitForPodmanMachineStartup,
+  waitUntil,
+} from '@podman-desktop/tests-playwright';
 import {
   existsSync,
   mkdirSync,
@@ -28,8 +36,8 @@ import {
   unlinkSync,
   writeFileSync,
 } from 'node:fs';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 export const extensionName = 'hummingbird';
 export const extensionLabel = 'redhat.hummingbird';
@@ -46,8 +54,16 @@ const grypeOciImage = process.env.GRYPE_OCI_IMAGE || 'ghcr.io/podman-desktop/ext
 export const grypeExtensionImage = grypeOciImage;
 
 // What this run installed / pulled, so only that gets removed during cleanup. Persisted to
-// a file: Playwright restarts the worker after a failure, resetting module state.
-const SUITE_STATE_FILE = join(tmpdir(), 'hummingbird-e2e-suite-state.json');
+// a file: Playwright restarts the worker after a failure, resetting module state. Kept
+// under tests/output so concurrent runs in different checkouts do not share it.
+const SUITE_STATE_FILE = join(
+  dirname(fileURLToPath(import.meta.url)),
+  '..',
+  '..',
+  'tests',
+  'output',
+  'hummingbird-e2e-suite-state.json',
+);
 
 interface SuiteState {
   hummingbirdInstalled: boolean;
@@ -66,6 +82,7 @@ function readSuiteState(): SuiteState {
 function updateSuiteState(mutate: (state: SuiteState) => void): void {
   const state = readSuiteState();
   mutate(state);
+  mkdirSync(dirname(SUITE_STATE_FILE), { recursive: true });
   writeFileSync(SUITE_STATE_FILE, JSON.stringify(state), 'utf-8');
 }
 
@@ -96,6 +113,29 @@ export function markImagePulledBySuite(imageReference: string): void {
 
 export function getImagesPulledBySuite(): string[] {
   return readSuiteState().imagesPulled;
+}
+
+// Waits for Podman to be running. On CI delegates to the framework helper, which creates
+// and starts the machine — and resets machines stuck in STARTING, deleting every machine
+// with its images and containers. That must never run on a developer machine: locally only
+// wait for the dashboard to report Podman as running.
+export async function waitForPodmanReady(page: Page): Promise<void> {
+  if (isCI) {
+    await waitForPodmanMachineStartup(page);
+    return;
+  }
+
+  const dashboardPage = await new NavigationBar(page).openDashboard();
+  await expect(dashboardPage.heading).toBeVisible();
+
+  const enhancedDashboard = await dashboardPage.systemOverviewButton.isVisible({ timeout: 5_000 }).catch(() => false);
+  if (enhancedDashboard) {
+    await expect(dashboardPage.statusButton).not.toHaveText(SystemOverviewState.Starting, { timeout: 60_000 });
+    await expect(dashboardPage.statusButton).toHaveText(SystemOverviewState.Operational, { timeout: 60_000 });
+  } else {
+    await expect(dashboardPage.podmanStatusLabel).not.toHaveText('STARTING', { timeout: 60_000 });
+    await expect(dashboardPage.podmanStatusLabel).toHaveText('RUNNING', { timeout: 60_000 });
+  }
 }
 
 // Returns the main Podman Desktop page and the webview guest page, matched by URL (the
@@ -132,19 +172,20 @@ export async function handleWebview(runner: Runner): Promise<[Page, Page]> {
   return [page, webViewPage!];
 }
 
-/** Installs the extension unless already present. Returns true only when it installed it. */
+// Installs the extension unless already present. Returns true only when it installed it.
 async function installExtensionIfNeeded(
   navigationBar: NavigationBar,
   label: string,
   image: string,
   installedBySuite: () => void,
+  waitForPreloaded = false,
 ): Promise<boolean> {
   const extensionsPage = await navigationBar.openExtensions();
   await expect(extensionsPage.header).toBeVisible();
 
   if (await extensionInstalledAfterSettling(extensionsPage, label)) return false;
 
-  if (label === extensionLabel && process.env.SKIP_INSTALLATION === 'true') {
+  if (waitForPreloaded) {
     // Preloaded: only wait for it.
     await expect.poll(async () => await extensionsPage.extensionIsInstalled(label), { timeout: 60_000 }).toBeTruthy();
     return false;
@@ -158,7 +199,13 @@ async function installExtensionIfNeeded(
 }
 
 export async function installHummingbirdExtensionIfNeeded(navigationBar: NavigationBar): Promise<boolean> {
-  return installExtensionIfNeeded(navigationBar, extensionLabel, extensionImage, markHummingbirdInstalledBySuite);
+  return installExtensionIfNeeded(
+    navigationBar,
+    extensionLabel,
+    extensionImage,
+    markHummingbirdInstalledBySuite,
+    process.env.SKIP_INSTALLATION === 'true',
+  );
 }
 
 export async function installGrypeExtensionIfNeeded(navigationBar: NavigationBar): Promise<boolean> {
@@ -210,8 +257,9 @@ export async function pullImageIfNeeded(navigationBar: NavigationBar, imageName:
   if (imageExists) return false;
 
   await imagesPage.pullImage(imageName);
-  await imagesPage.waitForImageExists(stripImageTag(imageName), 60_000);
+  // Record before waiting, so a failed wait still cleans up.
   markImagePulledBySuite(imageName);
+  await imagesPage.waitForImageExists(stripImageTag(imageName), 60_000);
   return true;
 }
 
@@ -232,18 +280,18 @@ export async function deleteImageIfExists(navigationBar: NavigationBar, imageNam
 }
 
 // Gives a still-populating extension list a short window before concluding "absent".
-async function extensionInstalledAfterSettling(
+export async function extensionInstalledAfterSettling(
   extensionsPage: ExtensionsPage,
   label: string,
   settleTimeout = 5_000,
 ): Promise<boolean> {
   if (await extensionsPage.extensionIsInstalled(label)) return true;
-  const deadline = Date.now() + settleTimeout;
-  while (Date.now() < deadline) {
-    await delay(500);
-    if (await extensionsPage.extensionIsInstalled(label)) return true;
-  }
-  return false;
+  await waitUntil(() => extensionsPage.extensionIsInstalled(label), {
+    timeout: settleTimeout,
+    diff: 500,
+    sendError: false,
+  });
+  return extensionsPage.extensionIsInstalled(label);
 }
 
 // Webview guest windows leave orphaned raw video files that runner.close() does not track.
