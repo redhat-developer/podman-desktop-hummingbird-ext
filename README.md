@@ -112,5 +112,5 @@ never removed, so the same preloaded profile can be reused across runs.
   build's commit SHA, and skips the job if `main` has already moved past that commit so tests stay aligned with the
   image. Manual runs can select a published image or build from the selected branch.
 
-Both paths publish JUnit summaries and upload per-OS test artifacts. Pass-path Playwright traces and videos are off by
-default; set `SAVE_TRACES_ON_PASS=true` locally if you need them.
+Both paths publish JUnit summaries and upload per-OS test artifacts. Playwright traces and videos are only kept for
+failures.

@@ -32,16 +32,14 @@ import {
 // "Installed": accept either.
 const extensionStatusRegex = /^\s*(ACTIVE|Installed)\s*$/i;
 
-const saveArtifactsOnPass = process.env.SAVE_TRACES_ON_PASS === 'true';
-
 test.use({
   runnerOptions: new RunnerOptions({
     customFolder: 'hummingbird-tests-pd',
     customOutputFolder: 'tests/output',
     autoUpdate: false,
     autoCheckUpdates: false,
-    saveTracesOnPass: saveArtifactsOnPass,
-    saveVideosOnPass: saveArtifactsOnPass,
+    saveTracesOnPass: false,
+    saveVideosOnPass: false,
   }),
 });
 
@@ -57,9 +55,8 @@ test.afterAll(async ({ runner }) => {
   await runner.close();
 });
 
-// This file sorts last in the suite: it performs the single final cleanup of what the run
-// installed (the extension) and pulled (the images). The extension is installed once by the
-// first spec file and never removed in between.
+// This file sorts last: it performs the single final cleanup of what the run installed and
+// pulled. The extension is installed once by the first spec file and never removed between.
 test.describe.serial('Hummingbird extension installation', { tag: ['@smoke', '@installation'] }, () => {
   test('Install Hummingbird from an OCI image', async ({ navigationBar }) => {
     // eslint-disable-next-line sonarjs/no-skipped-tests -- PRs preload the image; the next tests must still verify it.
@@ -68,7 +65,7 @@ test.describe.serial('Hummingbird extension installation', { tag: ['@smoke', '@i
     test.skip(didSuiteInstallHummingbird(), 'Extension already installed by an earlier spec file');
     let extensionsPage = await navigationBar.openExtensions();
     await expect(extensionsPage.header).toBeVisible();
-    // A failing earlier run may have left the extension installed: start from a clean state.
+    // A failing earlier run may have left it installed: start from a clean state.
     if (await extensionsPage.extensionIsInstalled(extensionLabel)) {
       await ensureHummingbirdIsRemoved(navigationBar);
       extensionsPage = await navigationBar.openExtensions();

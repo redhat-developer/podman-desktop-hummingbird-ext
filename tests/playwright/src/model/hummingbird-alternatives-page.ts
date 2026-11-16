@@ -45,8 +45,8 @@ export class HummingbirdAlternativesPage {
     return this.table.getByRole('row', { name: imageRepository, exact: true });
   }
 
-  // Row cells are: expander, Status, Name, CVEs, Size Reduction, Actions — the CVEs report
-  // cell sits at index 3 and only contains text once the scan has finished.
+  // Cells are: expander, Status, Name, CVEs, Size, Actions — index 3 is the CVEs report
+  // cell, which only contains text once the scan has finished.
   getReportCell(imageRepository: string): Locator {
     return this.getImageRow(imageRepository).getByRole('cell').nth(3);
   }

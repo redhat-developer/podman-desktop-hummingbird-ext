@@ -30,8 +30,6 @@ import {
 const localImageReference = 'docker.io/library/nginx:alpine';
 const localImageRepo = stripImageTag(localImageReference);
 
-const saveArtifactsOnPass = process.env.SAVE_TRACES_ON_PASS === 'true';
-
 let page: Page;
 let webview: Page;
 
@@ -41,8 +39,8 @@ test.use({
     customOutputFolder: 'tests/output',
     autoUpdate: false,
     autoCheckUpdates: false,
-    saveTracesOnPass: saveArtifactsOnPass,
-    saveVideosOnPass: saveArtifactsOnPass,
+    saveTracesOnPass: false,
+    saveVideosOnPass: false,
   }),
 });
 

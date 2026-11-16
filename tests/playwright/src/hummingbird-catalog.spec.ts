@@ -26,12 +26,10 @@ import {
   stripImageTag,
 } from './utility/hummingbird-test-utils';
 
-// Bare repository name as shown on the catalog card (e.g. "curl" or "jq").
+// Bare repository name as shown on the catalog card, e.g. "curl".
 // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
 const catalogImageName = process.env.HUMMINGBIRD_CATALOG_IMAGE || 'curl';
 const catalogImageReference = `quay.io/hummingbird/${catalogImageName}:latest`;
-
-const saveArtifactsOnPass = process.env.SAVE_TRACES_ON_PASS === 'true';
 
 let page: Page;
 let webview: Page;
@@ -42,8 +40,8 @@ test.use({
     customOutputFolder: 'tests/output',
     autoUpdate: false,
     autoCheckUpdates: false,
-    saveTracesOnPass: saveArtifactsOnPass,
-    saveVideosOnPass: saveArtifactsOnPass,
+    saveTracesOnPass: false,
+    saveVideosOnPass: false,
   }),
 });
 
@@ -85,8 +83,7 @@ test.describe.serial('Hummingbird catalog', { tag: ['@smoke', '@catalog'] }, () 
     const hummingbirdNavigationBar = new HummingbirdNavigationBar(page, webview);
     const catalogPage = await hummingbirdNavigationBar.openCatalog();
 
-    // The catalog is fetched from the Hummingbird API: waiting for the cards validates the
-    // extension backend too.
+    // Waiting for the cards validates the backend fetch from the Hummingbird API too.
     await expect(catalogPage.repositoryCards.first()).toBeVisible({ timeout: 60_000 });
 
     const card = catalogPage.getRepositoryCard('nginx');
@@ -101,7 +98,7 @@ test.describe.serial('Hummingbird catalog', { tag: ['@smoke', '@catalog'] }, () 
     const catalogPage = await hummingbirdNavigationBar.openCatalog();
     await expect(catalogPage.repositoryCards.first()).toBeVisible({ timeout: 60_000 });
 
-    // The page loads twice (connection auto-selection navigates again): poll for a stable count.
+    // The page loads twice (connection auto-selection navigates again): poll for stability.
     let totalCards = 0;
     await waitUntil(
       async () => {
@@ -112,8 +109,7 @@ test.describe.serial('Hummingbird catalog', { tag: ['@smoke', '@catalog'] }, () 
     );
 
     await catalogPage.searchInput.fill('nginx');
-    // Upstream may add similarly named repositories: require the nginx card to be visible
-    // and no non-matching card to remain, instead of an exact count.
+    // No exact count: upstream may add similarly named repositories.
     await expect(catalogPage.getRepositoryCard('nginx')).toBeVisible();
     await expect(catalogPage.repositoryCards.filter({ hasNotText: 'nginx' })).toHaveCount(0);
 

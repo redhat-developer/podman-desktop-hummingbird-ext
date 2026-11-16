@@ -59,18 +59,15 @@ export class HummingbirdCatalogPage {
     return this.getRepositoryCard(repositoryName).getByRole('button', { name: 'More details', exact: true });
   }
 
-  /**
-   * Pulls the `quay.io/hummingbird/<repositoryName>:latest` image and waits for the card to
-   * switch to the pulled state. Returns true only when it performed the pull.
-   */
+  // Pulls the image and waits for the card to switch to the pulled state.
+  // Returns true only when it performed the pull.
   async pullImage(repositoryName: string, timeout = 300_000): Promise<boolean> {
     await expect(this.getRepositoryCard(repositoryName)).toBeVisible();
 
     const pullButton = this.getPullButton(repositoryName);
     const openButton = this.getOpenButton(repositoryName);
-    // Wait for a stable footer: while the page loads, the card shows a disabled Pull button
-    // (no connection selected yet) or a skeleton. isVisible() does not wait for the element,
-    // while isEnabled() does — hence the guard and the short timeouts.
+    // Wait for a stable footer: while loading, the card shows a disabled Pull button (no
+    // connection selected yet) or a skeleton. isVisible() does not wait, isEnabled() does.
     await waitUntil(
       async () => {
         if (await openButton.isVisible().catch(() => false)) return true;

@@ -34,7 +34,7 @@ import { join } from 'node:path';
 export const extensionName = 'hummingbird';
 export const extensionLabel = 'redhat.hummingbird';
 export const extensionHeading = 'Hummingbird';
-// `||` on purpose: an empty variable must fall back to the default.
+// `||` on purpose: an empty variable must fall back.
 // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
 export const extensionImage = process.env.OCI_IMAGE || 'ghcr.io/redhat-developer/podman-desktop-hummingbird-ext:next';
 
@@ -45,10 +45,8 @@ export const grypeExtensionHeading = 'Grype';
 const grypeOciImage = process.env.GRYPE_OCI_IMAGE || 'ghcr.io/podman-desktop/extension-grype:next';
 export const grypeExtensionImage = grypeOciImage;
 
-// Suite state: what this run installed / pulled, so only that gets removed during cleanup.
-// Persisted to a file because Playwright restarts the worker process after a failure,
-// which would reset module-level state. Only what the run installed may be removed: a
-// preloaded plugin cannot be restored once removed.
+// What this run installed / pulled, so only that gets removed during cleanup. Persisted to
+// a file: Playwright restarts the worker after a failure, resetting module state.
 const SUITE_STATE_FILE = join(tmpdir(), 'hummingbird-e2e-suite-state.json');
 
 interface SuiteState {
@@ -100,12 +98,8 @@ export function getImagesPulledBySuite(): string[] {
   return readSuiteState().imagesPulled;
 }
 
-/**
- * Opens the Hummingbird extension page and returns the main Podman Desktop page together
- * with the webview guest page. The webview runs inside an Electron `<webview>` tag, so its
- * content must be driven through the guest page (same approach as the bootc E2E suite),
- * matched by URL rather than by position.
- */
+// Returns the main Podman Desktop page and the webview guest page, matched by URL (the
+// webview runs inside an Electron <webview> tag, like in the bootc E2E suite).
 export async function handleWebview(runner: Runner): Promise<[Page, Page]> {
   const page = runner.getPage();
   const navigationBar = new NavigationBar(page);
@@ -127,8 +121,7 @@ export async function handleWebview(runner: Runner): Promise<[Page, Page]> {
     { timeout: 15_000, diff: 500, message: 'Webview guest window did not appear in the Electron app' },
   );
 
-  // The config actionTimeout does not reach pages obtained from the runner in every runner
-  // mode: bound them explicitly.
+  // The config actionTimeout does not reach runner pages in every mode: bound explicitly.
   page.setDefaultTimeout(30_000);
   webViewPage!.setDefaultTimeout(30_000);
 
@@ -152,13 +145,13 @@ async function installExtensionIfNeeded(
   if (await extensionInstalledAfterSettling(extensionsPage, label)) return false;
 
   if (label === extensionLabel && process.env.SKIP_INSTALLATION === 'true') {
-    // Preloaded in the test profile: only wait for it.
+    // Preloaded: only wait for it.
     await expect.poll(async () => await extensionsPage.extensionIsInstalled(label), { timeout: 60_000 }).toBeTruthy();
     return false;
   }
 
   await extensionsPage.installExtensionFromOCIImage(image);
-  // Record before verifying, so a failing verification still leads to cleanup.
+  // Record before verifying, so a failed verification still cleans up.
   installedBySuite();
   await expect.poll(async () => await extensionsPage.extensionIsInstalled(label), { timeout: 60_000 }).toBeTruthy();
   return true;
@@ -210,10 +203,7 @@ export function stripImageTag(imageReference: string): string {
   return imageReference.substring(0, lastColon);
 }
 
-/**
- * Pulls `imageName` through the Podman Desktop Images page unless already available, and
- * records it for the final cleanup. Returns true only when it pulled it.
- */
+// Pulls `imageName` unless already available; records it for the final cleanup.
 export async function pullImageIfNeeded(navigationBar: NavigationBar, imageName: string): Promise<boolean> {
   const imagesPage = await navigationBar.openImages();
   const imageExists = await imagesPage.waitForImageExists(stripImageTag(imageName), 5_000).catch(() => false);
@@ -256,8 +246,7 @@ async function extensionInstalledAfterSettling(
   return false;
 }
 
-// Webview guest windows leave orphaned raw video files that runner.close() does not track:
-// delete them, or move them to backups/ when the named video failed to save.
+// Webview guest windows leave orphaned raw video files that runner.close() does not track.
 export function cleanupRawVideoFiles(outputFolder: string, expectedVideoName?: string): void {
   if (!existsSync(outputFolder)) return;
   const RAW_VIDEO_PATTERN = /^[0-9a-f]{32,}\.webm$/;

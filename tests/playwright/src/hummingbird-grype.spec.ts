@@ -42,8 +42,6 @@ import {
 const localImageReference = 'docker.io/library/nginx:alpine';
 const localImageRepo = stripImageTag(localImageReference);
 
-const saveArtifactsOnPass = process.env.SAVE_TRACES_ON_PASS === 'true';
-
 let page: Page;
 let webview: Page;
 
@@ -53,8 +51,8 @@ test.use({
     customOutputFolder: 'tests/output',
     autoUpdate: false,
     autoCheckUpdates: false,
-    saveTracesOnPass: saveArtifactsOnPass,
-    saveVideosOnPass: saveArtifactsOnPass,
+    saveTracesOnPass: false,
+    saveVideosOnPass: false,
   }),
 });
 
@@ -117,8 +115,6 @@ test.describe.serial('Hummingbird Grype integration', { tag: ['@smoke', '@grype'
   });
 
   test('Analyze local images with Grype', async ({ runner }) => {
-    // Covers the whole scanning flow: Syft/Grype binaries installation, SBOM generation,
-    // vulnerability scan of the local image and comparison with the Hummingbird alternative.
     test.setTimeout(900_000);
 
     [page, webview] = await handleWebview(runner);
@@ -131,9 +127,8 @@ test.describe.serial('Hummingbird Grype integration', { tag: ['@smoke', '@grype'
     await expect(alternativesPage.cvesColumnHeader).toBeVisible({ timeout: 30_000 });
     await expect(alternativesPage.sizeReductionColumnHeader).toBeVisible({ timeout: 30_000 });
 
-    // On first use the Grype extension asks (on the main page, not in the webview) to
-    // install the Syft and Grype binaries, and possibly to install them system-wide: the
-    // analysis only proceeds once the dialogs are answered.
+    // First use prompts on the main page (not the webview) to install the Syft/Grype
+    // binaries, and possibly system-wide: answer the dialogs while waiting for the report.
     const reportCell = alternativesPage.getReportCell(localImageRepo);
     const reportDone = async (): Promise<boolean> => {
       // innerText() waits for the element: only read a cell that is currently rendered.
