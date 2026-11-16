@@ -197,6 +197,7 @@ jobs:
           sudo loginctl enable-linger "$(id -un)" || true
           # Retry: the user session may not be up yet right after enabling lingering.
           for attempt in 1 2 3; do systemctl --user enable --now podman.socket && break; sleep 5; done
+          systemctl --user is-active --quiet podman.socket
           podman info
 
       - name: Make Podman the only container engine (Windows)

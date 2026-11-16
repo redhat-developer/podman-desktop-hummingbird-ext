@@ -18,7 +18,9 @@
 import { expect, RunnerOptions, test } from '@podman-desktop/tests-playwright';
 import {
   deleteImageIfExists,
+  didSuiteInstallGrype,
   didSuiteInstallHummingbird,
+  ensureGrypeExtensionIsRemoved,
   ensureHummingbirdIsRemoved,
   extensionHeading,
   extensionImage,
@@ -27,6 +29,7 @@ import {
   extensionName,
   getImagesPulledBySuite,
   markHummingbirdInstalledBySuite,
+  waitForPodmanReady,
 } from './utility/hummingbird-test-utils';
 
 // Podman Desktop 1.30.x renders the installed status as "ACTIVE" while current main renders
@@ -44,12 +47,16 @@ test.use({
   }),
 });
 
-test.beforeAll(async ({ runner, welcomePage, navigationBar }) => {
+test.beforeAll(async ({ runner, welcomePage, navigationBar, page: mainPage }) => {
   runner.setVideoAndTraceName('hummingbird-installation-smoke');
   await welcomePage.handleWelcomePage(true);
   await expect(welcomePage.skipOnBoarding).toBeHidden();
   const dashboardPage = await navigationBar.openDashboard();
   await expect(dashboardPage.heading).toBeVisible();
+  // The final cleanup lists images: make sure Podman is connected by then.
+  if (getImagesPulledBySuite().length > 0) {
+    await waitForPodmanReady(mainPage);
+  }
 });
 
 // This file sorts last: its afterAll performs the single final cleanup of what the run
@@ -58,6 +65,9 @@ test.beforeAll(async ({ runner, welcomePage, navigationBar }) => {
 test.afterAll(async ({ navigationBar }) => {
   for (const image of getImagesPulledBySuite()) {
     await deleteImageIfExists(navigationBar, image);
+  }
+  if (didSuiteInstallGrype()) {
+    await ensureGrypeExtensionIsRemoved(navigationBar);
   }
   if (didSuiteInstallHummingbird()) {
     await ensureHummingbirdIsRemoved(navigationBar);
@@ -85,8 +95,9 @@ test.describe.serial('Hummingbird extension installation', { tag: ['@smoke', '@i
       await expect(extensionsPage.header).toBeVisible();
     }
     await expect.poll(() => extensionsPage.extensionIsInstalled(extensionLabel)).toBeFalsy();
-    await extensionsPage.installExtensionFromOCIImage(extensionImage);
+    // Record before acting: a failed install that still lands the extension must clean up.
     markHummingbirdInstalledBySuite();
+    await extensionsPage.installExtensionFromOCIImage(extensionImage);
     const extension = await extensionsPage.getInstalledExtension(extensionName, extensionLabel);
     await expect(extension.card).toBeVisible();
   });

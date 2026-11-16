@@ -124,13 +124,15 @@ test.describe.serial('Hummingbird Grype integration', { tag: ['@smoke', '@grype'
     // First use prompts on the main page (not the webview) to install the Syft/Grype
     // binaries, and possibly system-wide: answer the dialogs while waiting for the report.
     const reportCell = alternativesPage.getReportCell(localImageRepo);
-    const errorScanning = alternativesPage.getImageRow(localImageRepo).getByText('Error scanning');
+    // Both report cells render "Error scanning": scope to the CVE cell to avoid a
+    // strict-mode error, and never treat an errored cell as a completed report.
+    const errorScanning = reportCell.getByText('Error scanning');
     const reportDone = async (): Promise<boolean> => {
       // innerText() waits for the element: only read a cell that is currently rendered.
       if (!(await reportCell.isVisible().catch(() => false))) return false;
       return await reportCell
         .innerText({ timeout: 1_000 })
-        .then(text => /\d/.test(text))
+        .then(text => !text.includes('Error scanning') && /\d/.test(text))
         .catch(() => false);
     };
 

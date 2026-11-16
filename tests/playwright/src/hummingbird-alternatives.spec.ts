@@ -78,6 +78,7 @@ test.describe.serial('Hummingbird alternatives', { tag: ['@smoke', '@alternative
   });
 
   test('Alternatives page lists local images with a Hummingbird alternative', async ({ runner, navigationBar }) => {
+    test.setTimeout(300_000); // Pulls an image over the network.
     await pullImageIfNeeded(navigationBar, localImageReference);
 
     [page, webview] = await handleWebview(runner);

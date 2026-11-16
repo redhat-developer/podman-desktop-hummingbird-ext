@@ -128,7 +128,10 @@ export async function waitForPodmanReady(page: Page): Promise<void> {
   const dashboardPage = await new NavigationBar(page).openDashboard();
   await expect(dashboardPage.heading).toBeVisible();
 
-  const enhancedDashboard = await dashboardPage.systemOverviewButton.isVisible({ timeout: 5_000 }).catch(() => false);
+  const enhancedDashboard = await dashboardPage.systemOverviewButton
+    .waitFor({ state: 'visible', timeout: 5_000 })
+    .then(() => true)
+    .catch(() => false);
   if (enhancedDashboard) {
     await dashboardPage.expandSystemOverview(true);
     await expect(dashboardPage.statusButton).not.toHaveText(SystemOverviewState.Starting, { timeout: 60_000 });
