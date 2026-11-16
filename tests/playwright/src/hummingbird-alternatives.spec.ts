@@ -21,10 +21,10 @@ import { HummingbirdNavigationBar } from './model/hummingbird-navigation-bar';
 import {
   cleanupRawVideoFiles,
   deleteImageIfExists,
-  ensureHummingbirdIsRemoved,
   handleWebview,
   installHummingbirdExtensionIfNeeded,
   pullImageIfNeeded,
+  removeHummingbirdExtensionIfNeeded,
 } from './utility/hummingbird-test-utils';
 
 // Local image with a known Hummingbird alternative (see packages/backend/src/assets/alt.json).
@@ -72,7 +72,7 @@ test.describe.serial('Hummingbird alternatives', { tag: ['@smoke', '@alternative
 
   test.afterAll(async ({ navigationBar }) => {
     await deleteImageIfExists(navigationBar, localImageReference);
-    await ensureHummingbirdIsRemoved(navigationBar);
+    await removeHummingbirdExtensionIfNeeded(navigationBar);
   });
 
   test('Open the Alternatives page from the webview navigation', async ({ runner }) => {

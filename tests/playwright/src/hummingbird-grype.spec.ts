@@ -29,7 +29,6 @@ import {
   cleanupRawVideoFiles,
   deleteImageIfExists,
   ensureGrypeExtensionIsRemoved,
-  ensureHummingbirdIsRemoved,
   grypeExtensionHeading,
   grypeExtensionImage,
   grypeExtensionLabel,
@@ -37,6 +36,7 @@ import {
   handleWebview,
   installHummingbirdExtensionIfNeeded,
   pullImageIfNeeded,
+  removeHummingbirdExtensionIfNeeded,
 } from './utility/hummingbird-test-utils';
 
 // Local image with a known Hummingbird alternative (see packages/backend/src/assets/alt.json).
@@ -90,7 +90,7 @@ test.describe.serial('Hummingbird Grype integration', { tag: ['@smoke', '@grype'
   test.afterAll(async ({ navigationBar }) => {
     await ensureGrypeExtensionIsRemoved(navigationBar);
     await deleteImageIfExists(navigationBar, localImageReference);
-    await ensureHummingbirdIsRemoved(navigationBar);
+    await removeHummingbirdExtensionIfNeeded(navigationBar);
   });
 
   test('Install the Grype extension', async ({ navigationBar }) => {

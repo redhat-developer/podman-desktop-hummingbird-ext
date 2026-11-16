@@ -21,9 +21,9 @@ import { HummingbirdNavigationBar } from './model/hummingbird-navigation-bar';
 import {
   cleanupRawVideoFiles,
   deleteImageIfExists,
-  ensureHummingbirdIsRemoved,
   handleWebview,
   installHummingbirdExtensionIfNeeded,
+  removeHummingbirdExtensionIfNeeded,
   stripImageTag,
 } from './utility/hummingbird-test-utils';
 
@@ -72,7 +72,7 @@ test.describe.serial('Hummingbird catalog', { tag: ['@smoke', '@catalog'] }, () 
 
   test.afterAll(async ({ navigationBar }) => {
     await deleteImageIfExists(navigationBar, catalogImageReference);
-    await ensureHummingbirdIsRemoved(navigationBar);
+    await removeHummingbirdExtensionIfNeeded(navigationBar);
   });
 
   test('Open the Hummingbird extension from the navigation bar', async ({ runner }) => {

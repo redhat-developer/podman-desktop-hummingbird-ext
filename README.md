@@ -92,8 +92,9 @@ SKIP_INSTALLATION=true SKIP_REMOVE_FOLDER=true PODMAN_DESKTOP_BINARY=/path/to/po
 
 `SKIP_INSTALLATION=true` skips the registry installation step, and `SKIP_REMOVE_FOLDER=true` preserves the preloaded
 profile while still running the framework's global setup (Chromium install). Activation and details checks still run
-and fail if the local extension is missing or cannot activate. Cleanup removes the extension, so export it again
-before another run.
+and fail if the local extension is missing or cannot activate. The specs keep a preloaded extension installed (removing
+it would delete its files from the profile), so the same preloaded profile can be reused across runs; the extension is
+only removed when the suite installed it from an OCI image itself.
 
 ### CI workflows
 

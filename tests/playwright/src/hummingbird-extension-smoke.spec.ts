@@ -49,6 +49,15 @@ test.beforeAll(async ({ runner, welcomePage, navigationBar }) => {
 });
 
 test.afterAll(async ({ navigationBar }) => {
+  // A preloaded plugin cannot be restored once removed (removal deletes its files from the
+  // test profile), so keep it installed for the spec files that may run after this one
+  // (e.g. the Grype integration spec on Windows). It is only removed when this suite
+  // installed it from an OCI image itself.
+  if (process.env.SKIP_INSTALLATION === 'true') {
+    console.log('Hummingbird extension was preloaded in the test profile, skipping removal');
+    return;
+  }
+
   const extensionsPage = await navigationBar.openExtensions();
   if (await extensionsPage.extensionIsInstalled(extensionLabel)) {
     const details = await extensionsPage.openExtensionDetails(extensionName, extensionLabel, extensionHeading);

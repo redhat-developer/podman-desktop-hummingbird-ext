@@ -133,6 +133,21 @@ export async function ensureHummingbirdIsRemoved(navigationBar: NavigationBar): 
   console.log('Hummingbird extension removed');
 }
 
+/**
+ * Removes the Hummingbird extension unless it was preloaded in the test profile
+ * (SKIP_INSTALLATION=true): removing a preloaded plugin deletes its files from the
+ * profile's plugins folder, so it would not be installed again on the next Podman
+ * Desktop start and the remaining spec files would fail to find it. The profile is
+ * discarded at the end of the test run anyway.
+ */
+export async function removeHummingbirdExtensionIfNeeded(navigationBar: NavigationBar): Promise<void> {
+  if (process.env.SKIP_INSTALLATION === 'true') {
+    console.log('Hummingbird extension was preloaded in the test profile, skipping removal');
+    return;
+  }
+  await ensureHummingbirdIsRemoved(navigationBar);
+}
+
 export async function ensureGrypeExtensionIsRemoved(navigationBar: NavigationBar): Promise<void> {
   console.log('Ensuring Grype extension is removed');
   let extensionsPage = await navigationBar.openExtensions();
