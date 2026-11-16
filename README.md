@@ -72,7 +72,9 @@ The default image is `ghcr.io/redhat-developer/podman-desktop-hummingbird-ext:ne
 published image. Run `pnpm test:e2e` to execute the full suite, or select a subset with tags: `@installation` (install
 smoke), `@catalog`, `@alternatives`, `@grype` (Windows only). The catalog spec pulls the small `curl` image by default;
 override it with `HUMMINGBIRD_CATALOG_IMAGE` (bare repository name as shown on the catalog card, e.g. `jq`, not a full
-image reference). Reports, traces, and videos are written under
+image reference). Note that the final cleanup runs in the last spec file of the full suite: a tag-filtered subset
+leaves the extension and pulled images behind (the next full run starts from a fresh profile, and the images double as
+a local pull cache). Reports, traces, and videos are written under
 `tests/playwright/tests/output/`; Playwright's per-test artifacts are under `tests/playwright/output/`.
 
 ### Test a local container image
@@ -93,8 +95,8 @@ SKIP_INSTALLATION=true SKIP_REMOVE_FOLDER=true PODMAN_DESKTOP_BINARY=/path/to/po
 
 `SKIP_INSTALLATION=true` skips the registry installation step, and `SKIP_REMOVE_FOLDER=true` preserves the preloaded
 profile while still running the framework's global setup (Chromium install). Activation and details checks still run
-and fail if the local extension is missing or cannot activate. A preloaded extension is never removed (removing it
-would delete its files from the profile), so the same preloaded profile can be reused across runs.
+and fail if the local extension is missing or cannot activate. With `SKIP_INSTALLATION` set, a preloaded extension is
+never removed, so the same preloaded profile can be reused across runs.
 
 ### CI workflows
 

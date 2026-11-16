@@ -18,7 +18,17 @@
 import type { Page } from '@playwright/test';
 import type { ExtensionsPage, Runner } from '@podman-desktop/tests-playwright';
 import { NavigationBar, delay, expect, test, waitUntil } from '@podman-desktop/tests-playwright';
-import { existsSync, mkdirSync, readdirSync, renameSync, unlinkSync } from 'node:fs';
+import {
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  readdirSync,
+  renameSync,
+  rmSync,
+  unlinkSync,
+  writeFileSync,
+} from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 export const extensionName = 'hummingbird';
@@ -35,31 +45,59 @@ export const grypeExtensionHeading = 'Grype';
 const grypeOciImage = process.env.GRYPE_OCI_IMAGE || 'ghcr.io/podman-desktop/extension-grype:next';
 export const grypeExtensionImage = grypeOciImage;
 
-// Suite-wide state, shared by all spec files (the suite runs in a single worker). Only what
-// the run installed / pulled itself may be removed during cleanup: a preloaded plugin
-// cannot be restored once removed.
-let hummingbirdInstalledBySuite = false;
-let grypeInstalledBySuite = false;
-const imagesPulledBySuite = new Set<string>();
+// Suite state: what this run installed / pulled, so only that gets removed during cleanup.
+// Persisted to a file because Playwright restarts the worker process after a failure,
+// which would reset module-level state. Only what the run installed may be removed: a
+// preloaded plugin cannot be restored once removed.
+const SUITE_STATE_FILE = join(tmpdir(), 'hummingbird-e2e-suite-state.json');
+
+interface SuiteState {
+  hummingbirdInstalled: boolean;
+  grypeInstalled: boolean;
+  imagesPulled: string[];
+}
+
+function readSuiteState(): SuiteState {
+  try {
+    return JSON.parse(readFileSync(SUITE_STATE_FILE, 'utf-8')) as SuiteState;
+  } catch {
+    return { hummingbirdInstalled: false, grypeInstalled: false, imagesPulled: [] };
+  }
+}
+
+function updateSuiteState(mutate: (state: SuiteState) => void): void {
+  const state = readSuiteState();
+  mutate(state);
+  writeFileSync(SUITE_STATE_FILE, JSON.stringify(state), 'utf-8');
+}
+
+/** Clears the suite state; called by the global setup at the start of each run. */
+export function resetSuiteState(): void {
+  rmSync(SUITE_STATE_FILE, { force: true });
+}
 
 export function markHummingbirdInstalledBySuite(): void {
-  hummingbirdInstalledBySuite = true;
+  updateSuiteState(state => {
+    state.hummingbirdInstalled = true;
+  });
 }
 
 export function didSuiteInstallHummingbird(): boolean {
-  return hummingbirdInstalledBySuite;
+  return readSuiteState().hummingbirdInstalled;
 }
 
 export function didSuiteInstallGrype(): boolean {
-  return grypeInstalledBySuite;
+  return readSuiteState().grypeInstalled;
 }
 
 export function markImagePulledBySuite(imageReference: string): void {
-  imagesPulledBySuite.add(imageReference);
+  updateSuiteState(state => {
+    state.imagesPulled.push(imageReference);
+  });
 }
 
 export function getImagesPulledBySuite(): string[] {
-  return [...imagesPulledBySuite];
+  return readSuiteState().imagesPulled;
 }
 
 /**
@@ -88,6 +126,11 @@ export async function handleWebview(runner: Runner): Promise<[Page, Page]> {
     },
     { timeout: 15_000, diff: 500, message: 'Webview guest window did not appear in the Electron app' },
   );
+
+  // The config actionTimeout does not reach pages obtained from the runner in every runner
+  // mode: bound them explicitly.
+  page.setDefaultTimeout(30_000);
+  webViewPage!.setDefaultTimeout(30_000);
 
   await page.evaluate(() => {
     (document.querySelector('webview') as HTMLElement | null)?.focus();
@@ -122,14 +165,14 @@ async function installExtensionIfNeeded(
 }
 
 export async function installHummingbirdExtensionIfNeeded(navigationBar: NavigationBar): Promise<boolean> {
-  return installExtensionIfNeeded(navigationBar, extensionLabel, extensionImage, () => {
-    hummingbirdInstalledBySuite = true;
-  });
+  return installExtensionIfNeeded(navigationBar, extensionLabel, extensionImage, markHummingbirdInstalledBySuite);
 }
 
 export async function installGrypeExtensionIfNeeded(navigationBar: NavigationBar): Promise<boolean> {
   return installExtensionIfNeeded(navigationBar, grypeExtensionLabel, grypeExtensionImage, () => {
-    grypeInstalledBySuite = true;
+    updateSuiteState(state => {
+      state.grypeInstalled = true;
+    });
   });
 }
 

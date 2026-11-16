@@ -26,8 +26,8 @@ export default defineConfig({
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
   timeout: 120_000,
-  // Bound every action: without a default, a call on an element that never appears blocks
-  // until the test timeout.
+  // Bounds actions on pages created through the standard fixtures (e.g. the CDP connection
+  // CI uses); pages obtained from the runner are bounded explicitly in handleWebview().
   use: {
     actionTimeout: 30_000,
   },

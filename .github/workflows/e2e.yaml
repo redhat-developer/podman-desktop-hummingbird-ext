@@ -203,7 +203,10 @@ jobs:
         shell: pwsh
         run: |
           Get-Service -Name docker -ErrorAction SilentlyContinue | Stop-Service
-          podman info
+          # The podman-install action installs Podman per-user and only adds it to PATH for
+          # its own step: use the full path here, and export it for the later steps.
+          "$env:LOCALAPPDATA\Programs\Podman" | Out-File -Append $env:GITHUB_PATH
+          & "$env:LOCALAPPDATA\Programs\Podman\podman.exe" info
 
       - name: Run E2E tests
         shell: bash
