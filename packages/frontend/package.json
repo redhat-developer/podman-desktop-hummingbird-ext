@@ -36,7 +36,7 @@
     "@types/humanize-duration": "^3.27.4",
     "autoprefixer": "^10.6.2",
     "filesize": "^11.0.31",
-    "jsdom": "^30.1.3",
+    "jsdom": "^31.0.1",
     "prettier": "^3.10.1",
     "prettier-plugin-svelte": "^4.1.1",
     "svelte": "5.57.3",
