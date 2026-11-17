@@ -35,7 +35,7 @@
     "@tsconfig/svelte": "^5.0.9",
     "@types/humanize-duration": "^3.27.4",
     "autoprefixer": "^10.6.2",
-    "filesize": "^11.0.31",
+    "filesize": "^11.0.32",
     "jsdom": "^31.0.1",
     "prettier": "^3.10.1",
     "prettier-plugin-svelte": "^4.1.1",

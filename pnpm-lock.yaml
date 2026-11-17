@@ -374,8 +374,8 @@ importers:
         specifier: ^10.6.2
         version: 10.6.2(postcss@8.5.29)
       filesize:
-        specifier: ^11.0.31
-        version: 11.0.31
+        specifier: ^11.0.32
+        version: 11.0.32
       jsdom:
         specifier: ^31.0.1
         version: 31.0.1
@@ -2145,8 +2145,8 @@ packages:
   file-entry-cache@11.1.5:
     resolution: {integrity: sha512-+PFTHITI08JIGhnNpGNI8T8inUpgZfk3GNEqfT9R2zZV2iFXg3CvqzSl/uEhs7TSGujYRELEANyDvS8Fj7+S7Q==}
 
-  filesize@11.0.31:
-    resolution: {integrity: sha512-czuWA5JoomIGnMe1thggiNNWIbMz7b9GNOL7gv75yn0Qxg9vjECW0zUXARFE+5WLraHh/m35++uumoi9h8nKWw==}
+  filesize@11.0.32:
+    resolution: {integrity: sha512-XDm8d3VpwwIknUHaO+eZ79opT+do/j4jeST4JD4ip3QMncAy7UK1Qc+Bifly4FVkeXylM4wvKVAJrcsA0Hbm4A==}
     engines: {node: '>= 10.8.0'}
 
   find-up-simple@1.0.1:
@@ -3634,10 +3634,6 @@ packages:
     resolution: {integrity: sha512-sXcNcHOC51uPGF0P/D4NVtrkjSU2fNsm9iog4ZvZJsL3rjoDAzXZhkm2MWt1y+PUdggKAYVoMAIYcs78wJ51Cw==}
     engines: {node: '>=20'}
 
-  whatwg-url@17.2.0:
-    resolution: {integrity: sha512-IhLIHNcBrzIixC5XXsbr4DxdjajyA5vQ5RwGZMtrUp+GbtE5Nrsge9QKau7jXrC0aTXLYGV0xiW7Tb4YS2aomw==}
-    engines: {node: ^22.14.0 || >=24.0.0}
-
   whatwg-url@17.3.0:
     resolution: {integrity: sha512-KwOAJrpf+GTgBvcBQJcP38sMF0DsQKdwtG+TxM2pW44P6E5k0hDbWrDmyuJDIF0Uef0aQq0ZoJs+5oI+k8ddhg==}
     engines: {node: ^22.14.0 || >=24.0.0}
@@ -5044,7 +5040,7 @@ snapshots:
   data-urls@8.0.0:
     dependencies:
       whatwg-mimetype: 5.0.0
-      whatwg-url: 17.2.0
+      whatwg-url: 17.3.0
     transitivePeerDependencies:
       - '@noble/hashes'
 
@@ -5523,7 +5519,7 @@ snapshots:
     dependencies:
       flat-cache: 6.1.23
 
-  filesize@11.0.31: {}
+  filesize@11.0.32: {}
 
   find-up-simple@1.0.1: {}
 
@@ -7094,14 +7090,6 @@ snapshots:
   webpack-virtual-modules@0.6.2: {}
 
   whatwg-mimetype@5.0.0: {}
-
-  whatwg-url@17.2.0:
-    dependencies:
-      '@exodus/bytes': 1.16.0
-      tr46: 7.0.0
-      webidl-conversions: 8.0.1
-    transitivePeerDependencies:
-      - '@noble/hashes'
 
   whatwg-url@17.3.0:
     dependencies:
