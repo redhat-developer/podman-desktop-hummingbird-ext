@@ -16,15 +16,9 @@
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
 import type { PageLoad } from './$types';
-import type { LocalImageAlternative } from '@podman-desktop/extension-hummingbird-core-api';
 import { alternativesAPI } from '#api/client.js';
 
-interface Data {
-  alternatives: Promise<Array<LocalImageAlternative>>;
-  isGrypeInstalled: boolean;
-}
-
-export const load: PageLoad = async ({ depends }): Promise<Data> => {
+export const load: PageLoad = async ({ depends }) => {
   depends('alternatives:update');
 
   const isGrypeInstalled = await alternativesAPI.isGrypeInstalled();
@@ -35,6 +29,7 @@ export const load: PageLoad = async ({ depends }): Promise<Data> => {
   const alternatives = Promise.all([alternativesAPI.getAlternatives(), promise]).then(([alternatives]) => alternatives);
 
   return {
+    label: 'Alternatives',
     alternatives,
     isGrypeInstalled,
   };

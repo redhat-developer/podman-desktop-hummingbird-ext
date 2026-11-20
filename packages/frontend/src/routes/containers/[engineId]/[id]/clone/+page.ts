@@ -16,17 +16,11 @@
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
 import type { PageLoad } from './$types';
-import type { ImageSummary, LocalContainer } from '@podman-desktop/extension-hummingbird-core-api';
+import type { ImageSummary } from '@podman-desktop/extension-hummingbird-core-api';
 import { containerAPI, alternativesAPI, imageAPI } from '#api/client.js';
 import type { LocalImage } from '@podman-desktop/extension-hummingbird-core-api/src';
 
-interface Data {
-  container: Promise<LocalContainer>;
-  alternative: Promise<ImageSummary>;
-  localImage: Promise<Omit<LocalImage, 'containers'>>;
-}
-
-export const load: PageLoad = async ({ params }): Promise<Data> => {
+export const load: PageLoad = async ({ params }) => {
   const container = containerAPI.getContainer(params.engineId, params.id);
 
   const localImage: Promise<Omit<LocalImage, 'containers'>> = container.then(({ engineId, imageID }) =>
@@ -37,6 +31,7 @@ export const load: PageLoad = async ({ params }): Promise<Data> => {
   );
 
   return {
+    label: 'Clone container',
     container,
     alternative,
     localImage,
