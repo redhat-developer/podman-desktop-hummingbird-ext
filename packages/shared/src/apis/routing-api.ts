@@ -24,6 +24,12 @@ export abstract class RoutingApi {
    */
   abstract readRoute(): Promise<string | undefined>;
 
+  /**
+   * Register a frontend route in Podman Desktop's global back/forward history,
+   * so the user can navigate back to it using Podman Desktop navigation.
+   */
+  abstract pushHistory(route: string, label: string): Promise<void>;
+
   abstract navigateToCatalog(searchTerm?: string): Promise<void>;
 
   abstract navigateToContainerDetails(engineId: string, containerId: string): Promise<void>;

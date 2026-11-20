@@ -33,6 +33,10 @@ export class RoutingApiImpl extends RoutingApi {
     return this.routing.read();
   }
 
+  override async pushHistory(route: string, label: string): Promise<void> {
+    this.routing.pushHistory(route, label);
+  }
+
   override navigateToCatalog(searchTerm?: string): Promise<void> {
     return navigation.navigateToExtensionsCatalog({
       searchTerm,

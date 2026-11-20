@@ -79,7 +79,10 @@ const plugin = {
     showWarningMessage: vi.fn(),
     createWebviewPanel: vi.fn(),
   } as unknown as typeof podmanDesktopApi.window,
-  navigation: {} as unknown as typeof podmanDesktopApi.navigation,
+  navigation: {
+    pushHistoryEntry: vi.fn(),
+    onDidNavigateToHistoryEntry: vi.fn(),
+  } as unknown as typeof podmanDesktopApi.navigation,
   commands: {
     registerCommand: vi.fn(),
   } as unknown as typeof podmanDesktopApi.commands,

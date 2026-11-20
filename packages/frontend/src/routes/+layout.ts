@@ -16,5 +16,20 @@
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
 
+import { redirect } from '@sveltejs/kit';
+import type { LayoutLoad } from './$types';
+import { getRouterState } from '#api/client.js';
+
 export const prerender = true;
 export const ssr = false;
+
+export const load: LayoutLoad = async ({ url, untrack }): Promise<void> => {
+  // restore any pending route (e.g. Podman Desktop back/forward history) before rendering the default page
+  const state = await getRouterState();
+  if (state.url === '/') return;
+
+  const target = new URL(state.url, url);
+  if (untrack(() => target.pathname !== url.pathname)) {
+    redirect(307, `${target.pathname}${target.search}`);
+  }
+};
