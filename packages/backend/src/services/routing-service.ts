@@ -16,7 +16,7 @@
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
 import type { AsyncInit } from '/@/utils/async-init';
-import type { Disposable } from '@podman-desktop/api';
+import { navigation, type Disposable } from '@podman-desktop/api';
 import { Publisher } from '/@/utils/publisher';
 import { Messages } from '@podman-desktop/extension-hummingbird-core-api';
 import { inject, injectable, postConstruct } from 'inversify';
@@ -25,6 +25,7 @@ import { WebviewService } from '/@/services/webview-service';
 @injectable()
 export class RoutingService extends Publisher<string | undefined> implements Disposable, AsyncInit {
   #route: string | undefined = undefined;
+  #historyListener: Disposable | undefined = undefined;
 
   constructor(
     @inject(WebviewService)
@@ -34,7 +35,10 @@ export class RoutingService extends Publisher<string | undefined> implements Dis
   }
 
   @postConstruct()
-  async init(): Promise<void> {}
+  async init(): Promise<void> {
+    // the user navigated back/forward to one of our history entries: restore the matching route
+    this.#historyListener = navigation.onDidNavigateToHistoryEntry(({ id }) => this.write(id));
+  }
 
   /**
    * This function return the route, and reset it.
@@ -46,7 +50,15 @@ export class RoutingService extends Publisher<string | undefined> implements Dis
     return result;
   }
 
-  protected async write(route: string): Promise<void> {
+  /**
+   * Register a frontend route in Podman Desktop's global back/forward history.
+   * The route is used as the entry id, and given back by {@link navigation.onDidNavigateToHistoryEntry}.
+   */
+  public pushHistory(route: string, label: string): void {
+    navigation.pushHistoryEntry({ id: route, label });
+  }
+
+  protected write(route: string): void {
     // update the route
     this.#route = route;
     // notify
@@ -57,6 +69,7 @@ export class RoutingService extends Publisher<string | undefined> implements Dis
 
   override dispose(): void {
     super.dispose();
+    this.#historyListener?.dispose();
     this.#route = undefined;
   }
 }

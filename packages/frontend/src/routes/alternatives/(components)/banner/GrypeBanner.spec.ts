@@ -27,6 +27,7 @@ vi.mock(import('#api/client.js'), () => ({
     navigateToContainerDetails: vi.fn(),
     navigateToCatalog: vi.fn(),
     readRoute: vi.fn(),
+    pushHistory: vi.fn(),
   },
 }));
 
