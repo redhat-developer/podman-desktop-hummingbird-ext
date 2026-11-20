@@ -34,6 +34,7 @@ describe('when grype is not installed', () => {
   test('should display install prompt', () => {
     const { getByLabelText } = render(Page, {
       data: {
+        label: 'nginx:latest',
         engineId: 'podman',
         image: 'nginx:latest',
         isGrypeInstalled: false,
@@ -52,6 +53,7 @@ describe('when grype is not installed', () => {
   test('should render the ExtensionBanner', () => {
     const { getByLabelText } = render(Page, {
       data: {
+        label: 'nginx:latest',
         engineId: 'podman',
         image: 'nginx:latest',
         isGrypeInstalled: false,
@@ -72,6 +74,7 @@ describe('when grype is installed', () => {
   test('should show loading text while report is pending', () => {
     const { getByText } = render(Page, {
       data: {
+        label: 'nginx:latest',
         engineId: 'podman',
         image: 'nginx:latest',
         isGrypeInstalled: true,
@@ -89,6 +92,7 @@ describe('when grype is installed', () => {
   test('should show error screen when report promise rejects', async () => {
     const { getByLabelText } = render(Page, {
       data: {
+        label: 'nginx:latest',
         engineId: 'podman',
         image: 'nginx:latest',
         isGrypeInstalled: true,

@@ -15,28 +15,23 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
-import type { OptimisationReport } from '@podman-desktop/extension-hummingbird-core-api';
 import type { PageLoad } from './$types';
 import { alternativesAPI } from '#api/client.js';
 import { IMAGE_QUERY_KEY } from '#routes/images/[engineId]/[imageId]/report/constants.js';
 
-interface Data {
-  engineId: string;
-  image: string;
-  isGrypeInstalled: boolean;
-  report: Promise<OptimisationReport>;
-}
-
-export const load: PageLoad = async ({ params, url }): Promise<Data> => {
+export const load: PageLoad = async ({ params, url }) => {
   const engineId = decodeURIComponent(params.engineId);
   const imageId = decodeURIComponent(params.imageId);
 
   const isGrypeInstalled = await alternativesAPI.isGrypeInstalled();
 
+  const image = url.searchParams.get(IMAGE_QUERY_KEY);
+
   return {
+    label: image ?? 'Optimisation report',
     engineId,
     isGrypeInstalled,
-    image: url.searchParams.get(IMAGE_QUERY_KEY) ?? '<unknown>',
+    image: image ?? '<unknown>',
     report: alternativesAPI.getOptimisationReport(engineId, imageId),
   };
 };

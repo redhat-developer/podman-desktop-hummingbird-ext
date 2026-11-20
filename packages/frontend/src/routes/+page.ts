@@ -16,17 +16,10 @@
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
 import type { PageLoad } from './$types';
-import type { SimpleImageInfo, ImageSummary } from '@podman-desktop/extension-hummingbird-core-api';
+import type { SimpleImageInfo } from '@podman-desktop/extension-hummingbird-core-api';
 import { hummingbirdAPI, imageAPI } from '#api/client.js';
 
-interface Data {
-  pulled?: Promise<Array<SimpleImageInfo>>;
-  repositories: Promise<Array<ImageSummary>>;
-  providerId?: string;
-  connection?: string;
-}
-
-export const load: PageLoad = async ({ url, depends }): Promise<Data> => {
+export const load: PageLoad = async ({ url, depends }) => {
   depends('images:pulled');
 
   const providerId = url.searchParams.get('providerId') ?? undefined;
@@ -56,6 +49,7 @@ export const load: PageLoad = async ({ url, depends }): Promise<Data> => {
     ]).then(([images]) => images);
   }
   return {
+    label: 'Catalog',
     repositories: hummingbirdAPI.all(),
     pulled,
     providerId,
