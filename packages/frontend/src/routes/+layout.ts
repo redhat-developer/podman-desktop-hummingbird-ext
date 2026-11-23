@@ -28,7 +28,8 @@ export const load: LayoutLoad = async ({ url, untrack }): Promise<void> => {
   const state = await getRouterState();
   if (state.url === '/') return;
 
-  const target = new URL(state.url, url);
+  // read url inside untrack only: the root load must not re-run (and call readRoute) on every navigation
+  const target = untrack(() => new URL(state.url, url));
   if (untrack(() => target.pathname !== url.pathname)) {
     redirect(307, `${target.pathname}${target.search}`);
   }

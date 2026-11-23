@@ -53,3 +53,32 @@ test('pending route matching the current one should not redirect', async () => {
 
   await expect(callLoad('http://localhost/alternatives')).resolves.toBeUndefined();
 });
+
+test('url should only be read inside untrack, so the root load does not re-run on every navigation', async () => {
+  vi.mocked(getRouterState).mockResolvedValue({ url: '/alternatives' });
+
+  // mimic SvelteKit's tracked url: reading these properties outside untrack registers a dependency
+  let untracking = false;
+  let tracked = false;
+  const url = new Proxy(new URL('http://localhost/'), {
+    get(target, key): unknown {
+      if (['href', 'pathname', 'search', 'toString', 'toJSON'].includes(String(key)) && !untracking) tracked = true;
+      const value = Reflect.get(target, key);
+      return typeof value === 'function' ? value.bind(target) : value;
+    },
+  });
+  const untrack = <T>(fn: () => T): T => {
+    untracking = true;
+    try {
+      return fn();
+    } finally {
+      untracking = false;
+    }
+  };
+
+  await expect(load({ url, untrack } as unknown as Parameters<typeof load>[0] & LoadEvent)).rejects.toMatchObject({
+    status: 307,
+    location: '/alternatives',
+  });
+  expect(tracked).toBe(false);
+});
