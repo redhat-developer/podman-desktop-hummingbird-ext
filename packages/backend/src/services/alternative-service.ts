@@ -21,6 +21,7 @@ import {
   CancellationTokenSource,
   containerEngine as containerEngineAPI,
   Disposable,
+  ImageInfo,
   ImageInspectInfo,
   TelemetryLogger,
 } from '@podman-desktop/api';
@@ -154,6 +155,23 @@ export class AlternativeService extends Publisher<void> implements AsyncInit, Di
     return this.getHummingbirdImageSummary(hummingbirdImageName);
   }
 
+  /**
+   * The `Arch` property returned by the image list endpoint is podman-specific
+   * (https://github.com/podman-desktop/podman-desktop/issues/16967); docker does not provide it.
+   * Fall back on the `Architecture` property of the image inspect, which both engines provide.
+   */
+  protected async getImageArchitecture(image: ImageInfo): Promise<string | undefined> {
+    if ('Arch' in image && typeof image.Arch === 'string' && image.Arch.length > 0) return image.Arch;
+
+    try {
+      const inspect = await containerEngineAPI.getImageInspect(image.engineId, image.Id);
+      return inspect.Architecture || undefined;
+    } catch (err: unknown) {
+      console.warn(`cannot inspect image ${image.Id}`, err);
+      return undefined;
+    }
+  }
+
   public async getAlternatives(): Promise<Array<LocalImageAlternative>> {
     const results: LocalImageAlternative[] = [];
 
@@ -190,10 +208,10 @@ export class AlternativeService extends Publisher<void> implements AsyncInit, Di
 
         const hummingbirdImage = await this.getHummingbirdImageSummary(hummingbirdImageName);
 
-        // https://github.com/podman-desktop/podman-desktop/issues/16967
-        if (!('Arch' in image) || typeof image.Arch !== 'string') {
-          console.warn('missing arch on image', image);
-          continue;
+        const architecture = await this.getImageArchitecture(image);
+        if (!architecture) {
+          console.warn(`missing architecture on image ${image.Id} (${repoTag})`);
+          break;
         }
 
         if (hummingbirdImage) {
@@ -205,7 +223,7 @@ export class AlternativeService extends Publisher<void> implements AsyncInit, Di
               name: repo,
               tag: tag ?? 'latest',
               size: image.Size,
-              architecture: image.Arch,
+              architecture,
               containers: containerMap.get(image.Id) ?? [],
             },
             alternative: hummingbirdImage,

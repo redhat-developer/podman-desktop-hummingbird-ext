@@ -17,7 +17,14 @@
  ***********************************************************************/
 
 import { expect, test, vi, beforeEach, describe, assert } from 'vitest';
-import type { TelemetryLogger, ImageInfo, Webview, WebviewPanel, ContainerJSONEvent } from '@podman-desktop/api';
+import type {
+  TelemetryLogger,
+  ImageInfo,
+  ImageInspectInfo,
+  Webview,
+  WebviewPanel,
+  ContainerJSONEvent,
+} from '@podman-desktop/api';
 import { containerEngine as containerEngineAPI, containerEngine } from '@podman-desktop/api';
 import { AlternativeService } from './alternative-service';
 import type { HummingbirdService } from './hummingbird-service';
@@ -151,22 +158,62 @@ test('should skip images without RepoTags', async () => {
   expect(result).toHaveLength(0);
 });
 
-test('should skip images without Arch property', async () => {
+describe('images without Arch property (docker engine)', () => {
   const localImages: Array<ImageInfo> = [
     {
       Id: 'sha256:abc123',
-      engineId: 'podman',
+      engineId: 'docker',
       RepoTags: ['docker.io/library/nginx:latest'],
       Size: 1024000,
     } as ImageInfo,
   ];
 
-  vi.mocked(containerEngine.listImages).mockResolvedValue(localImages);
+  beforeEach(() => {
+    vi.mocked(containerEngine.listImages).mockResolvedValue(localImages);
+  });
 
-  const service = getAlternativeService();
-  const result = await service.getAlternatives();
+  test('should use the Architecture from the image inspect', async () => {
+    vi.mocked(containerEngine.getImageInspect).mockResolvedValue({
+      Architecture: 'arm64',
+    } as unknown as ImageInspectInfo);
 
-  expect(result).toHaveLength(0);
+    const service = getAlternativeService();
+    const result = await service.getAlternatives();
+
+    expect(containerEngine.getImageInspect).toHaveBeenCalledWith('docker', 'sha256:abc123');
+    expect(result).toHaveLength(1);
+    expect(result[0].localImage.architecture).toBe('arm64');
+  });
+
+  test('should not inspect images that have the Arch property', async () => {
+    vi.mocked(containerEngine.listImages).mockResolvedValue([
+      { ...localImages[0], Arch: 'amd64' } as unknown as ImageInfo,
+    ]);
+
+    const service = getAlternativeService();
+    const result = await service.getAlternatives();
+
+    expect(containerEngine.getImageInspect).not.toHaveBeenCalled();
+    expect(result[0].localImage.architecture).toBe('amd64');
+  });
+
+  test('should skip the image if the inspect has no Architecture', async () => {
+    vi.mocked(containerEngine.getImageInspect).mockResolvedValue({} as unknown as ImageInspectInfo);
+
+    const service = getAlternativeService();
+    const result = await service.getAlternatives();
+
+    expect(result).toHaveLength(0);
+  });
+
+  test('should skip the image if the inspect fails', async () => {
+    vi.mocked(containerEngine.getImageInspect).mockRejectedValue(new Error('inspect failed'));
+
+    const service = getAlternativeService();
+    const result = await service.getAlternatives();
+
+    expect(result).toHaveLength(0);
+  });
 });
 
 test('should skip images without matching alternatives', async () => {
