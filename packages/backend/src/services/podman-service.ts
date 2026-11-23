@@ -93,11 +93,13 @@ export class PodmanService implements Disposable {
             },
           );
 
-          if (result.Warnings) {
-            console.warn('warnings', result.Warnings.join('\n'));
+          // libpod returns `Warnings: null` when there are none, despite the API typing
+          const warnings = result.Warnings ?? [];
+          if (warnings.length) {
+            console.warn('warnings', warnings.join('\n'));
           }
 
-          telemetry['warnings'] = result.Warnings.length;
+          telemetry['warnings'] = warnings.length;
 
           return {
             engineId,

@@ -165,6 +165,35 @@ describe('clone', () => {
     );
   });
 
+  test('should handle null Warnings returned by libpod', async () => {
+    vi.mocked(containerEngineAPI.replicatePodmanContainer).mockResolvedValue({
+      Id: 'new-container-id',
+      // eslint-disable-next-line no-null/no-null
+      Warnings: null as unknown as string[],
+    });
+
+    const service = getPodmanService();
+    const result = await service.clone('test-engine-id', 'old-container-id', 'alt-image', {
+      name: 'new-name',
+      task: {
+        title: 'Cloning container',
+      },
+    });
+
+    expect(result).toStrictEqual({
+      engineId: 'test-engine-id',
+      Id: 'new-container-id',
+    });
+
+    expect(TELEMETRY_LOGGER_MOCK.logUsage).toHaveBeenCalledWith(
+      TelemetryEvents.CLONE_CONTAINER,
+      expect.objectContaining({
+        alternative: 'alt-image',
+        warnings: 0,
+      }),
+    );
+  });
+
   test('should log error telemetry if clone fails', async () => {
     const error = new Error('clone failed');
     vi.mocked(containerEngineAPI.replicatePodmanContainer).mockRejectedValue(error);
