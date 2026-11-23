@@ -165,11 +165,10 @@ describe('clone', () => {
     );
   });
 
-  test('should handle null Warnings returned by libpod', async () => {
+  test('should handle missing Warnings returned by libpod', async () => {
     vi.mocked(containerEngineAPI.replicatePodmanContainer).mockResolvedValue({
       Id: 'new-container-id',
-      // eslint-disable-next-line no-null/no-null
-      Warnings: null as unknown as string[],
+      Warnings: undefined as unknown as string[],
     });
 
     const service = getPodmanService();
