@@ -60,8 +60,9 @@ async function navigateToContainer(): Promise<void> {
   <!-- form -->
   <div class="bg-[var(--pd-content-card-bg)] space-y-6 px-8 sm:pb-6 xl:pb-8 rounded-lg h-fit">
     <div class="w-full flex flex-col">
-      <label for="new-base-image" class="pt-4 block mb-2 font-bold text-[var(--pd-content-card-header-text)]"
-        >New base image</label>
+      <label for="new-base-image" class="pt-4 block mb-2 font-bold text-[var(--pd-content-card-header-text)]">
+        New base image
+      </label>
       <div class="flex items-center gap-2">
         <span class="text-base">
           {localImage.name}:{localImage.tag}
@@ -72,8 +73,9 @@ async function navigateToContainer(): Promise<void> {
         </span>
       </div>
 
-      <label for="new-container-name" class="pt-4 block mb-2 font-bold text-[var(--pd-content-card-header-text)]"
-        >New container name</label>
+      <label for="new-container-name" class="pt-4 block mb-2 font-bold text-[var(--pd-content-card-header-text)]">
+        New container name
+      </label>
       <Input name="new-container-name" bind:value={name} readonly={loading || !!result} />
 
       <label class="flex items-center gap-2 cursor-pointer mt-4">

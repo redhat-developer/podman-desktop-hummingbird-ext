@@ -21,8 +21,9 @@ let { cveReductionCount, cveReductionPercent, sizeReductionPercent }: Props = $p
         <span class="text-lg font-bold text-(--pd-link)">Hardened Alternative Found!</span>
         <span
           class:hidden={!!cveReductionPercent && cveReductionPercent <= 0}
-          class="text-sm text-[var(--pd-content-text)] opacity-70"
-          >A Hummingbird image is available with significant security improvements</span>
+          class="text-sm text-[var(--pd-content-text)] opacity-70">
+          A Hummingbird image is available with significant security improvements
+        </span>
       </div>
     </div>
 
