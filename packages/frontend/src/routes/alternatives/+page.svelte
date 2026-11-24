@@ -67,7 +67,9 @@ async function analyze(): Promise<void> {
       inProgress={reporting}
       onclick={analyze}
       icon={faMagnifyingGlass}
-      title="Analyze images">Analyze</Button>
+      title="Analyze images">
+      Analyze
+    </Button>
   {/snippet}
   {#snippet content()}
     {#await data.alternatives}

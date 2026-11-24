@@ -39,15 +39,17 @@ let result: 'smaller' | 'larger' | 'equal' | undefined = $derived.by(() => {
 {#if valid}
   <div class="flex flex-col items-center">
     <div class="flex items-center gap-2">
-      <span class="text-base font-medium"
-        >{filesize(object.localImage.size, {
+      <span class="text-base font-medium">
+        {filesize(object.localImage.size, {
           round: 0,
-        })}</span>
+        })}
+      </span>
       <span class="text-[var(--pd-content-text)] opacity-30">→</span>
-      <span class:text-green-400={result === 'smaller'} class="text-base font-medium"
-        >{filesize(object.alternative.size, {
+      <span class:text-green-400={result === 'smaller'} class="text-base font-medium">
+        {filesize(object.alternative.size, {
           round: 0,
-        })}</span>
+        })}
+      </span>
     </div>
     {#if result === 'smaller'}
       <div class="flex items-center gap-1 max-lg:hidden">

@@ -19,8 +19,9 @@ let { container }: Props = $props();
   </div>
   <div>
     <p class="text-(--pd-content-text) text-base leading-normal m-0 opacity-80 mb-2">
-      This will clone the container <strong class="text-(--pd-badge-green)"
-        >{container.name?.replace(/^\//, '') ?? container.id}</strong>
+      This will clone the container <strong class="text-(--pd-badge-green)">
+        {container.name?.replace(/^\//, '') ?? container.id}
+      </strong>
       and replace its base image with the Hummingbird hardened alternative
     </p>
     <p class="text-(--pd-content-text) text-base leading-normal m-0 opacity-80">

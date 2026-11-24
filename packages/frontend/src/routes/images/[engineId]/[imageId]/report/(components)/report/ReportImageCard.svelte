@@ -44,8 +44,9 @@ let {
       size={24} />
     <div class="min-w-0 flex-1">
       <span class="text-base font-bold text-[var(--pd-content-header)] block truncate" title={title}>{title}</span>
-      <span class="text-xs {isHummingbird ? 'text-(--pd-link)' : 'text-[var(--pd-content-text)] opacity-50'} block"
-        >{subtitle}</span>
+      <span class="text-xs {isHummingbird ? 'text-(--pd-link)' : 'text-[var(--pd-content-text)] opacity-50'} block">
+        {subtitle}
+      </span>
     </div>
   </div>
 
@@ -54,8 +55,9 @@ let {
     <!-- Version Row -->
     <div class="flex justify-between items-center">
       <span class="text-xs text-[var(--pd-content-text)] opacity-50 uppercase tracking-wide">Version</span>
-      <span class="text-sm font-mono {isHummingbird ? 'text-(--pd-link)' : 'text-[var(--pd-content-header)]'}"
-        >{version}</span>
+      <span class="text-sm font-mono {isHummingbird ? 'text-(--pd-link)' : 'text-[var(--pd-content-header)]'}">
+        {version}
+      </span>
     </div>
 
     <!-- Vulnerabilities Row -->
