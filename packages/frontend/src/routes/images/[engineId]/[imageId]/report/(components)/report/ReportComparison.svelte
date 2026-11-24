@@ -94,12 +94,14 @@ const benefits = $derived([
             <div
               class="h-5 rounded bg-(--pd-button-primary-bg)/40 flex items-center px-2"
               style="width: {Math.max(10, 100 - sizeReductionPercent)}%">
-              <span class="text-[10px] line-clamp-1 font-medium text-(--pd-label-primary-text)"
-                >{filesize(altSize)}</span>
+              <span class="text-[10px] line-clamp-1 font-medium text-(--pd-label-primary-text)">
+                {filesize(altSize)}
+              </span>
             </div>
             <div class="h-5 rounded bg-(--pd-button-primary-bg)/20 flex items-center px-2" style="width: 100%">
-              <span class="text-[10px] font-medium text-(--pd-label-primary-text) opacity-60"
-                >{filesize(imageSize)}</span>
+              <span class="text-[10px] font-medium text-(--pd-label-primary-text) opacity-60">
+                {filesize(imageSize)}
+              </span>
             </div>
           </div>
         </div>

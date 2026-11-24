@@ -101,14 +101,18 @@ function openExternal(): Promise<boolean> {
               type="secondary"
               class="grow"
               aria-label="Open"
-              onclick={navigateToImageDetails.bind(undefined, result)}>Open</Button>
+              onclick={navigateToImageDetails.bind(undefined, result)}>
+              Open
+            </Button>
 
             <Button
               icon={faPlay}
               type="primary"
               class="grow"
               aria-label="Run"
-              onclick={navigateToImageRun.bind(undefined, result)}>Run</Button>
+              onclick={navigateToImageRun.bind(undefined, result)}>
+              Run
+            </Button>
           </div>
         {:else}
           <Button
@@ -118,7 +122,9 @@ function openExternal(): Promise<boolean> {
             class="grow"
             icon={faDownload}
             aria-label="Pull"
-            onclick={pullImage}>Pull</Button>
+            onclick={pullImage}>
+            Pull
+          </Button>
         {/if}
       {/await}
 

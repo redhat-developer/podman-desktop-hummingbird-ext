@@ -97,7 +97,8 @@ const imageVersion = $derived(imageRepoTag.split(':')[1] ?? '-');
 {#if image.containers.length > 0}
   <div class="px-5 pt-4">
     <span class="text-base font-bold text-[var(--pd-content-header)]">
-      Container{image.containers.length > 1 ? 's' : ''} using {image.inspect.RepoTags[0]} image</span>
+      Container{image.containers.length > 1 ? 's' : ''} using {image.inspect.RepoTags[0]} image
+    </span>
   </div>
 
   <div class="flex w-full">
